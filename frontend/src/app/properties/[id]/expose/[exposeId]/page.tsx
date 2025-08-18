@@ -42,7 +42,7 @@ export default function ExposeGenerationPage() {
   } | null>(null);
 
   // 转换数据格式以适配 Expose_A4_Classic 组件
-  const transformPreviewDataForExpose = (data: any): ExposeTemplateData => {
+  const transformPreviewDataForExpose = (data: ExposeData['previewData']): ExposeTemplateData => {
     if (!data) {
       // 返回默认数据
       return {
@@ -92,17 +92,17 @@ export default function ExposeGenerationPage() {
       orientation: 'Nord-Süd-Orientierung',
       renovation: 'Ausstattung',
       description: data.description || 'Keine Beschreibung verfügbar',
-      images: (data.images || []).map((img: any, index: number) => ({
+      images: (data.images || []).map((img, index: number) => ({
         id: `img_${index}`,
         url: img.url,
         alt: `Immobilienbild ${index + 1}`
       })),
       contact: {
-        name: 'Herr Zhang',
+        name: data.contact_person || 'Herr Zhang',
         title: 'Erfolgreicher Immobilienberater',
         avatar: 'https://source.unsplash.com/100x100/?portrait',
-        phone: '138-0013-8000',
-        email: 'zhang@example.com',
+        phone: data.contact_phone || '138-0013-8000',
+        email: data.contact_email || 'zhang@example.com',
         company: 'Guomao Immobilienmakler GmbH',
         license: 'B-00123456789'
       },
@@ -114,7 +114,7 @@ export default function ExposeGenerationPage() {
   };
 
   // 转换数据格式以适配 Expose_PPT_Classic 组件
-  const transformPreviewDataForPPT = (data: any): ExposePPTData => {
+  const transformPreviewDataForPPT = (data: ExposeData['previewData']): ExposePPTData => {
     if (!data) {
       // 返回默认数据
       return {
@@ -165,7 +165,8 @@ export default function ExposeGenerationPage() {
             email: 'li@example.com',
             avatar: 'https://source.unsplash.com/100x100/?portrait-2'
           }
-        ]
+        ],
+        agentInfo: undefined
       };
     }
     
@@ -186,13 +187,17 @@ export default function ExposeGenerationPage() {
         baujahr: data.yearBuilt?.toString() || '2020',
         wohnflaeche: `${data.area || 120} m²`,
         zimmer: data.rooms?.toString() || '5',
-        schlafzimmer: Math.floor((data.rooms || 5) * 0.6).toString(),
-        badezimmer: Math.max(1, Math.floor((data.rooms || 5) * 0.4)).toString(),
-        heizungssystem: 'Fußbodenheizung',
-        energieklasse: 'A'
+        schlafzimmer: data.bedrooms?.toString() || '3',
+        badezimmer: data.bathrooms?.toString() || '2',
+        heizungssystem: data.heating_system || 'Fußbodenheizung',
+        energieklasse: data.energy_certificate || 'A',
+        energietraeger: data.energy_source || 'Erdgas',
+        parkplatz: data.parking || 'Garage',
+        renovierungsqualitaet: data.renovation_quality || 'Hochwertig',
+        bodenbelag: data.floor_type || 'Parkett'
       },
       description: data.description || 'Dies ist eine hochwertige Immobilie in einer erstklassigen Lage mit ausgezeichneter Verkehrsanbindung. Die Wohnung ist durchdacht gestaltet, bietet viel Tageslicht und verfügt über eine vollständige Ausstattung.',
-      images: (data.images || []).map((img: any, index: number) => ({
+      images: (data.images || []).map((img, index: number) => ({
         id: `img_${index}`,
         url: img.url,
         alt: `Immobilienbild ${index + 1}`
@@ -210,15 +215,15 @@ export default function ExposeGenerationPage() {
       ],
       contacts: [
         {
-          name: 'Herr Zhang',
-          phone: '138-0013-8000',
-          email: 'zhang@example.com',
+          name: data.contact_person || 'Herr Zhang',
+          phone: data.contact_phone || '138-0013-8000',
+          email: data.contact_email || 'zhang@example.com',
           avatar: 'https://source.unsplash.com/100x100/?portrait-1'
         },
         {
-          name: 'Frau Li',
-          phone: '139-0013-8001',
-          email: 'li@example.com',
+          name: data.contact_person2 || 'Frau Li',
+          phone: data.contact_phone2 || '139-0013-8001',
+          email: data.contact_email2 || 'li@example.com',
           avatar: 'https://source.unsplash.com/100x100/?portrait-2'
         }
       ]

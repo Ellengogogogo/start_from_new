@@ -80,9 +80,31 @@ export const getExposePreview = async (exposeId: string): Promise<{
   address: string;
   price?: number;
   rooms?: number;
+  bedrooms?: number;
+  bathrooms?: number;
   area?: number;
   yearBuilt?: number;
+  heating_system?: string;
+  energy_source?: string;
+  energy_certificate?: string;
+  parking?: string;
+  renovation_quality?: string;
+  floor_type?: string;
   description?: string;
+  contact_person?: string;
+  contact_phone?: string;
+  contact_email?: string;
+  contact_person2?: string;
+  contact_phone2?: string;
+  contact_email2?: string;
+  agentInfo?: {
+    companyLogo?: string;
+    responsiblePerson: string;
+    address: string;
+    website?: string;
+    phone: string;
+    userType: string;
+  };
   images?: Array<{
     url: string;
     isPrimary: boolean;
@@ -99,15 +121,28 @@ export const generateAIDescription = async (
 ): Promise<{ suggested_description: string; style: string; message: string }> => {
   const response = await api.post('/api/properties/generate-description', {
     ...propertyData,
-    property_type: 'house', // 默认类型，可以根据实际需要调整
+    property_type: propertyData.property_type,
     status: 'for_sale',
     price_type: 'total',
     area_sqm: propertyData.area,
     rooms: propertyData.rooms,
-    bedrooms: propertyData.rooms,
-    bathrooms: 1,
+    bedrooms: propertyData.bedrooms,
+    bathrooms: propertyData.bathrooms,
     year_built: propertyData.yearBuilt,
-    country: 'Germany'
+    country: 'Germany',
+    city: propertyData.city,
+    heating_system: propertyData.heating_system,
+    energy_source: propertyData.energy_source,
+    energy_certificate: propertyData.energy_certificate,
+    parking: propertyData.parking,
+    renovation_quality: propertyData.renovation_quality,
+    floor_type: propertyData.floor_type,
+    contact_person: propertyData.contact_person,
+    contact_phone: propertyData.contact_phone,
+    contact_email: propertyData.contact_email,
+    contact_person2: propertyData.contact_person2,
+    contact_phone2: propertyData.contact_phone2,
+    contact_email2: propertyData.contact_email2,
   }, {
     params: { style }
   });

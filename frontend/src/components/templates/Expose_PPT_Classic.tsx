@@ -18,6 +18,10 @@ export interface ExposePPTData {
     badezimmer?: string;
     heizungssystem?: string;
     energieklasse?: string;
+    energietraeger?: string;
+    parkplatz?: string;
+    renovierungsqualitaet?: string;
+    bodenbelag?: string;
   };
   
   // 描述
@@ -48,6 +52,16 @@ export interface ExposePPTData {
   
   // 样式配置
   accentColor?: string;
+  
+  // 代理信息
+  agentInfo?: {
+    companyLogo?: string;
+    responsiblePerson: string;
+    address: string;
+    website?: string;
+    phone: string;
+    userType: string;
+  };
 }
 
 export interface Expose_PPT_ClassicProps {
@@ -204,9 +218,9 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
         {/* 第2页 - 议程 */}
         <div className="slide w-full h-screen bg-white p-12 flex items-center pb-20" 
              style={{ aspectRatio: '16/9', minHeight: '1080px' }}>
-          <div className="w-full max-w-7xl mx-auto grid grid-cols-2 gap-16 items-center">
+          <div className="w-full max-w-7xl mx-auto grid grid-cols-2 gap-16 items-center h-full">
             {/* 左侧议程 */}
-            <div>
+            <div className="flex flex-col justify-center">
               <h2 className="text-4xl font-serif font-bold text-gray-900 mb-8">Agenda</h2>
               <ol className="space-y-4">
                 {data.agendaItems?.map((item, index) => (
@@ -235,21 +249,19 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
               </ol>
             </div>
             
-            {/* 右侧图片 */}
-            <div className="flex justify-center">
-              <div className="w-80 h-60 bg-gray-200 rounded-lg shadow-lg overflow-hidden">
-                <img 
-                  src={data.images?.[1]?.url ? getFullImageUrl(data.images[1].url) : 
-                       data.images?.[0]?.url ? getFullImageUrl(data.images[0].url) : 
-                       'https://source.unsplash.com/800x600/?house-interior'} 
-                  alt="Immobilienbild"
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = 'https://source.unsplash.com/800x600/?house-interior';
-                  }}
-                />
-              </div>
+            {/* 右侧图片 - 占满整个右侧区域 */}
+            <div className="h-full w-full rounded-lg shadow-lg overflow-hidden">
+              <img 
+                src={data.images?.[1]?.url ? getFullImageUrl(data.images[1].url) : 
+                     data.images?.[0]?.url ? getFullImageUrl(data.images[0].url) : 
+                     'https://source.unsplash.com/800x600/?house-interior'} 
+                alt="Immobilienbild"
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = 'https://source.unsplash.com/800x600/?house-interior';
+                }}
+              />
             </div>
           </div>
           
@@ -267,30 +279,60 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
         {/* 第3页 - 关键数据 */}
         <div className="slide w-full h-screen bg-white p-12 flex items-center pb-20" 
              style={{ aspectRatio: '16/9', minHeight: '1080px' }}>
-          <div className="w-full max-w-4xl mx-auto">
+          <div className="w-full max-w-6xl mx-auto">
             <h2 className="text-4xl font-serif font-bold text-gray-900 mb-12 text-center">Eckdaten</h2>
             
-            <div className="grid grid-cols-2 gap-8">
-              {/* 左侧字段 */}
+            <div className="grid grid-cols-2 gap-16">
+              {/* 左列 */}
               <div className="space-y-6">
-                <div className="text-right font-bold text-xl text-gray-700">Baujahr</div>
-                <div className="text-right font-bold text-xl text-gray-700">Wohnfläche</div>
-                <div className="text-right font-bold text-xl text-gray-700">Zimmer</div>
-                <div className="text-right font-bold text-xl text-gray-700">Schlafzimmer</div>
-                <div className="text-right font-bold text-xl text-gray-700">Badezimmer</div>
-                <div className="text-right font-bold text-xl text-gray-700">Heizungssystem</div>
-                <div className="text-right font-bold text-xl text-gray-700">Energieklasse</div>
+                <div className="flex justify-between items-center border-b border-gray-200 pb-2">
+                  <span className="font-bold text-lg text-gray-700">Baujahr</span>
+                  <span className="text-lg text-gray-600">{data.keyFacts?.baujahr || '2020'}</span>
+                </div>
+                <div className="flex justify-between items-center border-b border-gray-200 pb-2">
+                  <span className="font-bold text-lg text-gray-700">Wohnfläche</span>
+                  <span className="text-lg text-gray-600">{data.keyFacts?.wohnflaeche || '120 m²'}</span>
+                </div>
+                <div className="flex justify-between items-center border-b border-gray-200 pb-2">
+                  <span className="font-bold text-lg text-gray-700">Zimmer</span>
+                  <span className="text-lg text-gray-600">{data.keyFacts?.zimmer || '5'}</span>
+                </div>
+                <div className="flex justify-between items-center border-b border-gray-200 pb-2">
+                  <span className="font-bold text-lg text-gray-700">Schlafzimmer</span>
+                  <span className="text-lg text-gray-600">{data.keyFacts?.schlafzimmer || '3'}</span>
+                </div>
+                <div className="flex justify-between items-center border-b border-gray-200 pb-2">
+                  <span className="font-bold text-lg text-gray-700">Badezimmer</span>
+                  <span className="text-lg text-gray-600">{data.keyFacts?.badezimmer || '2'}</span>
+                </div>
+                <div className="flex justify-between items-center border-b border-gray-200 pb-2">
+                  <span className="font-bold text-lg text-gray-700">Heizungssystem</span>
+                  <span className="text-lg text-gray-600">{data.keyFacts?.heizungssystem || 'Fußbodenheizung'}</span>
+                </div>
               </div>
               
-              {/* 右侧数值 */}
+              {/* 右列 */}
               <div className="space-y-6">
-                <div className="text-left text-xl text-gray-600">{data.keyFacts?.baujahr || '2020'}</div>
-                <div className="text-left text-xl text-gray-600">{data.keyFacts?.wohnflaeche || '120 m²'}</div>
-                <div className="text-left text-xl text-gray-600">{data.keyFacts?.zimmer || '5'}</div>
-                <div className="text-left text-xl text-gray-600">{data.keyFacts?.schlafzimmer || '3'}</div>
-                <div className="text-left text-xl text-gray-600">{data.keyFacts?.badezimmer || '2'}</div>
-                <div className="text-left text-xl text-gray-600">{data.keyFacts?.heizungssystem || 'Fußbodenheizung'}</div>
-                <div className="text-left text-xl text-gray-600">{data.keyFacts?.energieklasse || 'A'}</div>
+                <div className="flex justify-between items-center border-b border-gray-200 pb-2">
+                  <span className="font-bold text-lg text-gray-700">Energieklasse</span>
+                  <span className="text-lg text-gray-600">{data.keyFacts?.energieklasse || 'A'}</span>
+                </div>
+                <div className="flex justify-between items-center border-b border-gray-200 pb-2">
+                  <span className="font-bold text-lg text-gray-700">Energieträger</span>
+                  <span className="text-lg text-gray-600">{data.keyFacts?.energietraeger || 'Erdgas'}</span>
+                </div>
+                <div className="flex justify-between items-center border-b border-gray-200 pb-2">
+                  <span className="font-bold text-lg text-gray-700">Parkplatz</span>
+                  <span className="text-lg text-gray-600">{data.keyFacts?.parkplatz || 'Garage'}</span>
+                </div>
+                <div className="flex justify-between items-center border-b border-gray-200 pb-2">
+                  <span className="font-bold text-lg text-gray-700">Renovierungsqualität</span>
+                  <span className="text-lg text-gray-600">{data.keyFacts?.renovierungsqualitaet || 'Hochwertig'}</span>
+                </div>
+                <div className="flex justify-between items-center border-b border-gray-200 pb-2">
+                  <span className="font-bold text-lg text-gray-700">Bodenbelag</span>
+                  <span className="text-lg text-gray-600">{data.keyFacts?.bodenbelag || 'Parkett'}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -307,10 +349,10 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
         </div>
 
         {/* 第4页 - 房源描述 */}
-        <div className="slide w-full h-screen bg-white p-12 flex items-center pb-20" 
+        <div className="slide w-full h-screen bg-gray-50 p-12 flex items-center pb-20" 
              style={{ aspectRatio: '16/9', minHeight: '1080px' }}>
           <div className="w-full max-w-5xl mx-auto">
-            <h2 className="text-4xl font-serif font-bold text-gray-900 mb-12 text-center">Beschreibung</h2>
+            <h2 className="text-4xl font-serif font-bold text-gray-900 mb-12 text-center">Object beschreibung</h2>
             
             <div className="bg-gray-50 rounded-lg p-8">
               <p className="text-xl text-gray-700 leading-relaxed text-justify">
@@ -414,22 +456,22 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
         <div className="slide w-full h-screen bg-white p-12 flex items-center pb-20" 
              style={{ aspectRatio: '16/9', minHeight: '1080px' }}>
           <div className="w-full max-w-7xl mx-auto grid grid-cols-2 gap-16 items-center">
-            {/* 左侧平面图 */}
-            <div className="flex justify-center">
-              <div className="w-96 h-72 bg-gray-200 rounded-lg shadow-lg overflow-hidden">
-                <img 
-                  src={data.floorPlanImage ? getFullImageUrl(data.floorPlanImage) : 
-                       data.images?.[1]?.url ? getFullImageUrl(data.images[1].url) : 
-                       'https://source.unsplash.com/800x600/?floor-plan'} 
-                  alt="Grundriss"
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = 'https://source.unsplash.com/800x600/?floor-plan';
-                  }}
-                />
-              </div>
-            </div>
+                         {/* 左侧平面图 */}
+             <div className="flex justify-center">
+               <div className="w-[500px] h-[400px] bg-gray-200 rounded-lg shadow-lg overflow-hidden">
+                 <img 
+                   src={data.floorPlanImage ? getFullImageUrl(data.floorPlanImage) : 
+                        data.images?.[1]?.url ? getFullImageUrl(data.images[1].url) : 
+                        'https://source.unsplash.com/800x600/?floor-plan'} 
+                   alt="Grundriss"
+                   className="w-full h-full object-cover"
+                   onError={(e) => {
+                     const target = e.target as HTMLImageElement;
+                     target.src = 'https://source.unsplash.com/800x600/?floor-plan';
+                   }}
+                 />
+               </div>
+             </div>
             
             {/* 右侧详情 */}
             <div>
@@ -468,6 +510,40 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
              style={{ aspectRatio: '16/9', minHeight: '1080px' }}>
           <div className="w-full max-w-5xl mx-auto">
             <h2 className="text-4xl font-serif font-bold text-gray-900 mb-12 text-center">Kontakt</h2>
+            
+            {/* 代理信息显示 */}
+            {data.agentInfo && (
+              <div className="mb-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
+                <div className="flex items-center space-x-4">
+                  {data.agentInfo.companyLogo && (
+                    <img
+                      src={getFullImageUrl(data.agentInfo.companyLogo)}
+                      alt="Company logo"
+                      className="w-16 h-16 rounded-lg object-cover"
+                    />
+                  )}
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-blue-900 mb-2">房地产中介信息</h3>
+                    <div className="grid grid-cols-2 gap-4 text-sm text-blue-700">
+                      <div>
+                        <span className="font-medium">负责人:</span> {data.agentInfo.responsiblePerson}
+                      </div>
+                      <div>
+                        <span className="font-medium">电话:</span> {data.agentInfo.phone}
+                      </div>
+                      <div className="col-span-2">
+                        <span className="font-medium">地址:</span> {data.agentInfo.address}
+                      </div>
+                      {data.agentInfo.website && (
+                        <div className="col-span-2">
+                          <span className="font-medium">网站:</span> {data.agentInfo.website}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
             
             <div className="grid grid-cols-2 gap-8">
               {(data.contacts || [

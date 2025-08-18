@@ -11,6 +11,14 @@ export interface PropertyFormData {
   rooms: number;
   area: number;
   yearBuilt: number;
+  bedrooms: number;
+  bathrooms: number;
+  heating_system: string;
+  energy_source: string;
+  energy_certificate: string;
+  parking: string;
+  renovation_quality: string;
+  floor_type: string;
   
   // 步骤3: 描述文本
   description?: string;
@@ -18,6 +26,17 @@ export interface PropertyFormData {
   
   // 步骤4: 图片
   images: File[];
+  
+  // 步骤5: 联系人信息
+  contact_person: string;
+  contact_phone: string;
+  contact_email: string;
+  contact_person2?: string;
+  contact_phone2?: string;
+  contact_email2?: string;
+  
+  // Agent information (optional)
+  agentInfo?: AgentInfo;
 }
 
 export interface PropertyData {
@@ -66,7 +85,21 @@ export interface ExposeData {
     rooms?: number;
     area?: number;
     yearBuilt?: number;
+    bedrooms?: number;
+    bathrooms?: number;
+    heating_system?: string;
+    energy_source?: string;
+    energy_certificate?: string;
+    parking?: string;
+    renovation_quality?: string;
+    floor_type?: string;
     description?: string;
+    contact_person?: string;
+    contact_phone?: string;
+    contact_email?: string;
+    contact_person2?: string;
+    contact_phone2?: string;
+    contact_email2?: string;
     images?: Array<{
       url: string;
       isPrimary: boolean;
@@ -83,4 +116,13 @@ export interface ExposeGenerationRequest {
     language?: 'zh' | 'en';
     format?: 'A4' | 'A3';
   };
+}
+
+export interface AgentInfo {
+  companyLogo?: string;
+  responsiblePerson: string;
+  address: string;
+  website?: string;
+  phone: string;
+  userType: 'agent';
 }

@@ -6,6 +6,13 @@ from pydantic import BaseModel, Field
 from typing import Optional, List
 from datetime import datetime
 
+class AgentInfo(BaseModel):
+    companyLogo: Optional[str] = None
+    responsiblePerson: str = Field(..., max_length=100)
+    address: str = Field(..., max_length=200)
+    website: Optional[str] = Field(None, max_length=255)
+    phone: str = Field(..., max_length=20)
+    userType: str = "agent"
 
 class PropertyBase(BaseModel):
     """Base property model"""
@@ -31,13 +38,28 @@ class PropertyBase(BaseModel):
     floors: Optional[int] = Field(None, ge=0)
     year_built: Optional[int] = Field(None, ge=1800, le=2030)
     
+    # Additional property details
+    heating_system: Optional[str] = Field(None, max_length=100)
+    energy_source: Optional[str] = Field(None, max_length=100)
+    energy_certificate: Optional[str] = Field(None, max_length=10)
+    parking: Optional[str] = Field(None, max_length=100)
+    renovation_quality: Optional[str] = Field(None, max_length=100)
+    floor_type: Optional[str] = Field(None, max_length=100)
+    
     # Features
     features: Optional[str] = None  # JSON string
     energy_class: Optional[str] = Field(None, pattern="^[A-G]$")
     
     # Contact info
+    contact_person: Optional[str] = Field(None, max_length=100)
     contact_phone: Optional[str] = Field(None, max_length=50)
     contact_email: Optional[str] = Field(None, max_length=255)
+    contact_person2: Optional[str] = Field(None, max_length=100)
+    contact_phone2: Optional[str] = Field(None, max_length=50)
+    contact_email2: Optional[str] = Field(None, max_length=255)
+
+    # Agent information (optional)
+    agentInfo: Optional[AgentInfo] = None
 
 
 class PropertyCreate(PropertyBase):
@@ -69,13 +91,25 @@ class PropertyUpdate(BaseModel):
     floors: Optional[int] = Field(None, ge=0)
     year_built: Optional[int] = Field(None, ge=1800, le=2030)
     
+    # Additional property details
+    heating_system: Optional[str] = Field(None, max_length=100)
+    energy_source: Optional[str] = Field(None, max_length=100)
+    energy_certificate: Optional[str] = Field(None, max_length=10)
+    parking: Optional[str] = Field(None, max_length=100)
+    renovation_quality: Optional[str] = Field(None, max_length=100)
+    floor_type: Optional[str] = Field(None, max_length=100)
+    
     # Features
     features: Optional[str] = None
     energy_class: Optional[str] = Field(None, pattern="^[A-G]$")
     
     # Contact info
+    contact_person: Optional[str] = Field(None, max_length=100)
     contact_phone: Optional[str] = Field(None, max_length=50)
     contact_email: Optional[str] = Field(None, max_length=255)
+    contact_person2: Optional[str] = Field(None, max_length=100)
+    contact_phone2: Optional[str] = Field(None, max_length=50)
+    contact_email2: Optional[str] = Field(None, max_length=255)
 
 
 class PropertyResponse(PropertyBase):
