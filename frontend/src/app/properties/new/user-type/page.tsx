@@ -8,19 +8,14 @@ export default function UserTypePage() {
   const router = useRouter();
 
   const handleUserTypeSelect = (userType: 'private' | 'agent') => {
-    console.log('User type selected:', userType);
-    
     // Store user type in sessionStorage
     sessionStorage.setItem('userType', userType);
-    console.log('User type stored in sessionStorage:', sessionStorage.getItem('userType'));
     
     if (userType === 'private') {
       // Go directly to property form
-      console.log('Redirecting to property form...');
       router.push('/properties/new');
     } else {
       // Go to agent info form
-      console.log('Redirecting to agent info form...');
       router.push('/properties/new/agent-info');
     }
   };

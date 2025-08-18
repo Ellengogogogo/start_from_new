@@ -15,7 +15,7 @@ export default function HomePage() {
             
             <div className="flex items-center gap-4">
               <Link
-                href="/properties/new"
+                href="/properties/new/user-type"
                 className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
                 <Plus className="w-5 h-5" />
@@ -40,7 +40,7 @@ export default function HomePage() {
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
             <Link
-              href="/properties/new"
+              href="/properties/new/user-type"
               className="flex items-center justify-center gap-3 px-8 py-4 bg-blue-600 text-white text-lg font-semibold rounded-lg hover:bg-blue-700 transition-all duration-200 hover:scale-105 shadow-lg"
             >
               <Plus className="w-6 h-6" />
