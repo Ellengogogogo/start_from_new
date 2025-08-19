@@ -3,7 +3,7 @@ import { Home, Plus, Search, User, Building2, MapPin, Euro } from 'lucide-react'
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 font-sans">
       {/* Navigation Bar */}
       <nav className="bg-white shadow-lg border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -12,7 +12,7 @@ export default function HomePage() {
               <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-lg flex items-center justify-center">
                 <Home className="w-6 h-6 text-white" />
               </div>
-              <span className="text-2xl font-bold text-gray-900">Immobilien Exposé Generator</span>
+              <span className="text-xl font-bold text-gray-900">Immobilien Exposé Generator</span>
             </div>
             
             <div className="flex items-center gap-4">
@@ -38,30 +38,28 @@ export default function HomePage() {
             </div>
           </div>
           
-          <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-8 leading-tight">
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-8 leading-tight">
             Professioneller
             <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
-              Immobilien Exposé
+              Immobilien Exposé Erstellung
             </span>
-            Generator
+            innerhalb 5 Minuten
           </h1>
           
-          <p className="text-xl md:text-2xl text-gray-400 mb-12 max-w-4xl mx-auto leading-relaxed">
-            Erstellen Sie beeindruckende Exposés mit unserem professionellen Generator. 
-            Perfekt für Makler und private Verkäufer - mit mehrstufigen Formularen, KI-gestützter Beschreibung 
-            und professionellem Design.
+          <p className="text-lg md:text-xl text-gray-400 mb-12 max-w-4xl mx-auto leading-relaxed">
+            Kein Designaufwand. Keine Formatierung. Einfach hochladen & herunterladen.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center mb-20">
             <Link
               href="/properties/new/user-type"
-              className="group flex items-center justify-center gap-3 px-10 py-5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xl font-semibold rounded-2xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 hover:scale-105 shadow-2xl hover:shadow-3xl transform hover:-translate-y-1"
+              className="group flex items-center justify-center gap-3 px-10 py-5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-lg font-semibold rounded-2xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 hover:scale-105 shadow-2xl hover:shadow-3xl transform hover:-translate-y-1"
             >
               <Plus className="w-7 h-7 group-hover:rotate-90 transition-transform duration-300" />
-              Jetzt Exposé erstellen
+              Jetzt Probieren
             </Link>
             
-            <button className="flex items-center justify-center gap-3 px-10 py-5 border-2 border-gray-200 text-gray-700 text-xl font-semibold rounded-2xl hover:border-blue-300 hover:bg-blue-50 transition-all duration-300 hover:scale-105 shadow-lg">
+            <button className="flex items-center justify-center gap-3 px-10 py-5 border-2 border-gray-200 text-gray-700 text-lg font-semibold rounded-2xl hover:border-blue-300 hover:bg-blue-50 transition-all duration-300 hover:scale-105 shadow-lg">
               <Search className="w-7 h-7" />
               Beispiele ansehen
             </button>
@@ -74,10 +72,9 @@ export default function HomePage() {
             <div className="w-20 h-20 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-8 group-hover:scale-110 transition-transform duration-300">
               <Plus className="w-10 h-10 text-blue-600" />
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-6">Mehrstufige Formulare</h3>
-            <p className="text-gray-600 text-lg leading-relaxed">
-              Strukturierte Eingabe von Immobiliendaten in logischen Schritten - von Grundinformationen 
-              bis zu Bildern und Kontaktdaten. Übersichtlich und benutzerfreundlich.
+            <h3 className="text-xl font-bold text-gray-900 mb-6">Intuitive Anwendung</h3>
+            <p className="text-base text-gray-600 leading-relaxed">
+              Strukturierte Eingabe von Immobiliendaten in logischen Schritten.
             </p>
           </div>
           
@@ -85,10 +82,9 @@ export default function HomePage() {
             <div className="w-20 h-20 bg-gradient-to-br from-green-100 to-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-8 group-hover:scale-110 transition-transform duration-300">
               <Search className="w-10 h-10 text-green-600" />
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-6">KI-gestützte Generierung</h3>
-            <p className="text-gray-600 text-lg leading-relaxed">
-              Automatische Erstellung professioneller Immobilienbeschreibungen basierend auf Ihren Daten. 
-              Mit Bildoptimierung für maximale Wirkung.
+            <h3 className="text-xl font-bold text-gray-900 mb-6">Automatisch gestylte PDF-Exposés</h3>
+            <p className="text-base text-gray-600 leading-relaxed">
+              Wählen Sie aus professionellen Vorlagen, die perfekt aussehen – ganz ohne Gestaltungsaufwand.
             </p>
           </div>
           
@@ -96,23 +92,22 @@ export default function HomePage() {
             <div className="w-20 h-20 bg-gradient-to-br from-purple-100 to-violet-100 rounded-2xl flex items-center justify-center mx-auto mb-8 group-hover:scale-110 transition-transform duration-300">
               <User className="w-10 h-10 text-purple-600" />
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-6">Professionelle Präsentation</h3>
-            <p className="text-gray-600 text-lg leading-relaxed">
-              Erstellen Sie beeindruckende Exposés mit modernem Design. Vollständig responsiv für 
-              alle Geräte - vom Smartphone bis zum Desktop.
+            <h3 className="text-xl font-bold text-gray-900 mb-6">Vollständig responsiv</h3>
+            <p className="text-base text-gray-600 leading-relaxed">
+              Vollständig responsiv für alle Geräte - vom Smartphone bis zum Desktop.
             </p>
           </div>
         </div>
 
         {/* Technology Stack */}
         <div className="bg-white rounded-2xl shadow-xl p-12 border border-gray-100">
-          <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">Technologie</h2>
+          <h2 className="text-2xl font-bold text-gray-900 text-center mb-12">Technologie</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="text-center group">
               <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
                 <span className="text-blue-600 font-bold text-2xl">N</span>
               </div>
-              <div className="text-lg font-semibold text-gray-900">Next.js 15</div>
+              <div className="text-base font-semibold text-gray-900">Next.js 15</div>
               <div className="text-sm text-gray-500">App Router</div>
             </div>
             
@@ -120,7 +115,7 @@ export default function HomePage() {
               <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
                 <span className="text-white font-bold text-2xl">TS</span>
               </div>
-              <div className="text-lg font-semibold text-gray-900">TypeScript</div>
+              <div className="text-base font-semibold text-gray-900">TypeScript</div>
               <div className="text-sm text-gray-500">Typsicherheit</div>
             </div>
             
@@ -128,7 +123,7 @@ export default function HomePage() {
               <div className="w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
                 <span className="text-white font-bold text-2xl">T</span>
               </div>
-              <div className="text-lg font-semibold text-gray-900">Tailwind CSS</div>
+              <div className="text-base font-semibold text-gray-900">Tailwind CSS</div>
               <div className="text-sm text-gray-500">Utility-First CSS</div>
             </div>
             
@@ -136,7 +131,7 @@ export default function HomePage() {
               <div className="w-16 h-16 bg-gradient-to-br from-green-600 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
                 <span className="text-white font-bold text-2xl">R</span>
               </div>
-              <div className="text-lg font-semibold text-gray-900">React 19</div>
+              <div className="text-base font-semibold text-gray-900">React 19</div>
               <div className="text-sm text-gray-500">Neueste Features</div>
             </div>
           </div>
@@ -145,16 +140,16 @@ export default function HomePage() {
         {/* Stats Section */}
         <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="text-center">
-            <div className="text-4xl font-bold text-blue-600 mb-2">1000+</div>
-            <div className="text-gray-600">Erstellte Exposés</div>
+            <div className="text-3xl font-bold text-blue-600 mb-2">1000+</div>
+            <div className="text-sm text-gray-600">Erstellte Exposés (in 2025)</div>
           </div>
           <div className="text-center">
-            <div className="text-4xl font-bold text-green-600 mb-2">500+</div>
-            <div className="text-gray-600">Zufriedene Kunden</div>
+            <div className="text-3xl font-bold text-green-600 mb-2">500+</div>
+            <div className="text-sm text-gray-600">Zufriedene Kunden</div>
           </div>
           <div className="text-center">
-            <div className="text-4xl font-bold text-purple-600 mb-2">24/7</div>
-            <div className="text-gray-600">Verfügbarkeit</div>
+            <div className="text-3xl font-bold text-purple-600 mb-2">24/7</div>
+            <div className="text-sm text-gray-600">Verfügbarkeit</div>
           </div>
         </div>
       </div>
@@ -168,26 +163,25 @@ export default function HomePage() {
                 <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-lg flex items-center justify-center">
                   <Home className="w-6 h-6 text-white" />
                 </div>
-                <span className="text-xl font-bold">Immobilien Exposé Generator</span>
+                <span className="text-xs font-bold">Immobilien Exposé Generator</span>
               </div>
-              <p className="text-gray-400">
-                Professionelle Immobilienpräsentationen einfach und schnell erstellen.
+              <p className="text-sm text-gray-400">
+                Professionelles Exposé einfach und schnell erstellen.
               </p>
             </div>
             
             <div>
-              <h3 className="text-lg font-semibold mb-4">Funktionen</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li>Mehrstufige Formulare</li>
-                <li>KI-gestützte Beschreibungen</li>
-                <li>Bildoptimierung</li>
-                <li>Responsive Design</li>
+              <h3 className="text-base font-semibold mb-4">Funktionen</h3>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li>Intuitive Anwendung</li>
+                <li>Automatisch gestylte PDF-Exposés</li>
+                <li>Vollständig responsiv</li>
               </ul>
             </div>
             
             <div>
-              <h3 className="text-lg font-semibold mb-4">Unterstützung</h3>
-              <ul className="space-y-2 text-gray-400">
+              <h3 className="text-base font-semibold mb-4">Unterstützung</h3>
+              <ul className="space-y-2 text-sm text-gray-400">
                 <li>Dokumentation</li>
                 <li>Kontakt</li>
                 <li>FAQ</li>
@@ -196,8 +190,8 @@ export default function HomePage() {
             </div>
             
             <div>
-              <h3 className="text-lg font-semibold mb-4">Rechtliches</h3>
-              <ul className="space-y-2 text-gray-400">
+              <h3 className="text-base font-semibold mb-4">Rechtliches</h3>
+              <ul className="space-y-2 text-sm text-gray-400">
                 <li>Datenschutz</li>
                 <li>AGB</li>
                 <li>Impressum</li>
@@ -207,7 +201,7 @@ export default function HomePage() {
           </div>
           
           <div className="border-t border-gray-800 pt-8 text-center">
-            <p className="text-gray-400">
+            <p className="text-sm text-gray-400">
               © 2024 Immobilien Exposé Generator. Entwickelt mit Next.js + TypeScript + Tailwind CSS.
             </p>
           </div>
