@@ -192,8 +192,8 @@ async def simulate_expose_generation(expose_id: str, property_id: str):
         
         # 生成预览数据（使用真实数据）
         expose_preview_data[expose_id] = {
-            "title": property_data.get("title", f"专业房源展示 - {property_id[:8]}"),
-            "address": property_data.get("address", "地址信息"),
+            "title": property_data.get("title", f"Professionelle Exposé - {property_id[:8]}"),
+            "address": property_data.get("address", "Adressinformationen"),
             "price": property_data.get("price", 0),
             "rooms": property_data.get("rooms", 0),
             "bedrooms": property_data.get("bedrooms", 0),
@@ -206,11 +206,11 @@ async def simulate_expose_generation(expose_id: str, property_id: str):
             "parking": property_data.get("parking", ""),
             "renovation_quality": property_data.get("renovation_quality", ""),
             "floor_type": property_data.get("floor_type", ""),
-            "description": property_data.get("description", "这是一套专业的房源展示，位置优越，交通便利，配套设施完善，是理想的居住选择。"),
-            "locationDescription": property_data.get("locationDescription", ""),  # 新增：地理位置描述
-            "contact_person": property_data.get("contact_person", "联系人"),
-            "contact_phone": property_data.get("contact_phone", "联系电话"),
-            "contact_email": property_data.get("contact_email", "联系邮箱"),
+            "description": property_data.get("description", "Dies ist eine professionelle Exposé in einer erstklassigen Lage mit ausgezeichneter Verkehrsanbindung, vollständigen Einrichtungen und ist eine ideale Wohnwahl."),
+            "locationDescription": property_data.get("locationDescription", ""),  # Neu: Geografische Lagebeschreibung
+            "contact_person": property_data.get("contact_person", "Kontaktperson"),
+            "contact_phone": property_data.get("contact_phone", "Telefonnummer"),
+            "contact_email": property_data.get("contact_email", "E-Mail-Adresse"),
             "contact_person2": property_data.get("contact_person2", ""),
             "contact_phone2": property_data.get("contact_phone2", ""),
             "contact_email2": property_data.get("contact_email2", ""),
@@ -219,7 +219,7 @@ async def simulate_expose_generation(expose_id: str, property_id: str):
                 {
                     "id": image.get("id", f"img_{i}"),
                     "url": image.get("url", ""),
-                    "alt": image.get("alt", f"房源图片 {i+1}"),
+                    "alt": image.get("alt", f"Immobilienbild {i+1}"),
                     "isPrimary": image.get("isPrimary", False)
                 }
                 for i, image in enumerate(regular_images)

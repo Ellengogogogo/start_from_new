@@ -37,7 +37,7 @@ export interface ExposePPTData {
   // 位置信息
   locationText: string;
   locationImage: string;
-  locationDescription?: string; // 新增：用户输入的地理位置描述
+  locationDescription?: string; // Neu: Vom Benutzer eingegebene geografische Lagebeschreibung
   
   // 平面图
   floorPlanImage: string;
@@ -534,20 +534,20 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
                     />
                   )}
                   <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-blue-900 mb-2">房地产中介信息</h3>
+                    <h3 className="text-lg font-semibold text-blue-900 mb-2">Immobilienmakler Informationen</h3>
                     <div className="grid grid-cols-2 gap-4 text-sm text-blue-700">
                       <div>
-                        <span className="font-medium">负责人:</span> {data.agentInfo.responsiblePerson}
+                        <span className="font-medium">Verantwortliche Person:</span> {data.agentInfo.responsiblePerson}
                       </div>
                       <div>
-                        <span className="font-medium">电话:</span> {data.agentInfo.phone}
+                        <span className="font-medium">Telefon:</span> {data.agentInfo.phone}
                       </div>
                       <div className="col-span-2">
-                        <span className="font-medium">地址:</span> {data.agentInfo.address}
+                        <span className="font-medium">Adresse:</span> {data.agentInfo.address}
                       </div>
                       {data.agentInfo.website && (
                         <div className="col-span-2">
-                          <span className="font-medium">网站:</span> {data.agentInfo.website}
+                          <span className="font-medium">Website:</span> {data.agentInfo.website}
                         </div>
                       )}
                     </div>

@@ -107,6 +107,7 @@ export interface ExposeData {
       isPrimary: boolean;
     }>;
     locationDescription?: string; // 新增：地理位置描述
+    floorPlanImage?: string; // 新增：平面图图片
   };
 }
 
