@@ -140,6 +140,7 @@ export default function ExposeGenerationPage() {
           energieklasse: 'A'
         },
         description: 'Dies ist eine hochwertige Immobilie in einer erstklassigen Lage mit ausgezeichneter Verkehrsanbindung. Die Wohnung ist durchdacht gestaltet, bietet viel Tageslicht und verfügt über eine vollständige Ausstattung.',
+        locationDescription: '', // 新增：地理位置描述
         images: [],
         locationText: 'Verkehrsgünstige Lage',
         locationImage: 'https://source.unsplash.com/800x600/?city-map',
@@ -197,6 +198,7 @@ export default function ExposeGenerationPage() {
         bodenbelag: data.floor_type || 'Parkett'
       },
       description: data.description || 'Dies ist eine hochwertige Immobilie in einer erstklassigen Lage mit ausgezeichneter Verkehrsanbindung. Die Wohnung ist durchdacht gestaltet, bietet viel Tageslicht und verfügt über eine vollständige Ausstattung.',
+      locationDescription: data.locationDescription || '', // 新增：地理位置描述
       images: (data.images || []).map((img, index: number) => ({
         id: `img_${index}`,
         url: img.url,

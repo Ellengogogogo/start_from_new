@@ -32,12 +32,18 @@ export const getCachedPropertyImages = async (id: string): Promise<PropertyImage
 export const uploadPropertyImages = async (
   propertyId: string,
   images: File[],
-  onProgress?: (progress: number) => void
+  onProgress?: (progress: number) => void,
+  imageType?: string
 ): Promise<{ images: PropertyImage[] }> => {
   const formData = new FormData();
   images.forEach((image) => {
     formData.append('images', image);
   });
+  
+  // 添加图片类型参数
+  if (imageType) {
+    formData.append('image_type', imageType);
+  }
 
   const response = await api.post(`/api/cache/property-images/${propertyId}`, formData, {
     headers: {

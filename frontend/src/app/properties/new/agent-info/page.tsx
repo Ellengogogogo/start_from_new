@@ -5,15 +5,15 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Building2, Upload, ArrowRight } from 'lucide-react';
+import { Building2, Upload, ArrowRight, ArrowLeft, CheckCircle, Globe, Phone, MapPin, User } from 'lucide-react';
 
 // Agent info schema
 const agentInfoSchema = z.object({
   companyLogo: z.any().optional(),
-  responsiblePerson: z.string().min(1, '负责人是必填项').max(100, '负责人姓名不能超过100个字符'),
-  address: z.string().min(1, '地址是必填项').max(200, '地址不能超过200个字符'),
-  website: z.string().url('请输入有效的网址').optional().or(z.literal('')),
-  phone: z.string().min(1, '电话是必填项').max(20, '电话号码不能超过20个字符'),
+  responsiblePerson: z.string().min(1, 'Verantwortliche Person ist erforderlich').max(100, 'Name darf maximal 100 Zeichen haben'),
+  address: z.string().min(1, 'Adresse ist erforderlich').max(200, 'Adresse darf maximal 200 Zeichen haben'),
+  website: z.string().url('Bitte geben Sie eine gültige URL ein').optional().or(z.literal('')),
+  phone: z.string().min(1, 'Telefonnummer ist erforderlich').max(20, 'Telefonnummer darf maximal 20 Zeichen haben'),
 });
 
 type AgentInfoFormData = z.infer<typeof agentInfoSchema>;
@@ -65,63 +65,71 @@ export default function AgentInfoPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-16">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">
-            房地产中介信息
+        <div className="text-center mb-12">
+          <div className="mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">
+              <Building2 className="w-4 h-4" />
+              Schritt 2 von 3
+            </div>
+          </div>
+          
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+            Unternehmensinformationen
           </h1>
-          <p className="text-lg text-gray-600">
-            请填写您的公司信息
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            Bitte füllen Sie Ihre Unternehmensdaten aus
           </p>
         </div>
 
         {/* Progress Indicator */}
-        <div className="flex justify-center mb-8">
-          <div className="flex items-center space-x-4">
+        <div className="flex justify-center mb-12">
+          <div className="flex items-center space-x-6">
             <div className="flex items-center">
-              <div className="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-semibold">
-                ✓
+              <div className="w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-semibold text-lg shadow-lg">
+                <CheckCircle className="w-6 h-6" />
               </div>
-              <span className="ml-2 text-sm font-medium text-green-600">选择用户类型</span>
+              <span className="ml-3 text-base font-medium text-green-600">Benutzertyp</span>
             </div>
-            <div className="w-8 h-1 bg-blue-600"></div>
+            <div className="w-12 h-1 bg-green-600 rounded-full"></div>
             <div className="flex items-center">
-              <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold">
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-full flex items-center justify-center font-semibold text-lg shadow-lg">
                 2
               </div>
-              <span className="ml-2 text-sm font-medium text-blue-600">中介信息</span>
+              <span className="ml-3 text-base font-semibold text-blue-600">Unternehmensdaten</span>
             </div>
-            <div className="w-8 h-1 bg-gray-300"></div>
+            <div className="w-12 h-1 bg-gray-300 rounded-full"></div>
             <div className="flex items-center">
-              <div className="w-8 h-8 bg-gray-300 text-gray-500 rounded-full flex items-center justify-center font-semibold">
+              <div className="w-10 h-10 bg-gray-200 text-gray-500 rounded-full flex items-center justify-center font-semibold text-lg">
                 3
               </div>
-              <span className="ml-2 text-sm font-medium text-gray-500">房源信息</span>
+              <span className="ml-3 text-base font-medium text-gray-500">Immobiliendaten</span>
             </div>
           </div>
         </div>
 
         {/* Form */}
-        <div className="bg-white rounded-lg shadow-lg p-8">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <div className="bg-white rounded-2xl shadow-xl p-10 border border-gray-100">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
             {/* Company Logo */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                公司标志
+              <label className="block text-lg font-semibold text-gray-900 mb-4">
+                <Building2 className="w-5 h-5 inline mr-2 text-blue-600" />
+                Firmenlogo
               </label>
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-6">
                 <div className="flex-shrink-0">
                   {logoPreview ? (
                     <img
                       src={logoPreview}
-                      alt="Company logo preview"
-                      className="w-16 h-16 rounded-lg object-cover border border-gray-300"
+                      alt="Firmenlogo Vorschau"
+                      className="w-20 h-20 rounded-xl object-cover border-2 border-gray-200 shadow-md"
                     />
                   ) : (
-                    <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300">
-                      <Building2 className="w-6 h-6 text-gray-400" />
+                    <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center border-2 border-dashed border-gray-300">
+                      <Building2 className="w-8 h-8 text-gray-400" />
                     </div>
                   )}
                 </div>
@@ -135,13 +143,13 @@ export default function AgentInfoPage() {
                   />
                   <label
                     htmlFor="company-logo"
-                    className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    className="cursor-pointer inline-flex items-center px-6 py-3 border border-gray-300 rounded-xl shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 hover:border-blue-300"
                   >
-                    <Upload className="w-4 h-4 mr-2" />
-                    选择图片
+                    <Upload className="w-5 h-5 mr-2" />
+                    Bild auswählen
                   </label>
-                  <p className="text-xs text-gray-500 mt-1">
-                    支持 JPG, PNG 格式，最大 2MB
+                  <p className="text-sm text-gray-500 mt-2">
+                    Unterstützt JPG, PNG Format, maximal 2MB
                   </p>
                 </div>
               </div>
@@ -149,92 +157,97 @@ export default function AgentInfoPage() {
 
             {/* Responsible Person */}
             <div>
-              <label htmlFor="responsiblePerson" className="block text-sm font-medium text-gray-700 mb-2">
-                负责人 <span className="text-red-500">*</span>
+              <label htmlFor="responsiblePerson" className="block text-lg font-semibold text-gray-900 mb-3">
+                <User className="w-5 h-5 inline mr-2 text-blue-600" />
+                Verantwortliche Person <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 id="responsiblePerson"
                 {...register('responsiblePerson')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                placeholder="请输入负责人姓名"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-lg"
+                placeholder="Name der verantwortlichen Person eingeben"
               />
               {errors.responsiblePerson && (
-                <p className="text-red-500 text-sm mt-1">{errors.responsiblePerson.message}</p>
+                <p className="text-red-500 text-sm mt-2">{errors.responsiblePerson.message}</p>
               )}
             </div>
 
             {/* Address */}
             <div>
-              <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-2">
-                公司地址 <span className="text-red-500">*</span>
+              <label htmlFor="address" className="block text-lg font-semibold text-gray-900 mb-3">
+                <MapPin className="w-5 h-5 inline mr-2 text-blue-600" />
+                Firmenadresse <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 id="address"
                 {...register('address')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                placeholder="请输入公司地址"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-lg"
+                placeholder="Vollständige Firmenadresse eingeben"
               />
               {errors.address && (
-                <p className="text-red-500 text-sm mt-1">{errors.address.message}</p>
+                <p className="text-red-500 text-sm mt-2">{errors.address.message}</p>
               )}
             </div>
 
             {/* Website */}
             <div>
-              <label htmlFor="website" className="block text-sm font-medium text-gray-700 mb-2">
-                公司网站
+              <label htmlFor="website" className="block text-lg font-semibold text-gray-900 mb-3">
+                <Globe className="w-5 h-5 inline mr-2 text-blue-600" />
+                Firmenwebsite
               </label>
               <input
                 type="url"
                 id="website"
                 {...register('website')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-lg"
                 placeholder="https://example.com"
               />
               {errors.website && (
-                <p className="text-red-500 text-sm mt-1">{errors.website.message}</p>
+                <p className="text-red-500 text-sm mt-2">{errors.website.message}</p>
               )}
             </div>
 
             {/* Phone */}
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                联系电话 <span className="text-red-500">*</span>
+              <label htmlFor="phone" className="block text-lg font-semibold text-gray-900 mb-3">
+                <Phone className="w-5 h-5 inline mr-2 text-blue-600" />
+                Telefonnummer <span className="text-red-500">*</span>
               </label>
               <input
                 type="tel"
                 id="phone"
                 {...register('phone')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                placeholder="请输入联系电话"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-lg"
+                placeholder="Telefonnummer eingeben"
               />
               {errors.phone && (
-                <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>
+                <p className="text-red-500 text-sm mt-2">{errors.phone.message}</p>
               )}
             </div>
 
             {/* Action Buttons */}
-            <div className="flex justify-between pt-6">
+            <div className="flex justify-between pt-8">
               <button
                 type="button"
                 onClick={() => router.push('/properties/new/user-type')}
-                className="px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+                className="inline-flex items-center gap-2 px-6 py-3 text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-all duration-200 font-medium hover:shadow-md"
               >
-                返回
+                <ArrowLeft className="w-5 h-5" />
+                Zurück
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center"
+                className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
               >
                 {isSubmitting ? (
-                  '保存中...'
+                  'Wird gespeichert...'
                 ) : (
                   <>
-                    继续
-                    <ArrowRight className="w-4 h-4 ml-2" />
+                    Fortfahren
+                    <ArrowRight className="w-5 h-5" />
                   </>
                 )}
               </button>

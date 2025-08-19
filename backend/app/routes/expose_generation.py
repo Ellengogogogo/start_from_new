@@ -186,6 +186,10 @@ async def simulate_expose_generation(expose_id: str, property_id: str):
         property_data = property_cache.get(property_id, {})
         cached_images = image_cache.get(property_id, [])
         
+        # 分离普通图片和平面图
+        regular_images = [img for img in cached_images if img.get("imageType") != "floorplan"]
+        floorplan_images = [img for img in cached_images if img.get("imageType") == "floorplan"]
+        
         # 生成预览数据（使用真实数据）
         expose_preview_data[expose_id] = {
             "title": property_data.get("title", f"专业房源展示 - {property_id[:8]}"),
@@ -203,6 +207,7 @@ async def simulate_expose_generation(expose_id: str, property_id: str):
             "renovation_quality": property_data.get("renovation_quality", ""),
             "floor_type": property_data.get("floor_type", ""),
             "description": property_data.get("description", "这是一套专业的房源展示，位置优越，交通便利，配套设施完善，是理想的居住选择。"),
+            "locationDescription": property_data.get("locationDescription", ""),  # 新增：地理位置描述
             "contact_person": property_data.get("contact_person", "联系人"),
             "contact_phone": property_data.get("contact_phone", "联系电话"),
             "contact_email": property_data.get("contact_email", "联系邮箱"),
@@ -217,8 +222,17 @@ async def simulate_expose_generation(expose_id: str, property_id: str):
                     "alt": image.get("alt", f"房源图片 {i+1}"),
                     "isPrimary": image.get("isPrimary", False)
                 }
-                for i, image in enumerate(cached_images)
-            ] if cached_images else []
+                for i, image in enumerate(regular_images)
+            ] if regular_images else [],
+            "floorPlanImage": floorplan_images[0].get("url", "") if floorplan_images else "",  # 添加平面图
+            "floorPlanDetails": [
+                f"{property_data.get('bedrooms', 0)} Schlafzimmer, Hauptschlafzimmer mit eigenem Bad",
+                f"{property_data.get('bathrooms', 0)} Badezimmer, Trocken- und Nassbereich getrennt",
+                "Offene Küche, Essbereich integriert",
+                "Wohnzimmer geräumig, viel Tageslicht",
+                "Balkon verbindet Wohnzimmer und Hauptschlafzimmer",
+                "Abstellraum und Kleiderschrank vorhanden"
+            ]
         }
         
         print(f"Expose {expose_id} generation completed successfully")

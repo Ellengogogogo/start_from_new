@@ -23,9 +23,11 @@ export interface PropertyFormData {
   // 步骤3: 描述文本
   description?: string;
   suggested_description?: string;
+  locationDescription?: string; // 新增：地理位置描述
   
   // 步骤4: 图片
   images: File[];
+  floorPlan?: File; // 新增：平面图文件
   
   // 步骤5: 联系人信息
   contact_person: string;
@@ -104,6 +106,7 @@ export interface ExposeData {
       url: string;
       isPrimary: boolean;
     }>;
+    locationDescription?: string; // 新增：地理位置描述
   };
 }
 

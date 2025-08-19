@@ -62,7 +62,8 @@ async def get_cached_property_data(property_id: str):
 @router.post("/property-images/{property_id}", status_code=status.HTTP_201_CREATED)
 async def cache_property_images(
     property_id: str,
-    images: List[UploadFile] = File(...)
+    images: List[UploadFile] = File(...),
+    image_type: str = None  # 新增：图片类型参数
 ):
     """Cache property images temporarily"""
     try:
@@ -83,9 +84,10 @@ async def cache_property_images(
         # 处理上传的图片
         uploaded_images = []
         for i, image in enumerate(images):
-            # 生成文件名
+            # 生成文件名，根据图片类型添加前缀
             file_extension = image.filename.split('.')[-1] if image.filename else 'jpg'
-            filename = f"{property_id}_{i}_{uuid.uuid4().hex[:8]}.{file_extension}"
+            prefix = "floorplan" if image_type == "floorplan" else "image"
+            filename = f"{property_id}_{prefix}_{i}_{uuid.uuid4().hex[:8]}.{file_extension}"
             
             # 保存图片到文件系统
             file_path = os.path.join(cache_dir, filename)
@@ -97,10 +99,10 @@ async def cache_property_images(
                 with open(file_path, "wb") as f:
                     f.write(content)
                 
-                print(f"Saved image: {file_path}")
+                print(f"Saved {image_type or 'image'}: {file_path}")
                 
             except Exception as e:
-                print(f"Error saving image {filename}: {str(e)}")
+                print(f"Error saving {image_type or 'image'} {filename}: {str(e)}")
                 continue
             
             # 生成图片URL（相对于静态文件根目录）
@@ -117,6 +119,7 @@ async def cache_property_images(
                 "url": image_url,
                 "alt": alt_text,
                 "isPrimary": i == 0,  # 第一张图片作为主图
+                "imageType": image_type,  # 新增：图片类型
                 "createdAt": datetime.now().isoformat()
             }
             
@@ -125,7 +128,7 @@ async def cache_property_images(
         
         return {
             "images": uploaded_images,
-            "message": f"Successfully cached {len(uploaded_images)} images"
+            "message": f"Successfully cached {len(uploaded_images)} {image_type or 'images'}"
         }
     except HTTPException:
         raise

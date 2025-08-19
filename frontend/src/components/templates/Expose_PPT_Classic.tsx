@@ -37,6 +37,7 @@ export interface ExposePPTData {
   // 位置信息
   locationText: string;
   locationImage: string;
+  locationDescription?: string; // 新增：用户输入的地理位置描述
   
   // 平面图
   floorPlanImage: string;
@@ -414,12 +415,20 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
             <div>
               <h2 className="text-4xl font-serif font-bold text-gray-900 mb-8">Lagebeschreibung</h2>
               <div className="space-y-4 text-lg text-gray-700">
-                <p>• Einkaufszentrum 5 Minuten zu Fuß</p>
-                <p>• Viele Restaurants und Cafés</p>
-                <p>• Hochwertige Schulressourcen</p>
-                <p>• Krankenhauseinrichtungen vollständig</p>
-                <p>• Stadtzentrum verkehrsgünstig gelegen</p>
-                <p>• Parks und Grünflächen in der Nähe</p>
+                {data.locationDescription ? (
+                  // 使用用户输入的地理位置描述
+                  <p className="text-justify leading-relaxed">{data.locationDescription}</p>
+                ) : (
+                  // 默认描述
+                  <>
+                    <p>• Einkaufszentrum 5 Minuten zu Fuß</p>
+                    <p>• Viele Restaurants und Cafés</p>
+                    <p>• Hochwertige Schulressourcen</p>
+                    <p>• Krankenhauseinrichtungen vollständig</p>
+                    <p>• Stadtzentrum verkehrsgünstig gelegen</p>
+                    <p>• Parks und Grünflächen in der Nähe</p>
+                  </>
+                )}
               </div>
             </div>
             
@@ -455,28 +464,30 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
         {/* 第7页 - 平面图 */}
         <div className="slide w-full h-screen bg-white p-12 flex items-center pb-20" 
              style={{ aspectRatio: '16/9', minHeight: '1080px' }}>
-          <div className="w-full max-w-7xl mx-auto grid grid-cols-2 gap-16 items-center">
-                         {/* 左侧平面图 */}
-             <div className="flex justify-center">
-               <div className="w-[500px] h-[400px] bg-gray-200 rounded-lg shadow-lg overflow-hidden">
-                 <img 
-                   src={data.floorPlanImage ? getFullImageUrl(data.floorPlanImage) : 
-                        data.images?.[1]?.url ? getFullImageUrl(data.images[1].url) : 
-                        'https://source.unsplash.com/800x600/?floor-plan'} 
-                   alt="Grundriss"
-                   className="w-full h-full object-cover"
-                   onError={(e) => {
-                     const target = e.target as HTMLImageElement;
-                     target.src = 'https://source.unsplash.com/800x600/?floor-plan';
-                   }}
-                 />
-               </div>
-             </div>
+          <div className="w-full max-w-7xl mx-auto">
+            {/* 标题居中 */}
+            <h2 className="text-4xl font-serif font-bold text-gray-900 mb-8 text-center">Grundriss</h2>
             
-            {/* 右侧详情 */}
-            <div>
-              <h2 className="text-4xl font-serif font-bold text-gray-900 mb-8">Grundriss Details</h2>
-              <ul className="space-y-3 text-lg text-gray-700">
+            {/* 平面图居中展示 - 更大尺寸 */}
+            <div className="flex justify-center mb-8">
+              <div className="w-[800px] h-[600px] bg-gray-200 rounded-lg shadow-lg overflow-hidden">
+                <img 
+                  src={data.floorPlanImage ? getFullImageUrl(data.floorPlanImage) : 
+                       data.images?.[1]?.url ? getFullImageUrl(data.images[1].url) : 
+                       'https://source.unsplash.com/800x600/?floor-plan'} 
+                  alt="Grundriss"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = 'https://source.unsplash.com/800x600/?floor-plan';
+                  }}
+                />
+              </div>
+            </div>
+            
+            {/* 详情列表 - 紧凑布局 */}
+            <div className="max-w-5xl mx-auto">
+              <ul className="grid grid-cols-2 gap-4 text-base text-gray-700">
                 {(data.floorPlanDetails || [
                   '3 Schlafzimmer, Hauptschlafzimmer mit eigenem Bad',
                   '2 Badezimmer, Trocken- und Nassbereich getrennt',
@@ -485,9 +496,9 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
                   'Balkon verbindet Wohnzimmer und Hauptschlafzimmer',
                   'Abstellraum und Kleiderschrank vorhanden'
                 ]).map((detail, index) => (
-                  <li key={index} className="flex items-center gap-3">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                    {detail}
+                  <li key={index} className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></div>
+                    <span className="text-sm">{detail}</span>
                   </li>
                 ))}
               </ul>

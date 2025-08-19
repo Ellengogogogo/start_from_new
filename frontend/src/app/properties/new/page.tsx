@@ -24,29 +24,29 @@ import { propertyFormSchema } from '@/lib/validations';
 import { cachePropertyData, uploadPropertyImages, generateExpose, generateAIDescription } from '@/services/api';
 
 const steps = [
-  { id: 'basic', title: '基本信息', description: '填写房源的基本信息', icon: Info },
-  { id: 'details', title: '房屋详情', description: '填写房屋的详细信息', icon: Home },
-  { id: 'description', title: '描述文本', description: '添加房源描述', icon: FileText },
-  { id: 'images', title: '图片上传', description: '上传房源图片', icon: ImageIcon },
-  { id: 'contact', title: '联系人信息', description: '填写联系人信息', icon: User },
+  { id: 'basic', title: 'Grundinformationen', description: 'Grunddaten der Immobilie', icon: Info },
+  { id: 'details', title: 'Immobiliendetails', description: 'Detaillierte Informationen', icon: Home },
+  { id: 'description', title: 'Beschreibung', description: 'Immobilienbeschreibung', icon: FileText },
+  { id: 'images', title: 'Bilder hochladen', description: 'Fotos und Grundriss', icon: ImageIcon },
+  { id: 'contact', title: 'Kontaktdaten', description: 'Kontaktinformationen', icon: User },
 ];
 
 export default function NewPropertyPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [localFormData, setLocalFormData] = useState<Partial<PropertyFormData>>({});
-  const [descriptionStyle, setDescriptionStyle] = useState('formal'); // 新增：描述语气选择
-  const [isGeneratingDescription, setIsGeneratingDescription] = useState(false); // 新增：描述生成状态
-  const [agentInfo, setAgentInfo] = useState<AgentInfo | null>(null); // 新增：代理信息状态
+  const [descriptionStyle, setDescriptionStyle] = useState('formal'); // New: Description tone selection
+  const [isGeneratingDescription, setIsGeneratingDescription] = useState(false); // New: Description generation status
+  const [agentInfo, setAgentInfo] = useState<AgentInfo | null>(null); // New: Agent information status
 
-  // 检查是否有代理信息
+  // Check if there is agent information
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
       const storedAgentInfo = sessionStorage.getItem('agentInfo');
       if (storedAgentInfo) {
         const parsedAgentInfo = JSON.parse(storedAgentInfo);
         setAgentInfo(parsedAgentInfo);
-        // 清除sessionStorage中的代理信息，避免重复使用
+        // Clear agent information from sessionStorage to avoid reuse
         sessionStorage.removeItem('agentInfo');
       }
     }
@@ -88,19 +88,19 @@ export default function NewPropertyPage() {
 
   const watchedValues = watch();
 
-  // 更新本地表单数据
+  // Update local form data
   const updateLocalData = (data: Partial<PropertyFormData>) => {
     const newData = { ...localFormData, ...data };
     setLocalFormData(newData);
     updateFormData(newData);
     
-    // 同步到React Hook Form
+    // Synchronize with React Hook Form
     Object.entries(data).forEach(([key, value]) => {
       setValue(key as keyof PropertyFormData, value);
     });
   };
 
-  // 验证当前步骤
+  // Validate current step
   const validateCurrentStep = async () => {
     let isValid = false;
     
@@ -112,10 +112,10 @@ export default function NewPropertyPage() {
         isValid = await trigger(['rooms', 'bedrooms', 'bathrooms', 'area', 'yearBuilt', 'heating_system', 'energy_source', 'energy_certificate', 'parking', 'renovation_quality', 'floor_type']);
         break;
       case 2:
-        isValid = true; // 描述是可选的
+        isValid = true; // Description is optional
         break;
       case 3:
-        // 图片验证：确保至少有一张图片
+        // Image validation: Ensure at least one image
         if (localFormData.images && localFormData.images.length > 0) {
           isValid = true;
         } else {
@@ -130,7 +130,7 @@ export default function NewPropertyPage() {
     return isValid;
   };
 
-  // 下一步
+  // Next step
   const handleNext = async () => {
     const isValid = await validateCurrentStep();
     if (isValid) {
@@ -139,15 +139,15 @@ export default function NewPropertyPage() {
     }
   };
 
-  // 上一步
+  // Previous step
   const handlePrev = () => {
     updateLocalData(watchedValues);
     prevStep();
   };
 
-  // 预览效果
+  // Preview effect
   const handlePreview = () => {
-    // 将当前表单数据转换为预览格式并保存到localStorage
+    // Convert current form data to preview format and save to localStorage
     const previewData = {
       title: localFormData.title || '',
       property_type: localFormData.property_type || '',
@@ -167,6 +167,7 @@ export default function NewPropertyPage() {
       renovation_quality: localFormData.renovation_quality || '',
       floor_type: localFormData.floor_type || '',
       description: localFormData.description || '',
+      locationDescription: localFormData.locationDescription || '',
       contact_person: localFormData.contact_person || '',
       contact_phone: localFormData.contact_phone || '',
       contact_email: localFormData.contact_email || '',
@@ -176,25 +177,25 @@ export default function NewPropertyPage() {
       images: localFormData.images || []
     };
     
-    // 保存到localStorage
+    // Save to localStorage
     localStorage.setItem('tempPropertyData', JSON.stringify(previewData));
     
-    // 跳转到预览页面
+    // Navigate to preview page
     router.push('/properties/preview/preview');
   };
 
-  // 提交表单
+  // Form submission
   const onSubmit = async (data: PropertyFormData) => {
-    console.log('开始提交表单，数据:', data);
+    console.log('Formular wird übermittelt, Daten:', data);
     if (isSubmitting) {
-      console.log('表单正在提交中，忽略重复提交');
+      console.log('Formular wird bereits übermittelt, doppelte Übermittlung wird ignoriert');
       return;
     }
     
     setIsSubmitting(true);
     try {
-      console.log('步骤1: 开始上传房源数据...');
-      // 步骤1: 上传房源数据
+      console.log('Schritt 1: Immobiliendaten werden hochgeladen...');
+      // Schritt 1: Immobiliendaten hochladen
       const { id: propertyId } = await cachePropertyData({
         title: data.title,
         property_type: data.property_type,
@@ -214,42 +215,52 @@ export default function NewPropertyPage() {
         renovation_quality: data.renovation_quality,
         floor_type: data.floor_type,
         description: data.description || '',
+        locationDescription: data.locationDescription || '',
         contact_person: data.contact_person,
         contact_phone: data.contact_phone,
         contact_email: data.contact_email,
         contact_person2: data.contact_person2,
         contact_phone2: data.contact_phone2,
         contact_email2: data.contact_email2,
-        agentInfo: agentInfo || undefined, // 添加代理信息
+        agentInfo: agentInfo || undefined, // Agent-Informationen hinzufügen
       });
-      console.log('房源数据上传成功，ID:', propertyId);
+      console.log('Immobiliendaten erfolgreich hochgeladen, ID:', propertyId);
 
-      // 步骤2: 上传图片
+      // Schritt 2: Bilder hochladen
       if (data.images.length > 0) {
-        console.log('步骤2: 开始上传图片，数量:', data.images.length);
+        console.log('Schritt 2: Bilder werden hochgeladen, Anzahl:', data.images.length);
         await uploadPropertyImages(propertyId, data.images);
-        console.log('图片上传成功');
+        console.log('Bilder erfolgreich hochgeladen');
       } else {
-        console.log('没有图片需要上传');
+        console.log('Keine Bilder zum Hochladen vorhanden');
       }
 
-      // 步骤3: 生成专业expose
-      console.log('步骤3: 开始生成专业expose...');
-      const { exposeId } = await generateExpose(propertyId);
-      console.log('Expose生成成功，ID:', exposeId);
+      // Schritt 2.5: Grundriss hochladen
+      if (localFormData.floorPlan) {
+        console.log('Schritt 2.5: Grundriss wird hochgeladen');
+        await uploadPropertyImages(propertyId, [localFormData.floorPlan], undefined, 'floorplan');
+        console.log('Grundriss erfolgreich hochgeladen');
+      } else {
+        console.log('Kein Grundriss zum Hochladen vorhanden');
+      }
 
-      // 跳转到expose生成页面
-      console.log('跳转到expose页面:', `/properties/${propertyId}/expose/${exposeId}`);
+      // Schritt 3: Professionelles Exposé generieren
+      console.log('Schritt 3: Professionelles Exposé wird generiert...');
+      const { exposeId } = await generateExpose(propertyId);
+      console.log('Exposé erfolgreich generiert, ID:', exposeId);
+
+      // Zur Exposé-Seite weiterleiten
+      console.log('Weiterleitung zur Exposé-Seite:', `/properties/${propertyId}/expose/${exposeId}`);
       router.push(`/properties/${propertyId}/expose/${exposeId}`);
     } catch (error) {
-      console.error('提交失败:', error);
-      alert(`提交失败: ${error instanceof Error ? error.message : '未知错误'}，请重试`);
+      console.error('Übermittlung fehlgeschlagen:', error);
+      alert(`Übermittlung fehlgeschlagen: ${error instanceof Error ? error.message : 'Unbekannter Fehler'}, bitte versuchen Sie es erneut`);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // 图片处理
+  // Image handling
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
     updateLocalData({ images: files });
@@ -262,10 +273,10 @@ export default function NewPropertyPage() {
   };
 
 
-  // 新增：AI 生成描述
+  // New: AI description generation
   const handleGenerateAIDescription = async () => {
     if (!localFormData.title || !localFormData.property_type || !localFormData.city || !localFormData.postal_code || !localFormData.address || !localFormData.rooms || !localFormData.area || !localFormData.yearBuilt) {
-      alert('请先完成基本信息和房屋详情的填写，以便 AI 生成描述。');
+      alert('Bitte füllen Sie zuerst die Grundinformationen und Immobiliendetails aus, damit die KI eine Beschreibung generieren kann.');
       return;
     }
 
@@ -300,14 +311,14 @@ export default function NewPropertyPage() {
       updateLocalData({ suggested_description: response.suggested_description });
       setValue('description', response.suggested_description);
     } catch (error) {
-      console.error('AI 描述生成失败:', error);
-      alert(`AI 描述生成失败: ${error instanceof Error ? error.message : '未知错误'}`);
+      console.error('KI-Beschreibung konnte nicht generiert werden:', error);
+      alert(`KI-Beschreibung konnte nicht generiert werden: ${error instanceof Error ? error.message : 'Unbekannter Fehler'}`);
     } finally {
       setIsGeneratingDescription(false);
     }
   };
 
-  // 新增：判断是否可以生成描述
+  // New: Check if description can be generated
   const canGenerateDescription = localFormData.title && 
     localFormData.property_type && 
     localFormData.city && 
@@ -320,13 +331,13 @@ export default function NewPropertyPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* 页面标题 */}
+        {/* Page Title */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">创建新房源</h1>
-          <p className="mt-2 text-gray-600">填写房源信息，创建专业的房源展示</p>
+          <h1 className="text-3xl font-bold text-gray-900">Neue Immobilie erstellen</h1>
+          <p className="mt-2 text-gray-600">Füllen Sie die Immobiliendaten aus und erstellen Sie eine professionelle Präsentation</p>
         </div>
 
-        {/* 整体进度指示器 */}
+        {/* Overall Progress Indicator */}
         {(agentInfo || (typeof window !== 'undefined' && sessionStorage.getItem('userType') === 'private')) && (
           <div className="mb-8">
             <div className="flex justify-center">
@@ -335,7 +346,7 @@ export default function NewPropertyPage() {
                   <div className="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-semibold">
                     ✓
                   </div>
-                  <span className="ml-2 text-sm font-medium text-green-600">选择用户类型</span>
+                  <span className="ml-2 text-sm font-medium text-green-600">Benutzertyp</span>
                 </div>
                 {agentInfo && (
                   <>
@@ -344,7 +355,7 @@ export default function NewPropertyPage() {
                       <div className="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-semibold">
                         ✓
                       </div>
-                      <span className="ml-2 text-sm font-medium text-green-600">中介信息</span>
+                      <span className="ml-2 text-sm font-medium text-green-600">Unternehmensdaten</span>
                     </div>
                   </>
                 )}
@@ -353,39 +364,39 @@ export default function NewPropertyPage() {
                   <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold">
                     3
                   </div>
-                  <span className="ml-2 text-sm font-medium text-blue-600">房源信息</span>
+                  <span className="ml-2 text-sm font-medium text-blue-600">Immobiliendaten</span>
                 </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* 代理信息显示 */}
+        {/* Agent Info Display */}
         {agentInfo && (
           <div className="mb-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
             <div className="flex items-center space-x-4">
               {agentInfo.companyLogo && (
                 <img
                   src={agentInfo.companyLogo}
-                  alt="Company logo"
+                  alt="Firmenlogo"
                   className="w-12 h-12 rounded-lg object-cover"
                 />
               )}
               <div className="flex-1">
-                <h3 className="text-sm font-medium text-blue-900">房地产中介信息</h3>
+                <h3 className="text-sm font-medium text-blue-900">Immobilienmakler Informationen</h3>
                 <p className="text-sm text-blue-700">
-                  负责人: {agentInfo.responsiblePerson} | 电话: {agentInfo.phone}
+                  Verantwortlich: {agentInfo.responsiblePerson} | Telefon: {agentInfo.phone}
                 </p>
                 <p className="text-sm text-blue-700">
-                  地址: {agentInfo.address}
-                  {agentInfo.website && ` | 网站: ${agentInfo.website}`}
+                  Adresse: {agentInfo.address}
+                  {agentInfo.website && ` | Website: ${agentInfo.website}`}
                 </p>
               </div>
             </div>
           </div>
         )}
 
-        {/* 步骤指示器 */}
+        {/* Step Indicator */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
             {steps.map((step, index) => {
@@ -426,7 +437,7 @@ export default function NewPropertyPage() {
             })}
           </div>
           
-          {/* 连接线 */}
+          {/* Connection Line */}
           <div className="relative mt-4">
             <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-gray-200 -translate-y-1/2"></div>
             <div 
@@ -436,15 +447,15 @@ export default function NewPropertyPage() {
           </div>
         </div>
 
-        {/* 表单内容 */}
+        {/* Form Content */}
         <div className="bg-white rounded-lg shadow-lg p-8">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-            {/* 步骤1: 基本信息 */}
+            {/* Step 1: Basic Information */}
             {currentStep === 0 && (
               <div className="space-y-6">
                 <div>
                   <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
-                    房源标题 *
+                    Immobilientitel *
                   </label>
                   <input
                     {...register('title')}
@@ -453,7 +464,7 @@ export default function NewPropertyPage() {
                     className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
                       errors.title ? 'border-red-500' : 'border-gray-300'
                     }`}
-                    placeholder="例如：精装修三室两厅，南北通透"
+                    placeholder="z.B.: Renovierte 3-Zimmer-Wohnung, Südausrichtung"
                     defaultValue={localFormData.title}
                   />
                   {errors.title && (
@@ -463,7 +474,7 @@ export default function NewPropertyPage() {
 
                 <div>
                   <label htmlFor="property_type" className="block text-sm font-medium text-gray-700 mb-2">
-                    房源类型 *
+                    Immobilientyp *
                   </label>
                   <select
                     {...register('property_type')}
@@ -473,12 +484,12 @@ export default function NewPropertyPage() {
                     }`}
                     defaultValue={localFormData.property_type || 'apartment'}
                   >
-                    <option value="apartment">公寓</option>
-                    <option value="house">独栋房屋</option>
-                    <option value="villa">别墅</option>
-                    <option value="penthouse">顶层公寓</option>
-                    <option value="duplex">复式</option>
-                    <option value="studio">开间</option>
+                    <option value="apartment">Wohnung</option>
+                    <option value="house">Einfamilienhaus</option>
+                    <option value="villa">Villa</option>
+                    <option value="penthouse">Penthouse</option>
+                    <option value="duplex">Maisonette</option>
+                    <option value="studio">Studio</option>
                   </select>
                   {errors.property_type && (
                     <p className="mt-1 text-sm text-red-600">{errors.property_type.message}</p>
@@ -488,7 +499,7 @@ export default function NewPropertyPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-2">
-                      城市 *
+                      Stadt *
                     </label>
                     <input
                       {...register('city')}
@@ -497,8 +508,8 @@ export default function NewPropertyPage() {
                       className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
                         errors.city ? 'border-red-500' : 'border-gray-300'
                       }`}
-                      placeholder="例如：北京"
-                      defaultValue={localFormData.city || '北京'}
+                      placeholder="z.B.: Berlin"
+                      defaultValue={localFormData.city || 'Berlin'}
                     />
                     {errors.city && (
                       <p className="mt-1 text-sm text-red-600">{errors.city.message}</p>
@@ -507,7 +518,7 @@ export default function NewPropertyPage() {
 
                   <div>
                     <label htmlFor="postal_code" className="block text-sm font-medium text-gray-700 mb-2">
-                      邮政编码 *
+                      Postleitzahl *
                     </label>
                     <input
                       {...register('postal_code')}
@@ -516,7 +527,7 @@ export default function NewPropertyPage() {
                       className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
                         errors.postal_code ? 'border-red-500' : 'border-gray-300'
                       }`}
-                      placeholder="例如：100000"
+                      placeholder="z.B.: 10115"
                       defaultValue={localFormData.postal_code || ''}
                     />
                     {errors.postal_code && (
@@ -527,7 +538,7 @@ export default function NewPropertyPage() {
 
                 <div>
                   <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-2">
-                    详细地址 *
+                    Vollständige Adresse *
                   </label>
                   <input
                     {...register('address')}
@@ -536,7 +547,7 @@ export default function NewPropertyPage() {
                     className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
                       errors.address ? 'border-red-500' : 'border-gray-300'
                     }`}
-                    placeholder="例如：北京市朝阳区建国门外大街1号"
+                    placeholder="z.B.: Unter den Linden 1, 10117 Berlin"
                     defaultValue={localFormData.address}
                   />
                   {errors.address && (
@@ -546,7 +557,7 @@ export default function NewPropertyPage() {
 
                 <div>
                   <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-2">
-                    价格 (万元) *
+                    Preis (€) *
                   </label>
                   <input
                     {...register('price', { valueAsNumber: true })}
@@ -555,9 +566,9 @@ export default function NewPropertyPage() {
                     className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
                       errors.price ? 'border-red-500' : 'border-gray-300'
                     }`}
-                    placeholder="例如：500"
+                    placeholder="z.B.: 500000"
                     min="0"
-                    step="0.01"
+                    step="1000"
                     defaultValue={localFormData.price}
                   />
                   {errors.price && (
@@ -567,13 +578,13 @@ export default function NewPropertyPage() {
               </div>
             )}
 
-            {/* 步骤2: 房屋详情 */}
+            {/* Step 2: Property Details */}
             {currentStep === 1 && (
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div>
                     <label htmlFor="rooms" className="block text-sm font-medium text-gray-700 mb-2">
-                      房间数量 *
+                      Anzahl der Zimmer *
                     </label>
                     <input
                       {...register('rooms', { valueAsNumber: true })}
@@ -582,7 +593,7 @@ export default function NewPropertyPage() {
                       className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
                         errors.rooms ? 'border-red-500' : 'border-gray-300'
                       }`}
-                      placeholder="例如：3"
+                      placeholder="z.B.: 3"
                       min="0"
                       max="50"
                       defaultValue={localFormData.rooms}
@@ -594,7 +605,7 @@ export default function NewPropertyPage() {
 
                   <div>
                     <label htmlFor="bedrooms" className="block text-sm font-medium text-gray-700 mb-2">
-                      卧室数量 *
+                      Anzahl der Schlafzimmer *
                     </label>
                     <input
                       {...register('bedrooms', { valueAsNumber: true })}
@@ -603,7 +614,7 @@ export default function NewPropertyPage() {
                       className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
                         errors.bedrooms ? 'border-red-500' : 'border-gray-300'
                       }`}
-                      placeholder="例如：2"
+                      placeholder="z.B.: 2"
                       min="0"
                       max="20"
                       defaultValue={localFormData.bedrooms}
@@ -615,7 +626,7 @@ export default function NewPropertyPage() {
 
                   <div>
                     <label htmlFor="bathrooms" className="block text-sm font-medium text-gray-700 mb-2">
-                      洗手间数量 *
+                      Anzahl der Badezimmer *
                     </label>
                     <input
                       {...register('bathrooms', { valueAsNumber: true })}
@@ -624,7 +635,7 @@ export default function NewPropertyPage() {
                       className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
                         errors.bathrooms ? 'border-red-500' : 'border-gray-300'
                       }`}
-                      placeholder="例如：1"
+                      placeholder="z.B.: 1"
                       min="0"
                       max="10"
                       defaultValue={localFormData.bathrooms}
@@ -638,7 +649,7 @@ export default function NewPropertyPage() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div>
                     <label htmlFor="area" className="block text-sm font-medium text-gray-700 mb-2">
-                      建筑面积 (m²) *
+                      Wohnfläche (m²) *
                     </label>
                     <input
                       {...register('area', { valueAsNumber: true })}
@@ -647,7 +658,7 @@ export default function NewPropertyPage() {
                       className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
                         errors.area ? 'border-red-500' : 'border-gray-300'
                       }`}
-                      placeholder="例如：120"
+                      placeholder="z.B.: 120"
                       min="1"
                       max="10000"
                       step="0.01"
@@ -660,7 +671,7 @@ export default function NewPropertyPage() {
 
                   <div>
                     <label htmlFor="yearBuilt" className="block text-sm font-medium text-gray-700 mb-2">
-                      建成年份 *
+                      Baujahr *
                     </label>
                     <input
                       {...register('yearBuilt', { valueAsNumber: true })}
@@ -669,7 +680,7 @@ export default function NewPropertyPage() {
                       className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
                         errors.yearBuilt ? 'border-red-500' : 'border-gray-300'
                       }`}
-                      placeholder="例如：2010"
+                      placeholder="z.B.: 2010"
                       min="1800"
                       max={new Date().getFullYear()}
                       defaultValue={localFormData.yearBuilt}
@@ -681,7 +692,7 @@ export default function NewPropertyPage() {
 
                   <div>
                     <label htmlFor="heating_system" className="block text-sm font-medium text-gray-700 mb-2">
-                      保暖系统 *
+                      Heizsystem *
                     </label>
                     <select
                       {...register('heating_system')}
@@ -691,13 +702,13 @@ export default function NewPropertyPage() {
                       }`}
                       defaultValue={localFormData.heating_system || ''}
                     >
-                      <option value="">请选择保暖系统</option>
-                      <option value="central_heating">中央供暖</option>
-                      <option value="floor_heating">地暖</option>
-                      <option value="radiator_heating">暖气片供暖</option>
-                      <option value="air_conditioning">空调供暖</option>
-                      <option value="wood_stove">壁炉供暖</option>
-                      <option value="heat_pump">热泵供暖</option>
+                      <option value="">Heizsystem auswählen</option>
+                      <option value="central_heating">Zentralheizung</option>
+                      <option value="floor_heating">Fußbodenheizung</option>
+                      <option value="radiator_heating">Heizkörper</option>
+                      <option value="air_conditioning">Klimaanlage</option>
+                      <option value="wood_stove">Kaminofen</option>
+                      <option value="heat_pump">Wärmepumpe</option>
                     </select>
                     {errors.heating_system && (
                       <p className="mt-1 text-sm text-red-600">{errors.heating_system.message}</p>
@@ -708,7 +719,7 @@ export default function NewPropertyPage() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div>
                     <label htmlFor="energy_source" className="block text-sm font-medium text-gray-700 mb-2">
-                      主要能源供给 *
+                      Hauptenergiequelle *
                     </label>
                     <select
                       {...register('energy_source')}
@@ -718,14 +729,14 @@ export default function NewPropertyPage() {
                       }`}
                       defaultValue={localFormData.energy_source || ''}
                     >
-                      <option value="">请选择能源供给</option>
-                      <option value="natural_gas">天然气</option>
-                      <option value="electricity">电力</option>
-                      <option value="oil">燃油</option>
-                      <option value="district_heating">区域供暖</option>
-                      <option value="wood">木材</option>
-                      <option value="solar">太阳能</option>
-                      <option value="geothermal">地热能</option>
+                      <option value="">Energiequelle auswählen</option>
+                      <option value="natural_gas">Erdgas</option>
+                      <option value="electricity">Strom</option>
+                      <option value="oil">Heizöl</option>
+                      <option value="district_heating">Fernwärme</option>
+                      <option value="wood">Holz</option>
+                      <option value="solar">Solarenergie</option>
+                      <option value="geothermal">Geothermie</option>
                     </select>
                     {errors.energy_source && (
                       <p className="mt-1 text-sm text-red-600">{errors.energy_source.message}</p>
@@ -734,7 +745,7 @@ export default function NewPropertyPage() {
 
                   <div>
                     <label htmlFor="energy_certificate" className="block text-sm font-medium text-gray-700 mb-2">
-                      能源证书等级 *
+                      Energieausweis *
                     </label>
                     <select
                       {...register('energy_certificate')}
@@ -744,7 +755,7 @@ export default function NewPropertyPage() {
                       }`}
                       defaultValue={localFormData.energy_certificate || ''}
                     >
-                      <option value="">请选择能源等级</option>
+                      <option value="">Energieeffizienzklasse auswählen</option>
                       <option value="A+">A+</option>
                       <option value="A">A</option>
                       <option value="B">B</option>
@@ -762,7 +773,7 @@ export default function NewPropertyPage() {
 
                   <div>
                     <label htmlFor="parking" className="block text-sm font-medium text-gray-700 mb-2">
-                      停车位或车库 *
+                      Parkplatz oder Garage *
                     </label>
                     <select
                       {...register('parking')}
@@ -772,12 +783,12 @@ export default function NewPropertyPage() {
                       }`}
                       defaultValue={localFormData.parking || ''}
                     >
-                      <option value="">请选择停车方式</option>
-                      <option value="garage">车库</option>
-                      <option value="parking_space">停车位</option>
-                      <option value="street_parking">路边停车</option>
-                      <option value="underground_parking">地下停车场</option>
-                      <option value="none">无停车位</option>
+                      <option value="">Parkmöglichkeit auswählen</option>
+                      <option value="garage">Garage</option>
+                      <option value="parking_space">Parkplatz</option>
+                      <option value="street_parking">Straßenparken</option>
+                      <option value="underground_parking">Tiefgarage</option>
+                      <option value="none">Kein Parkplatz</option>
                     </select>
                     {errors.parking && (
                       <p className="mt-1 text-sm text-red-600">{errors.parking.message}</p>
@@ -788,7 +799,7 @@ export default function NewPropertyPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label htmlFor="renovation_quality" className="block text-sm font-medium text-gray-700 mb-2">
-                      装修质量 *
+                      Renovierungsqualität *
                     </label>
                     <select
                       {...register('renovation_quality')}
@@ -798,12 +809,12 @@ export default function NewPropertyPage() {
                       }`}
                       defaultValue={localFormData.renovation_quality || ''}
                     >
-                      <option value="">请选择装修质量</option>
-                      <option value="luxury">豪华装修</option>
-                      <option value="high_quality">高品质装修</option>
-                      <option value="standard">标准装修</option>
-                      <option value="basic">基础装修</option>
-                      <option value="needs_renovation">需要翻新</option>
+                      <option value="">Renovierungsqualität auswählen</option>
+                      <option value="luxury">Luxuriös</option>
+                      <option value="high_quality">Hochwertig</option>
+                      <option value="standard">Standard</option>
+                      <option value="basic">Grundlegend</option>
+                      <option value="needs_renovation">Renovierungsbedürftig</option>
                     </select>
                     {errors.renovation_quality && (
                       <p className="mt-1 text-sm text-red-600">{errors.renovation_quality.message}</p>
@@ -812,7 +823,7 @@ export default function NewPropertyPage() {
 
                   <div>
                     <label htmlFor="floor_type" className="block text-sm font-medium text-gray-700 mb-2">
-                      地板类型 *
+                      Bodenbelag *
                     </label>
                     <select
                       {...register('floor_type')}
@@ -822,14 +833,14 @@ export default function NewPropertyPage() {
                       }`}
                       defaultValue={localFormData.floor_type || ''}
                     >
-                      <option value="">请选择地板类型</option>
-                      <option value="hardwood">实木地板</option>
-                      <option value="laminate">复合地板</option>
-                      <option value="tile">瓷砖</option>
-                      <option value="carpet">地毯</option>
-                      <option value="vinyl">乙烯基地板</option>
-                      <option value="concrete">水泥地面</option>
-                      <option value="mixed">混合材质</option>
+                      <option value="">Bodenbelag auswählen</option>
+                      <option value="hardwood">Parkett</option>
+                      <option value="laminate">Laminat</option>
+                      <option value="tile">Fliesen</option>
+                      <option value="carpet">Teppich</option>
+                      <option value="vinyl">Vinyl</option>
+                      <option value="concrete">Beton</option>
+                      <option value="mixed">Gemischt</option>
                     </select>
                     {errors.floor_type && (
                       <p className="mt-1 text-sm text-red-600">{errors.floor_type.message}</p>
@@ -839,28 +850,29 @@ export default function NewPropertyPage() {
               </div>
             )}
 
-            {/* 步骤3: 描述文本 */}
+            {/* Step 3: Description */}
             {currentStep === 2 && (
-              <div className="space-y-6">
+              <div className="space-y-8">
+                {/* Property Description */}
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                      房源描述
+                      Immobilienbeschreibung
                     </label>
                     <div className="flex items-center gap-3">
-                      {/* 语气选择 */}
+                      {/* Tone Selection */}
                       <select
                         id="description-style"
                         className="px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         onChange={(e) => setDescriptionStyle(e.target.value)}
                         value={descriptionStyle}
                       >
-                        <option value="formal">正式</option>
-                        <option value="marketing">市场化</option>
-                        <option value="family">温馨家庭</option>
+                        <option value="formal">Formell</option>
+                        <option value="marketing">Marketing</option>
+                        <option value="family">Familienfreundlich</option>
                       </select>
                       
-                      {/* AI 生成按钮 */}
+                      {/* AI Generation Button */}
                       <button
                         type="button"
                         onClick={handleGenerateAIDescription}
@@ -870,19 +882,19 @@ export default function NewPropertyPage() {
                         {isGeneratingDescription ? (
                           <>
                             <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                            生成中...
+                            Wird generiert...
                           </>
                         ) : (
                           <>
                             <FileText className="w-4 h-4" />
-                            AI 生成描述
+                            KI-Beschreibung generieren
                           </>
                         )}
                       </button>
                     </div>
                   </div>
                   
-                  {/* 描述编辑框 */}
+                  {/* Description Editor */}
                   <textarea
                     {...register('description')}
                     id="description"
@@ -890,15 +902,15 @@ export default function NewPropertyPage() {
                     className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none ${
                       errors.description ? 'border-red-500' : 'border-gray-300'
                     }`}
-                    placeholder="描述房源的特点、优势、周边配套等信息..."
+                    placeholder="Beschreiben Sie die Besonderheiten, Vorteile und Umgebung der Immobilie..."
                     defaultValue={localFormData.description}
                   />
                   
-                  {/* AI 生成的描述（可编辑） */}
+                  {/* AI Generated Description (Editable) */}
                   {localFormData.suggested_description && (
                     <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                       <div className="flex items-center justify-between mb-2">
-                        <h4 className="text-sm font-medium text-blue-800">AI 生成的描述</h4>
+                        <h4 className="text-sm font-medium text-blue-800">KI-generierte Beschreibung</h4>
                         <button
                           type="button"
                           onClick={() => {
@@ -907,7 +919,7 @@ export default function NewPropertyPage() {
                           }}
                           className="text-xs text-blue-600 hover:text-blue-700 font-medium"
                         >
-                          使用此描述
+                          Diese Beschreibung verwenden
                         </button>
                       </div>
                       <textarea
@@ -915,7 +927,7 @@ export default function NewPropertyPage() {
                         onChange={(e) => updateLocalData({ suggested_description: e.target.value })}
                         rows={4}
                         className="w-full px-3 py-2 text-sm border border-blue-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
-                        placeholder="AI 生成的描述..."
+                        placeholder="KI-generierte Beschreibung..."
                       />
                     </div>
                   )}
@@ -924,18 +936,42 @@ export default function NewPropertyPage() {
                     <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
                   )}
                   <p className="mt-1 text-xs text-gray-500">
-                    最多2000个字符，当前 {localFormData.description?.length || 0}/2000
+                    Maximal 2000 Zeichen, aktuell {localFormData.description?.length || 0}/2000
+                  </p>
+                </div>
+
+                {/* Location Description */}
+                <div>
+                  <label htmlFor="locationDescription" className="block text-sm font-medium text-gray-700 mb-2">
+                    Lagebeschreibung
+                  </label>
+                  <textarea
+                    {...register('locationDescription')}
+                    id="locationDescription"
+                    rows={4}
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none ${
+                      errors.locationDescription ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                    placeholder="Beschreiben Sie die Lagevorteile wie Verkehrsanbindung, Umgebung, Schulen, Krankenhäuser, Einkaufszentren..."
+                    defaultValue={localFormData.locationDescription}
+                  />
+                  {errors.locationDescription && (
+                    <p className="mt-1 text-sm text-red-600">{errors.locationDescription.message}</p>
+                  )}
+                  <p className="mt-1 text-xs text-gray-500">
+                    Maximal 1000 Zeichen, aktuell {localFormData.locationDescription?.length || 0}/1000
                   </p>
                 </div>
               </div>
             )}
 
-            {/* 步骤4: 图片上传 */}
+            {/* Step 4: Image Upload */}
             {currentStep === 3 && (
-              <div className="space-y-6">
+              <div className="space-y-8">
+                {/* Property Images Upload */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    房源图片 *
+                    Immobilienbilder *
                   </label>
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
                     <input
@@ -953,10 +989,10 @@ export default function NewPropertyPage() {
                     >
                       <Upload className="w-12 h-12 text-gray-400 mb-4" />
                       <div className="text-lg font-medium text-gray-700 mb-2">
-                        点击上传图片
+                        Bilder hochladen
                       </div>
                       <div className="text-sm text-gray-500">
-                        支持 JPG、PNG、WebP 格式，最多20张
+                        JPG, PNG, WebP Formate unterstützt, maximal 20 Bilder
                       </div>
                     </label>
                   </div>
@@ -965,18 +1001,51 @@ export default function NewPropertyPage() {
                   )}
                 </div>
 
-                {/* 图片预览 */}
+                {/* Floor Plan Upload */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Grundriss
+                  </label>
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setLocalFormData(prev => ({ ...prev, floorPlan: file }));
+                        }
+                      }}
+                      className="hidden"
+                      id="floorplan-upload"
+                    />
+                    <label
+                      htmlFor="floorplan-upload"
+                      className="cursor-pointer flex flex-col items-center"
+                    >
+                      <Upload className="w-12 h-12 text-gray-400 mb-4" />
+                      <div className="text-lg font-medium text-gray-700 mb-2">
+                        Grundriss hochladen
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        JPG, PNG, WebP Formate unterstützt, für Exposé-Generierung
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Property Images Preview */}
                 {localFormData.images && localFormData.images.length > 0 && (
                   <div>
                     <h4 className="text-sm font-medium text-gray-700 mb-3">
-                      已选择的图片 ({localFormData.images.length}/20)
+                      Ausgewählte Immobilienbilder ({localFormData.images.length}/20)
                     </h4>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                       {localFormData.images.map((file, index) => (
                         <div key={index} className="relative group">
                           <img
                             src={URL.createObjectURL(file)}
-                            alt={`预览图片 ${index + 1}`}
+                            alt={`Vorschau Bild ${index + 1}`}
                             className="w-full h-24 object-cover rounded-lg border border-gray-200"
                           />
                           <button
@@ -995,11 +1064,37 @@ export default function NewPropertyPage() {
                   </div>
                 )}
 
-                {/* 上传进度 */}
+                {/* Floor Plan Preview */}
+                {localFormData.floorPlan && (
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-700 mb-3">
+                      Ausgewählter Grundriss
+                    </h4>
+                    <div className="relative group max-w-md">
+                      <img
+                        src={URL.createObjectURL(localFormData.floorPlan)}
+                        alt="Grundriss Vorschau"
+                        className="w-full h-48 object-cover rounded-lg border border-gray-200"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setLocalFormData(prev => ({ ...prev, floorPlan: undefined }))}
+                        className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                      <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-1 rounded-b-lg">
+                        {localFormData.floorPlan.name.length > 30 ? localFormData.floorPlan.name.substring(0, 30) + '...' : localFormData.floorPlan.name}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Upload Progress */}
                 {isUploading && (
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-700">上传进度</span>
+                      <span className="text-gray-700">Upload-Fortschritt</span>
                       <span className="text-blue-600 font-medium">
                         {Object.values(uploadProgress)[0] || 0}%
                       </span>
@@ -1015,12 +1110,12 @@ export default function NewPropertyPage() {
               </div>
             )}
 
-            {/* 步骤5: 联系人信息 */}
+            {/* Step 5: Contact Information */}
             {currentStep === 4 && (
               <div className="space-y-6">
                 <div>
                   <label htmlFor="contact_person" className="block text-sm font-medium text-gray-700 mb-2">
-                    联系人姓名 *
+                    Kontaktperson *
                   </label>
                   <input
                     {...register('contact_person')}
@@ -1029,7 +1124,7 @@ export default function NewPropertyPage() {
                     className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
                       errors.contact_person ? 'border-red-500' : 'border-gray-300'
                     }`}
-                    placeholder="例如：张先生"
+                    placeholder="z.B.: Herr Müller"
                     defaultValue={localFormData.contact_person || ''}
                   />
                   {errors.contact_person && (
@@ -1039,7 +1134,7 @@ export default function NewPropertyPage() {
 
                 <div>
                   <label htmlFor="contact_phone" className="block text-sm font-medium text-gray-700 mb-2">
-                    联系电话 *
+                    Telefonnummer *
                   </label>
                   <input
                     {...register('contact_phone')}
@@ -1048,7 +1143,7 @@ export default function NewPropertyPage() {
                     className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
                       errors.contact_phone ? 'border-red-500' : 'border-gray-300'
                     }`}
-                    placeholder="例如：138-0013-8000"
+                    placeholder="z.B.: +49 30 12345678"
                     defaultValue={localFormData.contact_phone || ''}
                   />
                   {errors.contact_phone && (
@@ -1058,7 +1153,7 @@ export default function NewPropertyPage() {
 
                 <div>
                   <label htmlFor="contact_email" className="block text-sm font-medium text-gray-700 mb-2">
-                    联系邮箱 *
+                    E-Mail-Adresse *
                   </label>
                   <input
                     {...register('contact_email')}
@@ -1067,7 +1162,7 @@ export default function NewPropertyPage() {
                     className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
                       errors.contact_email ? 'border-red-500' : 'border-gray-300'
                     }`}
-                    placeholder="例如：zhang@example.com"
+                    placeholder="z.B.: mueller@example.com"
                     defaultValue={localFormData.contact_email || ''}
                   />
                   {errors.contact_email && (
@@ -1075,13 +1170,13 @@ export default function NewPropertyPage() {
                   )}
                 </div>
 
-                {/* 第二个联系人信息 */}
+                {/* Second Contact Information */}
                 <div className="border-t border-gray-200 pt-6">
-                  <h3 className="text-lg font-medium text-gray-900 mb-4">第二个联系人（可选）</h3>
+                  <h3 className="text-lg font-medium text-gray-900 mb-4">Zweiter Kontakt (optional)</h3>
                   
                   <div>
                     <label htmlFor="contact_person2" className="block text-sm font-medium text-gray-700 mb-2">
-                      联系人姓名
+                      Kontaktperson
                     </label>
                     <input
                       {...register('contact_person2')}
@@ -1090,7 +1185,7 @@ export default function NewPropertyPage() {
                       className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
                         errors.contact_person2 ? 'border-red-500' : 'border-gray-300'
                       }`}
-                      placeholder="例如：李女士"
+                      placeholder="z.B.: Frau Schmidt"
                       defaultValue={localFormData.contact_person2 || ''}
                     />
                     {errors.contact_person2 && (
@@ -1100,7 +1195,7 @@ export default function NewPropertyPage() {
 
                   <div className="mt-4">
                     <label htmlFor="contact_phone2" className="block text-sm font-medium text-gray-700 mb-2">
-                      联系电话
+                      Telefonnummer
                     </label>
                     <input
                       {...register('contact_phone2')}
@@ -1109,7 +1204,7 @@ export default function NewPropertyPage() {
                       className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
                         errors.contact_phone2 ? 'border-red-500' : 'border-gray-300'
                       }`}
-                      placeholder="例如：139-0013-8001"
+                      placeholder="z.B.: +49 30 87654321"
                       defaultValue={localFormData.contact_phone2 || ''}
                     />
                     {errors.contact_phone2 && (
@@ -1119,7 +1214,7 @@ export default function NewPropertyPage() {
 
                   <div className="mt-4">
                     <label htmlFor="contact_email2" className="block text-sm font-medium text-gray-700 mb-2">
-                      联系邮箱
+                      E-Mail-Adresse
                     </label>
                     <input
                       {...register('contact_email2')}
@@ -1128,7 +1223,7 @@ export default function NewPropertyPage() {
                       className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
                         errors.contact_email2 ? 'border-red-500' : 'border-gray-300'
                       }`}
-                      placeholder="例如：li@example.com"
+                      placeholder="z.B.: schmidt@example.com"
                       defaultValue={localFormData.contact_email2 || ''}
                     />
                     {errors.contact_email2 && (
@@ -1144,12 +1239,12 @@ export default function NewPropertyPage() {
                     </div>
                     <div className="ml-3">
                       <h3 className="text-sm font-medium text-blue-800">
-                        联系人信息说明
+                        Kontaktinformationen
                       </h3>
                       <div className="mt-2 text-sm text-blue-700">
-                        <p>这些联系人信息将显示在生成的 Exposé 中，方便潜在买家或租户联系您。</p>
-                        <p className="mt-1">第一个联系人为必填项，第二个联系人为可选项。</p>
-                        <p className="mt-1">请确保信息准确无误，以便及时收到咨询。</p>
+                        <p>Diese Kontaktinformationen werden im generierten Exposé angezeigt, damit potenzielle Käufer oder Mieter Sie erreichen können.</p>
+                        <p className="mt-1">Der erste Kontakt ist erforderlich, der zweite Kontakt ist optional.</p>
+                        <p className="mt-1">Bitte stellen Sie sicher, dass alle Informationen korrekt sind, um Anfragen rechtzeitig zu erhalten.</p>
                       </div>
                     </div>
                   </div>
@@ -1157,10 +1252,10 @@ export default function NewPropertyPage() {
               </div>
             )}
 
-            {/* 表单操作按钮 */}
+            {/* Form Action Buttons */}
             <div className="flex items-center justify-between pt-6 border-t border-gray-200">
               <div className="flex items-center gap-2 text-sm text-gray-500">
-                <span>步骤 {currentStep + 1} / {totalSteps}</span>
+                <span>Schritt {currentStep + 1} / {totalSteps}</span>
               </div>
               
               <div className="flex items-center gap-4">
@@ -1171,7 +1266,7 @@ export default function NewPropertyPage() {
                     className="flex items-center gap-2 px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
                   >
                     <ArrowLeft className="w-4 h-4" />
-                    上一步
+                    Zurück
                   </button>
                 )}
                 
@@ -1181,7 +1276,7 @@ export default function NewPropertyPage() {
                     onClick={handleNext}
                     className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                   >
-                    下一步
+                    Weiter
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 ) : (
@@ -1193,7 +1288,7 @@ export default function NewPropertyPage() {
                       className="flex items-center gap-2 px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
                     >
                       <Eye className="w-4 h-4" />
-                      预览效果
+                      Vorschau
                     </button>
                     <button
                       type="submit"
@@ -1203,12 +1298,12 @@ export default function NewPropertyPage() {
                       {isSubmitting ? (
                         <>
                           <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                          提交中...
+                          Wird gesendet...
                         </>
                       ) : (
                         <>
                           <CheckCircle className="w-4 h-4" />
-                          提交表单
+                          Formular senden
                         </>
                       )}
                     </button>
@@ -1219,34 +1314,34 @@ export default function NewPropertyPage() {
           </form>
         </div>
 
-        {/* 调试信息 */}
+        {/* Debug Information */}
         <div className="mt-8 p-4 bg-gray-100 rounded-lg">
-          <h3 className="text-sm font-medium text-gray-700 mb-2">调试信息</h3>
+          <h3 className="text-sm font-medium text-gray-700 mb-2">Debug-Informationen</h3>
           
-          {/* 测试按钮 */}
+          {/* Test Buttons */}
           <div className="mb-4 p-3 bg-yellow-100 rounded border border-yellow-300">
-            <h4 className="text-sm font-medium text-yellow-800 mb-2">测试功能</h4>
+            <h4 className="text-sm font-medium text-yellow-800 mb-2">Test-Funktionen</h4>
             <div className="flex gap-2">
               <button
                 type="button"
-                onClick={() => console.log('当前表单数据:', localFormData)}
+                onClick={() => console.log('Aktuelle Formulardaten:', localFormData)}
                 className="px-3 py-1 text-xs bg-yellow-500 text-white rounded hover:bg-yellow-600"
               >
-                打印表单数据
+                Formulardaten ausgeben
               </button>
               <button
                 type="button"
-                onClick={() => console.log('当前步骤:', currentStep, '总步骤:', steps.length)}
+                onClick={() => console.log('Aktueller Schritt:', currentStep, 'Gesamte Schritte:', steps.length)}
                 className="px-3 py-1 text-xs bg-yellow-500 text-white rounded hover:bg-yellow-600"
               >
-                打印步骤信息
+                Schrittinformationen ausgeben
               </button>
               <button
                 type="button"
-                onClick={() => console.log('表单验证状态:', errors)}
+                onClick={() => console.log('Formularvalidierung:', errors)}
                 className="px-3 py-1 text-xs bg-yellow-500 text-white rounded hover:bg-yellow-600"
               >
-                打印验证状态
+                Validierungsstatus ausgeben
               </button>
             </div>
           </div>
