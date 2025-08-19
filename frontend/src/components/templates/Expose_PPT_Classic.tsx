@@ -433,20 +433,18 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
             </div>
             
             {/* 右侧地图图片 */}
-            <div className="flex justify-center">
-              <div className="w-96 h-72 bg-gray-200 rounded-lg shadow-lg overflow-hidden">
-                <img 
-                  src={data.locationImage ? getFullImageUrl(data.locationImage) : 
-                       data.images?.[0]?.url ? getFullImageUrl(data.images[0].url) : 
-                       'https://source.unsplash.com/800x600/?city-map'} 
-                  alt="Lagekarte"
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = 'https://source.unsplash.com/800x600/?city-map';
-                  }}
-                />
-              </div>
+            <div className="h-full w-full rounded-lg shadow-lg overflow-hidden">
+              <img 
+                src={data.locationImage ? getFullImageUrl(data.locationImage) : 
+                     data.images?.[0]?.url ? getFullImageUrl(data.images[0].url) : 
+                     'https://source.unsplash.com/800x600/?city-map'} 
+                alt="Lagekarte"
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = 'https://source.unsplash.com/800x600/?city-map';
+                }}
+              />
             </div>
           </div>
           

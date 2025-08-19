@@ -362,7 +362,7 @@ export default function NewPropertyPage() {
                 <div className="w-8 h-1 bg-blue-600"></div>
                 <div className="flex items-center">
                   <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold">
-                    3
+                    2
                   </div>
                   <span className="ml-2 text-sm font-medium text-blue-600">Immobiliendaten</span>
                 </div>
