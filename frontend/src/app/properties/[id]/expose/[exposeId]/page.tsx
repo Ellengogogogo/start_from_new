@@ -14,7 +14,6 @@ import {
 } from 'lucide-react';
 import { ExposeData } from '@/types/property';
 import { getExposeStatus, downloadPDF, getExposePreview } from '@/services/api';
-import { Expose_A4_Classic, ExposeData as ExposeTemplateData } from '@/components/templates/Expose_A4_Classic';
 import { Expose_PPT_Classic, ExposePPTData } from '@/components/templates/Expose_PPT_Classic';
 
 export default function ExposeGenerationPage() {
@@ -26,7 +25,7 @@ export default function ExposeGenerationPage() {
   const [exposeData, setExposeData] = useState<ExposeData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedTemplate, setSelectedTemplate] = useState<'a4' | 'ppt'>('a4');
+
   const [previewData, setPreviewData] = useState<{
     title?: string;
     address?: string;
@@ -41,76 +40,59 @@ export default function ExposeGenerationPage() {
     }>;
   } | null>(null);
 
-  // 转换数据格式以适配 Expose_A4_Classic 组件
-  const transformPreviewDataForExpose = (data: ExposeData['previewData']): ExposeTemplateData => {
-    if (!data) {
-      // 返回默认数据
-      return {
-        title: 'Professionelle Immobilienpräsentation',
-        address: 'Adressinformationen',
-        price: 0,
-        priceUnit: 'Tsd.',
-        tags: ['Ausstattung', 'Verkehrsgünstige Lage', 'Schlafzimmer'],
-        rooms: 0,
-        area: 0,
-        areaUnit: 'm²',
-        yearBuilt: 0,
-        floor: '15',
-        totalFloors: 28,
-        orientation: 'Nord-Süd-Orientierung',
-        renovation: 'Ausstattung',
-        description: 'Keine Beschreibung verfügbar',
-        images: [],
-        contact: {
-          name: 'Herr Zhang',
-          title: 'Erfolgreicher Immobilienberater',
-          avatar: 'https://source.unsplash.com/100x100/?portrait',
-          phone: '138-0013-8000',
-          email: 'zhang@example.com',
-          company: 'Guomao Immobilienmakler GmbH',
-          license: 'B-00123456789'
-        },
-        coordinates: {
-          lat: 39.9042,
-          lng: 116.4074
-        }
-      };
-    }
-    
-    return {
-      title: data.title || 'Professionelle Immobilienpräsentation',
-      address: data.address || 'Adressinformationen',
-      price: data.price || 0,
-      priceUnit: 'Tsd.',
-      tags: ['Ausstattung', 'Verkehrsgünstige Lage', 'Schlafzimmer'],
-      rooms: data.rooms || 0,
-      area: data.area || 0,
-      areaUnit: 'm²',
-      yearBuilt: data.yearBuilt || 0,
-      floor: '15',
-      totalFloors: 28,
-      orientation: 'Nord-Süd-Orientierung',
-      renovation: 'Ausstattung',
-      description: data.description || 'Keine Beschreibung verfügbar',
-      images: (data.images || []).map((img, index: number) => ({
-        id: `img_${index}`,
-        url: img.url,
-        alt: `Immobilienbild ${index + 1}`
-      })),
-      contact: {
-        name: data.contact_person || 'Herr Zhang',
-        title: 'Erfolgreicher Immobilienberater',
-        avatar: 'https://source.unsplash.com/100x100/?portrait',
-        phone: data.contact_phone || '138-0013-8000',
-        email: data.contact_email || 'zhang@example.com',
-        company: 'Guomao Immobilienmakler GmbH',
-        license: 'B-00123456789'
+
+
+  
+
+  // Helper function to convert English values to German
+  const translateToGerman = (key: string, value: string): string => {
+    const translations: { [key: string]: { [value: string]: string } } = {
+      heating_system: {
+        'central_heating': 'Zentralheizung',
+        'floor_heating': 'Fußbodenheizung',
+        'radiator_heating': 'Heizkörper',
+        'air_conditioning': 'Klimaanlage',
+        'wood_stove': 'Kaminofen',
+        'heat_pump': 'Wärmepumpe'
       },
-      coordinates: {
-        lat: 39.9042,
-        lng: 116.4074
+      energy_source: {
+        'natural_gas': 'Erdgas',
+        'electricity': 'Strom',
+        'oil': 'Heizöl',
+        'district_heating': 'Fernwärme',
+        'wood': 'Holz',
+        'solar': 'Solarenergie',
+        'geothermal': 'Geothermie'
+      },
+      parking: {
+        'garage': 'Garage',
+        'parking_space': 'Parkplatz',
+        'street_parking': 'Straßenparken',
+        'underground_parking': 'Tiefgarage',
+        'none': 'Kein Parkplatz'
+      },
+      renovation_quality: {
+        'luxury': 'Luxuriös',
+        'high_quality': 'Hochwertig',
+        'standard': 'Standard',
+        'basic': 'Grundlegend',
+        'needs_renovation': 'Renovierungsbedürftig'
+      },
+      floor_type: {
+        'hardwood': 'Parkett',
+        'laminate': 'Laminat',
+        'tile': 'Fliesen',
+        'carpet': 'Teppich',
+        'vinyl': 'Vinyl',
+        'concrete': 'Beton',
+        'mixed': 'Gemischt'
       }
     };
+
+    if (translations[key] && translations[key][value]) {
+      return translations[key][value];
+    }
+    return value;
   };
 
   // 转换数据格式以适配 Expose_PPT_Classic 组件
@@ -140,19 +122,19 @@ export default function ExposeGenerationPage() {
           energieklasse: 'A'
         },
         description: 'Dies ist eine hochwertige Immobilie in einer erstklassigen Lage mit ausgezeichneter Verkehrsanbindung. Die Wohnung ist durchdacht gestaltet, bietet viel Tageslicht und verfügt über eine vollständige Ausstattung.',
-        locationDescription: '', // 新增：地理位置描述
+                 locationDescription: '', // Neu: Geografische Lagebeschreibung
         images: [],
-        locationText: 'Verkehrsgünstige Lage',
+                 locationText: '',
         locationImage: 'https://source.unsplash.com/800x600/?city-map',
         floorPlanImage: 'https://source.unsplash.com/800x600/?floor-plan',
-        floorPlanDetails: [
-          '3 Schlafzimmer, Hauptschlafzimmer mit eigenem Bad',
-          '2 Badezimmer, Trocken- und Nassbereich getrennt',
-          'Offene Küche, Essbereich integriert',
-          'Wohnzimmer geräumig, viel Tageslicht',
-          'Balkon verbindet Wohnzimmer und Hauptschlafzimmer',
-          'Abstellraum und Kleiderschrank vorhanden'
-        ],
+                 floorPlanDetails: [
+           '3 Zimmer, Hauptschlafzimmer mit eigenem Bad',
+           '2 Badezimmer, Trocken- und Nassbereich getrennt',
+           'Offene Küche, Essbereich integriert',
+           'Wohnzimmer geräumig, viel Tageslicht',
+           'Balkon verbindet Wohnzimmer und Hauptschlafzimmer',
+           'Abstellraum und Kleiderschrank vorhanden'
+         ],
         contacts: [
           {
             name: 'Herr Zhang',
@@ -167,7 +149,7 @@ export default function ExposeGenerationPage() {
             avatar: 'https://source.unsplash.com/100x100/?portrait-2'
           }
         ],
-        agentInfo: undefined
+                 agentInfo: undefined
       };
     }
     
@@ -190,31 +172,31 @@ export default function ExposeGenerationPage() {
         zimmer: data.rooms?.toString() || '5',
         schlafzimmer: data.bedrooms?.toString() || '3',
         badezimmer: data.bathrooms?.toString() || '2',
-        heizungssystem: data.heating_system || 'Fußbodenheizung',
+        heizungssystem: translateToGerman('heating_system', data.heating_system || ''),
         energieklasse: data.energy_certificate || 'A',
-        energietraeger: data.energy_source || 'Erdgas',
-        parkplatz: data.parking || 'Garage',
-        renovierungsqualitaet: data.renovation_quality || 'Hochwertig',
-        bodenbelag: data.floor_type || 'Parkett'
+        energietraeger: translateToGerman('energy_source', data.energy_source || ''),
+        parkplatz: translateToGerman('parking', data.parking || ''),
+        renovierungsqualitaet: translateToGerman('renovation_quality', data.renovation_quality || ''),
+        bodenbelag: translateToGerman('floor_type', data.floor_type || '')
       },
       description: data.description || 'Dies ist eine hochwertige Immobilie in einer erstklassigen Lage mit ausgezeichneter Verkehrsanbindung. Die Wohnung ist durchdacht gestaltet, bietet viel Tageslicht und verfügt über eine vollständige Ausstattung.',
-      locationDescription: data.locationDescription || '', // 新增：地理位置描述
+             locationDescription: data.locationDescription || '', // Neu: Geografische Lagebeschreibung
       images: (data.images || []).map((img, index: number) => ({
         id: `img_${index}`,
         url: img.url,
         alt: `Immobilienbild ${index + 1}`
       })),
-      locationText: 'Verkehrsgünstige Lage',
-      locationImage: data.images?.[0]?.url || 'https://source.unsplash.com/800x600/?city-map',
-      floorPlanImage: data.images?.[1]?.url || 'https://source.unsplash.com/800x600/?floor-plan',
-      floorPlanDetails: [
-        `${data.rooms || 3} Schlafzimmer, Hauptschlafzimmer mit eigenem Bad`,
-        `${Math.max(1, Math.floor((data.rooms || 3) * 0.4))} Badezimmer, Trocken- und Nassbereich getrennt`,
-        'Offene Küche, Essbereich integriert',
-        'Wohnzimmer geräumig, viel Tageslicht',
-        'Balkon verbindet Wohnzimmer und Hauptschlafzimmer',
-        'Abstellraum und Kleiderschrank vorhanden'
-      ],
+             locationText: data.locationDescription || 'Verkehrsgünstige Lage',
+       locationImage: data.images?.[0]?.url || 'https://source.unsplash.com/800x600/?city-map',
+             floorPlanImage: data.floorPlanImage || 'https://source.unsplash.com/800x600/?floor-plan',
+             floorPlanDetails: [
+         `${data.rooms || 3} Zimmer, Hauptschlafzimmer mit eigenem Bad`,
+         `${data.bathrooms || 2} Badezimmer, Trocken- und Nassbereich getrennt`,
+         'Offene Küche, Essbereich integriert',
+         'Wohnzimmer geräumig, viel Tageslicht',
+         'Balkon verbindet Wohnzimmer und Hauptschlafzimmer',
+         'Abstellraum und Kleiderschrank vorhanden'
+       ],
       contacts: [
         {
           name: data.contact_person || 'Herr Zhang',
@@ -249,8 +231,8 @@ export default function ExposeGenerationPage() {
           setPreviewData(preview);
         }
       } catch (err) {
-        console.error('获取状态失败:', err);
-        setError('获取生成状态失败');
+        console.error('Statusabfrage fehlgeschlagen:', err);
+        setError('Statusabfrage fehlgeschlagen');
       } finally {
         setIsLoading(false);
       }
@@ -274,7 +256,7 @@ export default function ExposeGenerationPage() {
             setPreviewData(preview);
           }
         } catch (err) {
-          console.error('检查状态失败:', err);
+          console.error('Statusprüfung fehlgeschlagen:', err);
         }
       }
     }, 3000);
@@ -294,8 +276,8 @@ export default function ExposeGenerationPage() {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (error) {
-      console.error('下载失败:', error);
-      alert('下载失败，请重试');
+      console.error('Download fehlgeschlagen:', error);
+      alert('Download fehlgeschlagen, bitte versuchen Sie es erneut');
     }
   };
 
@@ -478,80 +460,32 @@ export default function ExposeGenerationPage() {
                   <p className="text-gray-600 mt-2">Dies ist Ihre professionelle Exposé Vorschau</p>
                 </div>
                 
-                {/* 模板选择 */}
-                <div className="flex items-center gap-4">
-                  <span className="text-sm font-medium text-gray-700">Vorlage auswählen:</span>
-                  <div className="flex bg-gray-100 rounded-lg p-1">
-                    <button
-                      onClick={() => setSelectedTemplate('a4')}
-                      className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                        selectedTemplate === 'a4'
-                          ? 'bg-white text-blue-600 shadow-sm'
-                          : 'text-gray-600 hover:text-gray-900'
-                      }`}
-                    >
-                      A4-Klassisch
-                    </button>
-                    <button
-                      onClick={() => setSelectedTemplate('ppt')}
-                      className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                        selectedTemplate === 'ppt'
-                          ? 'bg-white text-blue-600 shadow-sm'
-                          : 'text-blue-600 shadow-sm'
-                      }`}
-                    >
-                      PowerPoint-Stil
-                    </button>
-                  </div>
-                </div>
+
               </div>
             </div>
             
-            {/* 使用选择的模板展示预览 */}
+            {/* 使用 PPT 模板展示预览 */}
             <div className="bg-gray-50">
-              {selectedTemplate === 'a4' ? (
-                <Expose_A4_Classic
-                  data={transformPreviewDataForExpose(previewData)}
-                  showPrintButton={false}
-                  onPrint={handlePrint}
-                  onShare={() => {
-                    if (navigator.share) {
-                      navigator.share({
-                        title: previewData.title || 'Immobilienpräsentation',
-                        text: 'Siehe diese beeindruckende Immobilienpräsentation',
-                        url: window.location.href,
-                      });
-                    } else {
-                      navigator.clipboard.writeText(window.location.href);
-                      alert('Link in die Zwischenablage kopiert');
-                    }
-                  }}
-                  onContact={() => {
-                    alert('Kontaktfunktion: Anruf 138-0013-8000');
-                  }}
-                />
-              ) : (
-                <Expose_PPT_Classic
-                  data={transformPreviewDataForPPT(previewData)}
-                  showNavigation={false}
-                  onPrint={handlePrint}
-                  onShare={() => {
-                    if (navigator.share) {
-                      navigator.share({
-                        title: previewData.title || 'Immobilienpräsentation',
-                        text: 'Siehe diese beeindruckende Immobilienpräsentation',
-                        url: window.location.href,
-                      });
-                    } else {
-                      navigator.clipboard.writeText(window.location.href);
-                      alert('Link in die Zwischenablage kopiert');
-                    }
-                  }}
-                  onContact={() => {
-                    alert('Kontaktfunktion: Anruf 138-0013-8000');
-                  }}
-                />
-              )}
+              <Expose_PPT_Classic
+                data={transformPreviewDataForPPT(previewData)}
+                showNavigation={false}
+                onPrint={handlePrint}
+                onShare={() => {
+                  if (navigator.share) {
+                    navigator.share({
+                      title: previewData.title || 'Immobilienpräsentation',
+                      text: 'Siehe diese beeindruckende Immobilienpräsentation',
+                      url: window.location.href,
+                    });
+                  } else {
+                    navigator.clipboard.writeText(window.location.href);
+                    alert('Link in die Zwischenablage kopiert');
+                  }
+                }}
+                onContact={() => {
+                  alert('Kontaktfunktion: Anruf 138-0013-8000');
+                }}
+              />
             </div>
           </div>
         )}
