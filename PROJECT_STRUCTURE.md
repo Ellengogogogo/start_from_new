@@ -99,45 +99,77 @@ backend/
 │   ├── __init__.py
 │   ├── main.py                       # 主应用入口
 │   ├── core/                         # 核心配置
+│   │   ├── __init__.py
 │   │   ├── config.py                 # 应用配置
 │   │   └── database.py               # 数据库连接
 │   ├── models/                       # 数据模型
+│   ├── routes/                       # 路由管理
+│   │   ├── __init__.py
+│   │   ├── routers.py                # 主路由配置 ⭐ 重构
+│   │   └── endpoints/                # 端点实现 ⭐ 重构
+│   │       ├── auth.py               # 认证相关端点
+│   │       ├── cache.py              # 缓存管理端点
+│   │       ├── expose_generation.py  # Exposé 生成端点
+│   │       ├── images.py             # 图片处理端点
+│   │       └── properties.py         # 房源管理端点
 │   ├── schemas/                      # Pydantic模式
-│   ├── services/                     # 业务逻辑服务
-│   └── routes/                       # API路由
+│   │   ├── __init__.py
+│   │   ├── auth.py                   # 认证模式
+│   │   ├── expose.py                 # Exposé 模式
+│   │   ├── image.py                  # 图片模式
+│   │   └── property.py               # 房源模式
+│   └── services/                     # 业务逻辑服务
 │       ├── __init__.py
-│       ├── auth.py                   # 认证相关
-│       ├── properties.py             # 房源管理
-│       ├── images.py                 # 图片处理
-│       ├── cache.py                  # 缓存管理 ⭐ 新增
-│       └── expose_generation.py      # Expose生成路由 ⭐ 主要实现
+│       ├── auth_service.py           # 认证服务
+│       ├── expose_service.py         # Exposé 服务
+│       ├── image_service.py          # 图片服务
+│       └── property_service.py       # 房源服务
 ├── static/                           # 静态文件
 │   └── cache/                        # 缓存图片目录
 ├── requirements.txt                   # Python依赖
 ├── pyproject.toml                    # Poetry配置
 ├── Dockerfile                        # 容器化配置
-└── test_server.py                    # 测试服务器脚本 ⭐ 新增
+└── test_server.py                    # 测试服务器脚本
+```
+
+### 路由架构重构 ⭐ 新增
+
+#### 新的路由组织方式
+- **`routers.py`**: 统一管理所有路由，使用 `/api/v1` 前缀
+- **`endpoints/`**: 所有端点实现都集中在这个文件夹中
+- **模块化设计**: 每个功能模块都有独立的端点文件
+- **统一前缀**: 所有 API 都通过 `/api/v1` 访问，便于版本管理
+
+#### 路由结构
+```
+/api/v1/
+├── auth/                    # 认证相关
+├── cache/                   # 缓存管理
+├── expose_generation/       # Exposé 生成
+├── images/                  # 图片管理
+└── properties/              # 房源管理
 ```
 
 ### API端点
 
-#### 缓存管理 (`/api/cache`)
-- `POST /api/cache/property-data` - 缓存房源数据
-- `GET /api/cache/property-data/{id}` - 获取缓存的房源数据
-- `POST /api/cache/property-images/{id}` - 缓存房源图片
-- `GET /api/cache/property-images/{id}` - 获取缓存的图片
+#### 统一路由结构 (`/api/v1`)
+所有 API 端点现在都通过 `/api/v1` 前缀进行组织：
 
-#### Expose生成 (`/api/expose`)
-- `POST /api/expose/generate/{property_id}` - 开始生成expose
-- `GET /api/expose/status/{expose_id}` - 获取生成状态
-- `GET /api/expose/preview/{expose_id}` - 获取预览数据
-- `GET /api/expose/download/{expose_id}` - 下载PDF
-- `DELETE /api/expose/{expose_id}` - 删除expose
+- **认证管理** (`/api/v1/auth`)
+- **缓存管理** (`/api/v1/cache`)
+- **Exposé 生成** (`/api/v1/expose_generation`)
+- **图片管理** (`/api/v1/images`)
+- **房源管理** (`/api/v1/properties`)
 
-#### 主要业务 (`/api/v1`)
+#### 主要端点
 - `POST /api/v1/properties/` - 创建房源
 - `GET /api/v1/properties/` - 获取房源列表
 - `GET /api/v1/properties/{id}` - 获取特定房源
+- `POST /api/v1/cache/property-data` - 缓存房源数据
+- `POST /api/v1/cache/property-images/{id}` - 缓存房源图片
+- `POST /api/v1/expose_generation/generate/{property_id}` - 开始生成 Exposé
+- `GET /api/v1/expose_generation/status/{expose_id}` - 获取生成状态
+- `GET /api/v1/expose_generation/preview/{expose_id}` - 获取预览数据
 
 ## 🔧 Worker (Python Background Tasks)
 
@@ -177,7 +209,7 @@ infra/
 ```bash
 cd backend
 .\.venv\Scripts\activate  # Windows
-python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 ### 2. 启动前端
@@ -187,11 +219,19 @@ npm install
 npm run dev
 ```
 
-### 3. 使用Docker Compose
-```bash
-cd infra
-docker-compose up -d
-```
+### 3. 访问应用
+- **前端**: http://localhost:3000
+- **后端 API**: http://localhost:8000
+- **API 文档**: http://localhost:8000/docs
+- **ReDoc 文档**: http://localhost:8000/redoc
+
+### 4. 新的 API 端点访问
+所有 API 现在都通过 `/api/v1` 前缀访问：
+- 认证: http://localhost:8000/api/v1/auth/
+- 缓存: http://localhost:8000/api/v1/cache/
+- Exposé 生成: http://localhost:8000/api/v1/expose_generation/
+- 图片: http://localhost:8000/api/v1/images/
+- 房源: http://localhost:8000/api/v1/properties/
 
 ## 🔑 环境变量
 

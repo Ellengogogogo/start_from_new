@@ -12,19 +12,19 @@ const api = axios.create({
 
 // 缓存房源数据
 export const cachePropertyData = async (data: Omit<PropertyFormData, 'images'>): Promise<{ id: string }> => {
-  const response = await api.post('/api/cache/property-data', data);
+  const response = await api.post('/app/endpoints/cache/property-data', data);
   return response.data;
 };
 
 // 获取缓存的房源数据
 export const getCachedPropertyData = async (id: string): Promise<PropertyData> => {
-  const response = await api.get(`/api/cache/property-data/${id}`);
+  const response = await api.get(`/app/endpoints/cache/property-data/${id}`);
   return response.data;
 };
 
 // 获取缓存的房源图片
 export const getCachedPropertyImages = async (id: string): Promise<PropertyImage[]> => {
-  const response = await api.get(`/api/cache/property-images/${id}`);
+  const response = await api.get(`/app/endpoints/cache/property-images/${id}`);
   return response.data;
 };
 
@@ -45,7 +45,7 @@ export const uploadPropertyImages = async (
     formData.append('image_type', imageType);
   }
 
-  const response = await api.post(`/api/cache/property-images/${propertyId}`, formData, {
+  const response = await api.post(`/app/endpoints/cache/property-images/${propertyId}`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -62,19 +62,19 @@ export const uploadPropertyImages = async (
 
 // 生成专业expose
 export const generateExpose = async (propertyId: string): Promise<{ exposeId: string; status: string }> => {
-  const response = await api.post(`/api/expose/generate/${propertyId}`);
+  const response = await api.post(`/app/endpoints/expose_generation/generate/${propertyId}`);
   return response.data;
 };
 
 // 获取expose状态
 export const getExposeStatus = async (exposeId: string): Promise<{ status: string; progress?: number }> => {
-  const response = await api.get(`/api/expose/status/${exposeId}`);
+  const response = await api.get(`/app/endpoints/expose_generation/status/${exposeId}`);
   return response.data;
 };
 
 // 下载PDF
 export const downloadPDF = async (exposeId: string): Promise<Blob> => {
-  const response = await api.get(`/api/expose/download/${exposeId}`, {
+  const response = await api.get(`/app/endpoints/expose_generation/download/${exposeId}`, {
     responseType: 'blob',
   });
   return response.data;
@@ -116,7 +116,7 @@ export const getExposePreview = async (exposeId: string): Promise<{
     isPrimary: boolean;
   }>;
 }> => {
-  const response = await api.get(`/api/expose/preview/${exposeId}`);
+  const response = await api.get(`/app/endpoints/expose_generation/preview/${exposeId}`);
   return response.data;
 };
 
@@ -125,7 +125,7 @@ export const generateAIDescription = async (
   propertyData: Omit<PropertyFormData, 'images'>,
   style: 'formal' | 'marketing' | 'family' = 'formal'
 ): Promise<{ suggested_description: string; style: string; message: string }> => {
-  const response = await api.post('/api/properties/generate-description', {
+  const response = await api.post('/app/endpoints/properties/generate-description', {
     ...propertyData,
     property_type: propertyData.property_type,
     status: 'for_sale',

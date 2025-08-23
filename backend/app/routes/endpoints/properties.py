@@ -119,36 +119,3 @@ async def delete_property(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)
         )
-
-
-@router.post("/generate-description", status_code=status.HTTP_200_OK)
-async def generate_property_description(
-    property_data: PropertyCreate,
-    style: str = "formal",
-    db: AsyncSession = Depends(get_db)
-):
-    """Generate AI description for a property"""
-    try:
-        # Validate style parameter
-        valid_styles = ["formal", "marketing", "family"]
-        if style not in valid_styles:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Invalid style. Must be one of: {', '.join(valid_styles)}"
-            )
-        
-        property_service = PropertyService(db)
-        description = await property_service.generate_ai_description(property_data, style)
-        
-        return {
-            "suggested_description": description,
-            "style": style,
-            "message": "Description generated successfully"
-        }
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e)
-        )

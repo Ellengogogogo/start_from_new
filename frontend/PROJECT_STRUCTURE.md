@@ -1,7 +1,8 @@
-# 前端项目结构说明
+# 项目结构说明
 
-## 目录结构
+## 项目目录结构
 
+### 前端 (Frontend)
 ```
 frontend/
 ├── src/
@@ -11,11 +12,24 @@ frontend/
 │   │   ├── globals.css               # 全局样式
 │   │   └── properties/               # 房源相关页面
 │   │       ├── new/                  # 创建新房源
-│   │       │   └── page.tsx         # 多步骤表单页面
+│   │       │   ├── layout.tsx        # 布局组件
+│   │       │   ├── page.tsx          # 多步骤表单页面
+│   │       │   ├── user-type/        # 用户类型选择
+│   │       │   │   └── page.tsx      # 用户类型选择页面
+│   │       │   └── agent-info/       # 中介信息
+│   │       │       └── page.tsx      # 中介信息填写页面
 │   │       └── [id]/                 # 动态路由 - 房源ID
-│   │           └── preview/          # 房源预览
-│   │               └── page.tsx      # 预览页面
-│   ├── components/                    # 可复用组件 (待扩展)
+│   │           ├── preview/          # 房源预览
+│   │           │   └── page.tsx      # 预览页面
+│   │           └── expose/           # Exposé 生成
+│   │               └── [exposeId]/   # 动态路由 - Exposé ID
+│   │                   └── page.tsx  # Exposé 展示页面
+│   ├── components/                    # 可复用组件
+│   │   ├── atoms/                    # 原子组件
+│   │   ├── molecules/                # 分子组件
+│   │   ├── organisms/                # 有机组件
+│   │   └── templates/                # 模板组件
+│   │       └── Expose_PPT_Classic.tsx # PPT 风格 Exposé 模板
 │   ├── hooks/                        # 自定义 Hooks
 │   │   ├── useMultiStepForm.ts      # 多步骤表单管理
 │   │   └── useUploadImages.ts       # 图片上传管理
@@ -26,7 +40,6 @@ frontend/
 │   └── lib/                         # 工具库
 │       └── validations.ts           # 表单验证 Schema
 ├── public/                           # 静态资源
-│   └── placeholder-house.jpg        # 占位图片
 ├── package.json                      # 项目依赖
 ├── tsconfig.json                     # TypeScript 配置
 ├── next.config.ts                    # Next.js 配置
@@ -35,30 +48,90 @@ frontend/
 └── README.md                        # 项目说明
 ```
 
+### 后端 (Backend)
+```
+backend/
+├── app/
+│   ├── __init__.py
+│   ├── main.py                       # 主应用入口
+│   ├── core/                         # 核心配置
+│   │   ├── __init__.py
+│   │   ├── config.py                 # 配置管理
+│   │   └── database.py               # 数据库配置
+│   ├── models/                       # 数据模型
+│   ├── routes/                       # 路由管理
+│   │   ├── __init__.py
+│   │   ├── routers.py                # 主路由配置
+│   │   └── endpoints/                # 端点实现
+│   │       ├── auth.py               # 认证相关端点
+│   │       ├── cache.py              # 缓存管理端点
+│   │       ├── expose_generation.py  # Exposé 生成端点
+│   │       ├── images.py             # 图片管理端点
+│   │       └── properties.py         # 房源管理端点
+│   ├── schemas/                      # 数据模式
+│   │   ├── __init__.py
+│   │   ├── auth.py                   # 认证模式
+│   │   ├── expose.py                 # Exposé 模式
+│   │   ├── image.py                  # 图片模式
+│   │   └── property.py               # 房源模式
+│   └── services/                     # 业务逻辑
+│       ├── __init__.py
+│       ├── auth_service.py           # 认证服务
+│       ├── expose_service.py         # Exposé 服务
+│       ├── image_service.py          # 图片服务
+│       └── property_service.py       # 房源服务
+├── static/                           # 静态文件
+│   └── cache/                        # 图片缓存目录
+├── Dockerfile                        # Docker 配置
+├── pyproject.toml                    # Python 项目配置
+├── requirements.txt                  # Python 依赖
+└── test_server.py                    # 测试服务器
+```
+
 ## 核心文件说明
 
-### 1. 主页面 (`src/app/page.tsx`)
+### 前端核心文件
+
+#### 1. 主页面 (`src/app/page.tsx`)
 - 展示应用介绍和功能特性
 - 提供导航到房源创建页面的链接
 - 响应式设计，支持移动端和桌面端
+- 德语界面，专业房地产风格设计
 
-### 2. 房源创建表单 (`src/app/properties/new/page.tsx`)
+#### 2. 用户类型选择 (`src/app/properties/new/user-type/page.tsx`)
+- 用户选择"私人卖家"或"房地产中介"
+- 根据选择跳转到相应页面
+- 专业房地产设计风格
+
+#### 3. 中介信息填写 (`src/app/properties/new/agent-info/page.tsx`)
+- 房地产中介填写公司信息
+- 上传公司logo
+- 填写负责人、地址、网站、电话等信息
+
+#### 4. 房源创建表单 (`src/app/properties/new/page.tsx`)
 - **多步骤表单设计**：
   - 步骤1: 基本信息（标题、地址、价格）
   - 步骤2: 房屋详情（房间数、面积、建成年份）
-  - 步骤3: 描述文本（支持AI自动生成）
-  - 步骤4: 图片上传（多张图片，预览功能）
-- **表单验证**: 使用 Zod 进行数据验证
+  - 步骤3: 描述文本（支持AI自动生成，包含地理位置描述）
+  - 步骤4: 图片上传（多张图片 + 平面图上传）
+  - 步骤5: 联系信息
+- **表单验证**: 使用 Zod 进行数据验证（德语错误提示）
 - **状态管理**: React Hook Form 管理表单状态
 - **图片处理**: 支持多图片上传、预览、删除
 - **进度指示器**: 可视化步骤进度
 
-### 3. 房源预览页面 (`src/app/properties/[id]/preview/page.tsx`)
+#### 5. 房源预览页面 (`src/app/properties/[id]/preview/page.tsx`)
 - **完整信息展示**: 房源的所有详细信息
 - **图片画廊**: 主图片 + 缩略图列表
 - **图片模态框**: 点击图片可全屏查看
 - **联系信息**: 经纪人联系方式
 - **操作按钮**: 编辑、分享、下载等
+
+#### 6. Exposé 展示页面 (`src/app/properties/[id]/expose/[exposeId]/page.tsx`)
+- 展示生成的 Exposé
+- 使用 PPT 风格模板
+- 包含所有房源信息和图片
+- 支持平面图显示
 
 ### 4. 自定义 Hooks
 
