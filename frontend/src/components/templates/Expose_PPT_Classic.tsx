@@ -117,6 +117,16 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
       margin-bottom: 2rem;
       position: relative;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      font-family: "Garamond", "Times New Roman", serif;
+    }
+    
+    /* 全局字体设置 */
+    .expose-ppt-container {
+      font-family: "Garamond", "Times New Roman", serif;
+    }
+    
+    .expose-ppt-container * {
+      font-family: "Garamond", "Times New Roman", serif;
     }
     
     /* Footer 样式 */
@@ -134,11 +144,13 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
       padding: 0 24px;
       font-size: 14px;
       color: #6b7280;
+      font-family: "Garamond", "Times New Roman", serif;
     }
     
     .footer-left {
       font-weight: 500;
       color: #374151;
+      font-family: "Garamond", "Times New Roman", serif;
     }
     
     .footer-right {
@@ -147,16 +159,17 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
       background: rgba(59, 130, 246, 0.1);
       padding: 4px 12px;
       border-radius: 12px;
+      font-family: "Garamond", "Times New Roman", serif;
     }
   `;
 
   return (
-    <div className={`expose-ppt-container ${className}`}>
+    <div className={`expose-ppt-container ${className}`} style={{ fontFamily: '"Garamond", "Times New Roman", serif' }}>
       <style jsx>{printStyles}</style>
       
       {/* 导航栏 */}
       {showNavigation && (
-        <div className="no-print sticky top-0 z-40 bg-white border-b border-gray-200 px-6 py-4 shadow-sm">
+        <div className="no-print sticky top-0 z-40 bg-white border-b border-gray-200 px-6 py-4 shadow-sm" style={{ fontFamily: '"Garamond", "Times New Roman", serif' }}>
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             <h2 className="text-lg font-semibold text-gray-900">PowerPoint Stil Exposé</h2>
             <div className="flex gap-3">
@@ -235,7 +248,11 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
                   'Immobilienübersicht',
                   'Eckdaten',
                   'Immobiliendetails',
-                  'Bildergalerie',
+                  'Wohnzimmer',
+                  'Küche',
+                  'Schlafzimmer & Arbeitszimmer',
+                  'Bad',
+                  'Balkon & Draußen',
                   'Lagebeschreibung',
                   'Grundriss',
                   'Kontaktinformationen'
@@ -278,8 +295,8 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
         </div>
 
         {/* 第3页 - 关键数据 */}
-        <div className="slide w-full h-screen bg-white p-12 flex items-center pb-20" 
-             style={{ aspectRatio: '16/9', minHeight: '1080px' }}>
+        <div className="slide w-full h-screen p-12 flex items-center pb-20" 
+             style={{ aspectRatio: '16/9', minHeight: '1080px', backgroundColor: '#DCDCDC' }}>
           <div className="w-full max-w-6xl mx-auto">
             <h2 className="text-4xl font-serif font-bold text-gray-900 mb-12 text-center">Eckdaten</h2>
             
@@ -350,12 +367,12 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
         </div>
 
         {/* 第4页 - 房源描述 */}
-        <div className="slide w-full h-screen bg-gray-50 p-12 flex items-center pb-20" 
-             style={{ aspectRatio: '16/9', minHeight: '1080px' }}>
+        <div className="slide w-full h-screen p-12 flex items-center pb-20" 
+             style={{ aspectRatio: '16/9', minHeight: '1080px', backgroundColor: '#DCDCDC' }}>
           <div className="w-full max-w-5xl mx-auto">
             <h2 className="text-4xl font-serif font-bold text-gray-900 mb-12 text-center">Object beschreibung</h2>
             
-            <div className="bg-gray-50 rounded-lg p-8">
+            <div className="bg-white rounded-lg p-8" style={{backgroundColor: '#DCDCDC'}}>
               <p className="text-xl text-gray-700 leading-relaxed text-justify">
                 {data.description || 'Dies ist eine hochwertige Immobilie in einer erstklassigen Lage mit ausgezeichneter Verkehrsanbindung. Die Wohnung ist durchdacht gestaltet, bietet viel Tageslicht und verfügt über eine vollständige Ausstattung. Die Umgebung ist wunderschön, das Leben ist bequem und es ist eine ideale Wahl zum Wohnen. Die Immobilie ist gut gepflegt, die Renovierungsqualität ist ausgezeichnet und sie kann direkt bezogen werden.'}
                 </p>
@@ -373,26 +390,61 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
           </div>
         </div>
 
-        {/* 第5页 - 图片画廊 */}
+        {/* 第5页 - Wohnzimmer */}
         <div className="slide w-full h-screen bg-white p-12 flex items-center pb-20" 
              style={{ aspectRatio: '16/9', minHeight: '1080px' }}>
           <div className="w-full max-w-6xl mx-auto">
-            <h2 className="text-4xl font-serif font-bold text-gray-900 mb-12 text-center">Impressionen</h2>
+            <h2 className="text-4xl font-serif font-bold text-gray-900 mb-8 text-center">Wohnzimmer</h2>
             
-            <div className="grid grid-cols-3 gap-6">
-              {(data.images?.slice(0, 6) || Array(6).fill(null)).map((image, index) => (
-                <div key={index} className="aspect-video bg-gray-200 rounded-lg shadow-lg overflow-hidden">
+            <div className="grid grid-cols-2 gap-12 items-center">
+              {/* 左侧图片展示区域 */}
+              <div className="space-y-4">
+                <div className="aspect-video bg-gray-200 rounded-lg shadow-lg overflow-hidden">
                   <img 
-                    src={image?.url ? getFullImageUrl(image.url) : `https://source.unsplash.com/800x600/?house-${index + 1}`} 
-                    alt={image?.alt || `Immobilienbild ${index + 1}`}
+                    src={data.images?.[0]?.url ? getFullImageUrl(data.images[0].url) : 'https://source.unsplash.com/800x600/?living-room'} 
+                    alt="Wohnzimmer"
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
-                      target.src = `https://source.unsplash.com/800x600/?house-${index + 1}`;
+                      target.src = 'https://source.unsplash.com/800x600/?living-room';
                     }}
                   />
                 </div>
-              ))}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="aspect-video bg-gray-200 rounded-lg shadow-lg overflow-hidden">
+                    <img 
+                      src={data.images?.[1]?.url ? getFullImageUrl(data.images[1].url) : 'https://source.unsplash.com/400x300/?living-room-detail'} 
+                      alt="Wohnzimmer Detail"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = 'https://source.unsplash.com/400x300/?living-room-detail';
+                      }}
+                    />
+                  </div>
+                  <div className="aspect-video bg-gray-200 rounded-lg shadow-lg overflow-hidden">
+                    <img 
+                      src={data.images?.[2]?.url ? getFullImageUrl(data.images[2].url) : 'https://source.unsplash.com/400x300/?living-room-view'} 
+                      alt="Wohnzimmer Ausblick"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = 'https://source.unsplash.com/400x300/?living-room-view';
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              {/* 右侧介绍文字 */}
+              <div className="space-y-6">
+                <h3 className="text-2xl font-serif font-semibold text-gray-800">Gemütliches Wohnambiente</h3>
+                <div className="space-y-4 text-lg text-gray-700 leading-relaxed">
+                  <p>Das großzügige Wohnzimmer bietet viel Platz für Entspannung und Geselligkeit. Die helle Raumgestaltung mit großen Fenstern sorgt für eine angenehme Atmosphäre.</p>
+                  <p>Hochwertige Materialien und durchdachte Details schaffen ein elegantes Ambiente, das zum Verweilen einlädt. Der Raum ist ideal für Familienleben und Unterhaltung.</p>
+                  <p>Die flexible Einrichtung ermöglicht verschiedene Nutzungsmöglichkeiten und passt sich Ihren individuellen Bedürfnissen an.</p>
+                </div>
+              </div>
             </div>
           </div>
           
@@ -402,12 +454,288 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
               {data.propertyName || 'Immobilienname'}
             </div>
             <div className="footer-right">
-              5 / 8
+              5 / 12
             </div>
           </div>
         </div>
 
-        {/* 第6页 - 位置信息 */}
+        {/* 第6页 - Küche */}
+        <div className="slide w-full h-screen bg-white p-12 flex items-center pb-20" 
+             style={{ aspectRatio: '16/9', minHeight: '1080px' }}>
+          <div className="w-full max-w-6xl mx-auto">
+            <h2 className="text-4xl font-serif font-bold text-gray-900 mb-8 text-center">Küche</h2>
+            
+            <div className="grid grid-cols-2 gap-12 items-center">
+              {/* 左侧图片展示区域 */}
+              <div className="space-y-4">
+                <div className="aspect-video bg-gray-200 rounded-lg shadow-lg overflow-hidden">
+                  <img 
+                    src={data.images?.[3]?.url ? getFullImageUrl(data.images[3].url) : 'https://source.unsplash.com/800x600/?kitchen'} 
+                    alt="Küche"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = 'https://source.unsplash.com/800x600/?kitchen';
+                    }}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="aspect-video bg-gray-200 rounded-lg shadow-lg overflow-hidden">
+                    <img 
+                      src={data.images?.[4]?.url ? getFullImageUrl(data.images[4].url) : 'https://source.unsplash.com/400x300/?kitchen-appliances'} 
+                      alt="Küchengeräte"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = 'https://source.unsplash.com/400x300/?kitchen-appliances';
+                      }}
+                    />
+                  </div>
+                  <div className="aspect-video bg-gray-200 rounded-lg shadow-lg overflow-hidden">
+                    <img 
+                      src={data.images?.[5]?.url ? getFullImageUrl(data.images[5].url) : 'https://source.unsplash.com/400x300/?kitchen-storage'} 
+                      alt="Küchenlagerung"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = 'https://source.unsplash.com/400x300/?kitchen-storage';
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              {/* 右侧介绍文字 */}
+              <div className="space-y-6">
+                <h3 className="text-2xl font-serif font-semibold text-gray-800">Moderne Einbauküche</h3>
+                <div className="space-y-4 text-lg text-gray-700 leading-relaxed">
+                  <p>Die vollausgestattete Einbauküche überzeugt durch funktionales Design und hochwertige Ausstattung. Alle modernen Geräte sind bereits integriert.</p>
+                  <p>Der großzügige Arbeitsbereich bietet optimale Bedingungen für das Kochen und Backen. Die praktische Anordnung der Schränke und Schubladen sorgt für Ordnung.</p>
+                  <p>Ein gemütlicher Essbereich lädt zum gemeinsamen Frühstück oder Abendessen ein und schafft eine warme, familiäre Atmosphäre.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Footer */}
+          <div className="slide-footer">
+            <div className="footer-left">
+              {data.propertyName || 'Immobilienname'}
+            </div>
+            <div className="footer-right">
+              6 / 12
+            </div>
+          </div>
+        </div>
+
+        {/* 第7页 - Schlafzimmer & Arbeitszimmer */}
+        <div className="slide w-full h-screen bg-white p-12 flex items-center pb-20" 
+             style={{ aspectRatio: '16/9', minHeight: '1080px' }}>
+          <div className="w-full max-w-6xl mx-auto">
+            <h2 className="text-4xl font-serif font-bold text-gray-900 mb-8 text-center">Schlafzimmer & Arbeitszimmer</h2>
+            
+            <div className="grid grid-cols-2 gap-12 items-center">
+              {/* 左侧图片展示区域 */}
+              <div className="space-y-4">
+                <div className="aspect-video bg-gray-200 rounded-lg shadow-lg overflow-hidden">
+                  <img 
+                    src={data.images?.[6]?.url ? getFullImageUrl(data.images[6].url) : 'https://source.unsplash.com/800x600/?bedroom'} 
+                    alt="Schlafzimmer"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = 'https://source.unsplash.com/800x600/?bedroom';
+                    }}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="aspect-video bg-gray-200 rounded-lg shadow-lg overflow-hidden">
+                    <img 
+                      src={data.images?.[7]?.url ? getFullImageUrl(data.images[7].url) : 'https://source.unsplash.com/400x300/?home-office'} 
+                      alt="Arbeitszimmer"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = 'https://source.unsplash.com/400x300/?home-office';
+                      }}
+                    />
+                  </div>
+                  <div className="aspect-video bg-gray-200 rounded-lg shadow-lg overflow-hidden">
+                    <img 
+                      src={data.images?.[8]?.url ? getFullImageUrl(data.images[8].url) : 'https://source.unsplash.com/400x300/?bedroom-detail'} 
+                      alt="Schlafzimmer Detail"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = 'https://source.unsplash.com/400x300/?bedroom-detail';
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              {/* 右侧介绍文字 */}
+              <div className="space-y-6">
+                <h3 className="text-2xl font-serif font-semibold text-gray-800">Ruheoase & Produktivität</h3>
+                <div className="space-y-4 text-lg text-gray-700 leading-relaxed">
+                  <p>Das geräumige Hauptschlafzimmer bietet einen Rückzugsort der Ruhe und Entspannung. Die ruhige Lage und die hochwertige Ausstattung garantieren erholsamen Schlaf.</p>
+                  <p>Ein separates Arbeitszimmer ermöglicht konzentriertes Arbeiten von zu Hause aus. Die helle Raumgestaltung und die praktische Einrichtung schaffen optimale Arbeitsbedingungen.</p>
+                  <p>Beide Räume sind mit ausreichend Stauraum ausgestattet und bieten viel Flexibilität für individuelle Einrichtungsvorlieben.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Footer */}
+          <div className="slide-footer">
+            <div className="footer-left">
+              {data.propertyName || 'Immobilienname'}
+            </div>
+            <div className="footer-right">
+              7 / 12
+            </div>
+          </div>
+        </div>
+
+        {/* 第8页 - Bad */}
+        <div className="slide w-full h-screen bg-white p-12 flex items-center pb-20" 
+             style={{ aspectRatio: '16/9', minHeight: '1080px' }}>
+          <div className="w-full max-w-6xl mx-auto">
+            <h2 className="text-4xl font-serif font-bold text-gray-900 mb-8 text-center">Bad</h2>
+            
+            <div className="grid grid-cols-2 gap-12 items-center">
+              {/* 左侧图片展示区域 */}
+              <div className="space-y-4">
+                <div className="aspect-video bg-gray-200 rounded-lg shadow-lg overflow-hidden">
+                  <img 
+                    src={data.images?.[9]?.url ? getFullImageUrl(data.images[9].url) : 'https://source.unsplash.com/800x600/?bathroom'} 
+                    alt="Bad"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = 'https://source.unsplash.com/800x600/?bathroom';
+                    }}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="aspect-video bg-gray-200 rounded-lg shadow-lg overflow-hidden">
+                    <img 
+                      src={data.images?.[10]?.url ? getFullImageUrl(data.images[10].url) : 'https://source.unsplash.com/400x300/?bathroom-fixtures'} 
+                      alt="Badarmaturen"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = 'https://source.unsplash.com/400x300/?bathroom-fixtures';
+                      }}
+                    />
+                  </div>
+                  <div className="aspect-video bg-gray-200 rounded-lg shadow-lg overflow-hidden">
+                    <img 
+                      src={data.images?.[11]?.url ? getFullImageUrl(data.images[11].url) : 'https://source.unsplash.com/400x300/?bathroom-storage'} 
+                      alt="Badlagerung"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = 'https://source.unsplash.com/400x300/?bathroom-storage';
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              {/* 右侧介绍文字 */}
+              <div className="space-y-6">
+                <h3 className="text-2xl font-serif font-semibold text-gray-800">Luxuriöse Badezimmer</h3>
+                <div className="space-y-4 text-lg text-gray-700 leading-relaxed">
+                  <p>Das elegante Hauptbad überzeugt durch hochwertige Materialien und durchdachtes Design. Moderne Armaturen und eine geräumige Dusche sorgen für Komfort.</p>
+                  <p>Ein separates Gäste-WC bietet zusätzliche Privatsphäre und ist praktisch für Besucher. Alle Badezimmer sind mit ausreichend Stauraum ausgestattet.</p>
+                  <p>Die hochwertige Ausstattung und die ruhige Atmosphäre schaffen einen Ort der Entspannung und des Wohlbefindens.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Footer */}
+          <div className="slide-footer">
+            <div className="footer-left">
+              {data.propertyName || 'Immobilienname'}
+            </div>
+            <div className="footer-right">
+              8 / 12
+            </div>
+          </div>
+        </div>
+
+        {/* 第9页 - Balkon & draußen */}
+        <div className="slide w-full h-screen bg-white p-12 flex items-center pb-20" 
+             style={{ aspectRatio: '16/9', minHeight: '1080px' }}>
+          <div className="w-full max-w-6xl mx-auto">
+            <h2 className="text-4xl font-serif font-bold text-gray-900 mb-8 text-center">Balkon & Draußen</h2>
+            
+            <div className="grid grid-cols-2 gap-12 items-center">
+              {/* 左侧图片展示区域 */}
+              <div className="space-y-4">
+                <div className="aspect-video bg-gray-200 rounded-lg shadow-lg overflow-hidden">
+                  <img 
+                    src={data.images?.[12]?.url ? getFullImageUrl(data.images[12].url) : 'https://source.unsplash.com/800x600/?balcony'} 
+                    alt="Balkon"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = 'https://source.unsplash.com/800x600/?balcony';
+                    }}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="aspect-video bg-gray-200 rounded-lg shadow-lg overflow-hidden">
+                    <img 
+                      src={data.images?.[13]?.url ? getFullImageUrl(data.images[13].url) : 'https://source.unsplash.com/400x300/?outdoor-space'} 
+                      alt="Außenbereich"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = 'https://source.unsplash.com/400x300/?outdoor-space';
+                      }}
+                    />
+                  </div>
+                  <div className="aspect-video bg-gray-200 rounded-lg shadow-lg overflow-hidden">
+                    <img 
+                      src={data.images?.[14]?.url ? getFullImageUrl(data.images[14].url) : 'https://source.unsplash.com/400x300/?garden-view'} 
+                      alt="Gartenblick"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = 'https://source.unsplash.com/400x300/?garden-view';
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              {/* 右侧介绍文字 */}
+              <div className="space-y-6">
+                <h3 className="text-2xl font-serif font-semibold text-gray-800">Außenleben genießen</h3>
+                <div className="space-y-4 text-lg text-gray-700 leading-relaxed">
+                  <p>Der großzügige Balkon bietet einen wunderbaren Außenbereich zum Entspannen und Genießen. Hier können Sie den Tag bei einem Kaffee beginnen oder den Abend ausklingen lassen.</p>
+                  <p>Die ruhige Lage und der schöne Ausblick auf die Umgebung schaffen eine entspannende Atmosphäre. Der Balkon ist ideal für kleine Pflanzen und Outdoor-Möbel.</p>
+                  <p>Die Außenanlagen sind gepflegt und bieten zusätzlichen Lebensraum im Freien, der das Wohngefühl der Immobilie perfekt ergänzt.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Footer */}
+          <div className="slide-footer">
+            <div className="footer-left">
+              {data.propertyName || 'Immobilienname'}
+            </div>
+            <div className="footer-right">
+              9 / 12
+            </div>
+          </div>
+        </div>
+
+        {/* 第10页 - 位置信息 */}
         <div className="slide w-full h-screen bg-white p-12 flex items-center pb-20" 
              style={{ aspectRatio: '16/9', minHeight: '1080px' }}>
           <div className="w-full max-w-7xl mx-auto grid grid-cols-2 gap-16 items-center">
@@ -454,12 +782,12 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
               {data.propertyName || 'Immobilienname'}
             </div>
             <div className="footer-right">
-              6 / 8
+              10 / 12
             </div>
           </div>
         </div>
 
-        {/* 第7页 - 平面图 */}
+        {/* 第11页 - 平面图 */}
         <div className="slide w-full h-screen bg-white p-12 flex items-center pb-20" 
              style={{ aspectRatio: '16/9', minHeight: '1080px' }}>
           <div className="w-full max-w-7xl mx-auto">
@@ -509,12 +837,12 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
               {data.propertyName || 'Immobilienname'}
             </div>
             <div className="footer-right">
-              7 / 8
+              11 / 12
             </div>
           </div>
         </div>
 
-        {/* 第8页 - 联系信息 */}
+        {/* 第12页 - 联系信息 */}
         <div className="slide w-full h-screen bg-white p-12 flex items-center pb-20" 
              style={{ aspectRatio: '16/9', minHeight: '1080px' }}>
           <div className="w-full max-w-5xl mx-auto">
@@ -613,7 +941,7 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
               {data.propertyName || 'Immobilienname'}
             </div>
             <div className="footer-right">
-              8 / 8
+              12 / 12
             </div>
           </div>
         </div>

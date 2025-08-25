@@ -8,7 +8,7 @@ from typing import List
 import json
 
 from app.core.database import get_db, Property, PropertyImage
-from app.schemas.property import PropertyCreate, PropertyUpdate, PropertyResponse
+from app.schemas.property import PropertyCreate, PropertyUpdate, PropertyResponse, LocationDescriptionRequest
 from app.services.property_service import PropertyService
 
 router = APIRouter()
@@ -114,6 +114,43 @@ async def delete_property(
             )
     except HTTPException:
         raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e)
+        )
+
+
+@router.post("/generate-description", status_code=status.HTTP_200_OK)
+async def generate_property_description(
+    property_data: PropertyCreate,
+    style: str = "formal",
+    db: AsyncSession = Depends(get_db)
+):
+    """Generate AI description for a property using provided data"""
+    try:
+        property_service = PropertyService(db)
+        description = await property_service.generate_ai_description(property_data, style)
+        return {"description": description}
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e)
+        )
+
+
+@router.post("/generate-location-description", status_code=status.HTTP_200_OK)
+async def generate_location_description(
+    property_data: LocationDescriptionRequest,
+    style: str = "formal",
+    db: AsyncSession = Depends(get_db)
+):
+    """Generate AI location description for a property using provided data"""
+    try:
+        property_service = PropertyService(db)
+        location_description = await property_service.generate_location_description(property_data, style)
+        return {"location_description": location_description}
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

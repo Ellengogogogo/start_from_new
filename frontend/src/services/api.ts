@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { PropertyFormData, PropertyData, PropertyImage } from '@/types/property';
+import { PropertyFormData, PropertyData, PropertyImage, Photos } from '@/types/property';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -11,7 +11,7 @@ const api = axios.create({
 });
 
 // 缓存房源数据
-export const cachePropertyData = async (data: Omit<PropertyFormData, 'images'>): Promise<{ id: string }> => {
+export const cachePropertyData = async (data: Omit<PropertyFormData, 'images'> & { photos: Photos }): Promise<{ id: string }> => {
   const response = await api.post('/app/endpoints/cache/property-data', data);
   return response.data;
 };
@@ -149,6 +149,27 @@ export const generateAIDescription = async (
     contact_person2: propertyData.contact_person2,
     contact_phone2: propertyData.contact_phone2,
     contact_email2: propertyData.contact_email2,
+    // 添加德语prompt需要的字段
+    condition: propertyData.renovation_quality || 'gepflegt',
+    equipment: propertyData.features || '',
+    grundstuecksflaeche: propertyData.grundstuecksflaeche || null,
+    floor: propertyData.floor || null,
+    energy_class: propertyData.energy_certificate,
+  }, {
+    params: { style }
+  });
+  return response.data;
+};
+
+// 生成 AI 地理位置描述 (简化版)
+export const generateAILocationDescriptionSimple = async (
+  city: string,
+  address: string,
+  style: 'formal' | 'marketing' | 'family' = 'formal'
+): Promise<{ location_description: string; message: string }> => {
+  const response = await api.post('/app/endpoints/properties/generate-location-description', {
+    city,
+    address,
   }, {
     params: { style }
   });

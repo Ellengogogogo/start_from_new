@@ -46,6 +46,12 @@ class PropertyBase(BaseModel):
     renovation_quality: Optional[str] = Field(None, max_length=100)
     floor_type: Optional[str] = Field(None, max_length=100)
     
+    # Additional fields for German prompts
+    condition: Optional[str] = Field(None, max_length=100)  # e.g., "frisch renoviert", "gepflegt"
+    equipment: Optional[str] = Field(None, max_length=500)  # e.g., "Einbauküche", "Balkon", "Terrasse"
+    grundstuecksflaeche: Optional[float] = Field(None, ge=0)  # Land area in m²
+    floor: Optional[int] = Field(None, ge=0)  # Floor number
+    
     # Features
     features: Optional[str] = None  # JSON string
     energy_class: Optional[str] = Field(None, pattern="^[A-G]$")
@@ -99,8 +105,14 @@ class PropertyUpdate(BaseModel):
     renovation_quality: Optional[str] = Field(None, max_length=100)
     floor_type: Optional[str] = Field(None, max_length=100)
     
+    # Additional fields for German prompts
+    condition: Optional[str] = Field(None, max_length=100)  # e.g., "frisch renoviert", "gepflegt"
+    equipment: Optional[str] = Field(None, max_length=500)  # e.g., "Einbauküche", "Balkon", "Terrasse"
+    grundstuecksflaeche: Optional[float] = Field(None, ge=0)  # Land area in m²
+    floor: Optional[int] = Field(None, ge=0)  # Floor number
+    
     # Features
-    features: Optional[str] = None
+    features: Optional[str] = Field(None, max_length=500)
     energy_class: Optional[str] = Field(None, pattern="^[A-G]$")
     
     # Contact info
@@ -124,3 +136,8 @@ class PropertyResponse(PropertyBase):
         json_encoders = {
             datetime: lambda v: v.isoformat()
         }
+
+class LocationDescriptionRequest(BaseModel):
+    """Minimal schema for location description generation"""
+    city: str = Field(..., min_length=1, max_length=100)
+    address: str = Field(..., min_length=1, max_length=500)

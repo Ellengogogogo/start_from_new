@@ -8,6 +8,7 @@ from sqlalchemy.orm import selectinload
 from typing import List, Optional
 from openai import AsyncOpenAI
 from app.core.config import settings
+from app.prompts.prompts import BESCHREIBUNG_PROMPT_DE, LOCATION_PROMPT_DE
 import json
 
 
@@ -48,24 +49,20 @@ class PropertyService:
         """Generate AI description using OpenAI API"""
 
         try:
-            # 检查是否有 OpenAI API key
-            if not hasattr(settings, 'OPENAI_API_KEY') or not settings.OPENAI_API_KEY:
-                # 如果没有 API key，返回默认描述
-                return self._generate_fallback_description(property_data, style)
             
             # 创建 OpenAI 客户端
             client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
             
-            # 构建 prompt
-            prompt = self._build_description_prompt(property_data, style)
+            # 构建德语 prompt
+            prompt = self._build_german_description_prompt(property_data)
             
             # 调用 OpenAI API
             response = await client.chat.completions.create(
-                model="gpt-4o",
+                model="gpt-4nano",
                 messages=[
                     {
                         "role": "system",
-                        "content": "你是一个专业的房地产文案撰写专家，擅长根据房源信息撰写吸引人的房源描述。"
+                        "content": "Du bist ein erfahrener Immobilien-Texter. Erstelle eine professionelle Immobilienbeschreibung auf Deutsch."
                     },
                     {
                         "role": "user",
@@ -85,65 +82,127 @@ class PropertyService:
             # 如果 API 调用失败，返回默认描述
             return self._generate_fallback_description(property_data, style)
     
-    def _build_description_prompt(self, property_data: PropertyCreate, style: str) -> str:
-        """构建用于 OpenAI API 的 prompt"""
+    def _build_german_description_prompt(self, property_data: PropertyCreate) -> str:
+        """构建用于 OpenAI API 的德语 prompt"""
         
         # 提取房源信息
-        property_type = property_data.property_type or "房屋"
+        property_type = property_data.property_type or "Wohnung"
         area_sqm = property_data.area_sqm
         rooms = property_data.rooms
-        # bedrooms = property_data.bedrooms
-        # bathrooms = property_data.bathrooms
         year_built = property_data.year_built
-        address = property_data.address
-        city = property_data.city or "城市"
-        # energy_class = property_data.energy_class
-        description = property_data.description
+        energy_class = getattr(property_data, 'energy_class', None)
+        condition = getattr(property_data, 'condition', 'gepflegt')
+        equipment = getattr(property_data, 'equipment', '')
+        features = getattr(property_data, 'features', '')
+        grundstuecksflaeche = getattr(property_data, 'grundstuecksflaeche', None)
+        floor = getattr(property_data, 'floor', None)
         
-        # 根据风格设置不同的 prompt
-        style_instructions = {
-            "formal": "请使用正式、专业的语言，突出房源的品质和投资价值。",
-            "marketing": "请使用营销感强的语言，突出卖点和投资机会，可以使用emoji表情。",
-            "family": "请使用温馨、家庭友好的语言，强调居住舒适性和生活便利性。"
-        }
+        # 使用德语 prompt 模板
+        prompt = BESCHREIBUNG_PROMPT_DE.format(
+            property_type=property_type,
+            rooms=rooms or "n/a",
+            area_sqm=area_sqm or "n/a",
+            grundstuecksflaeche=grundstuecksflaeche or "n/a",
+            floor=floor or "n/a",
+            year_built=year_built or "n/a",
+            condition=condition,
+            equipment=equipment or "n/a",
+            features=features or "n/a",
+            energy_class=energy_class or "n/a"
+        )
         
-        prompt = f"""
-                请根据以下房源信息，撰写一段{style}风格的房源描述：
-
-                房源类型：{property_type}
-                地址：{address}
-                城市：{city}
-                {f"建筑面积：{area_sqm}平方米" if area_sqm else ""}
-                {f"房间数量：{rooms}间" if rooms else ""}
-                {f"建成年份：{year_built}年" if year_built else ""}
-
-                要求：
-                1. {style_instructions.get(style, style_instructions["formal"])}
-                2. 描述要包括：结合{description}，房源整体介绍、特色亮点、地理位置优势、周边配套设施
-                3. 根据城市信息，描述该城市的特点和环境
-                3. 语言要自然流畅，符合中文表达习惯
-                4. 长度控制在200-300字左右
-                5. 突出该房源的核心卖点和优势
-
-                请直接返回描述文本，不要包含任何其他内容。
-                """
         return prompt
+    
+    async def generate_location_description(self, property_data: PropertyCreate, style: str = "formal") -> str:
+        """Generate AI location description using OpenAI API"""
+        
+        try:
+            # 创建 OpenAI 客户端
+            client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+            
+            # 构建德语地理位置 prompt
+            prompt = self._build_german_location_prompt(property_data, style)
+            
+            # 调用 OpenAI API
+            response = await client.chat.completions.create(
+                model="gpt-4o",
+                messages=[
+                    {
+                        "role": "system",
+                        "content": "Du bist ein erfahrener Immobilien-Texter. Erstelle eine professionelle Lagebeschreibung auf Deutsch."
+                    },
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ],
+                max_tokens=400,
+                temperature=0.7
+            )
+            
+            # 提取生成的地理位置描述
+            location_description = response.choices[0].message.content.strip()
+            return location_description
+            
+        except Exception as e:
+            print(f"OpenAI API 调用失败: {e}")
+            # 如果 API 调用失败，返回默认地理位置描述
+            return self._generate_fallback_location_description(property_data, style)
+    
+    def _build_german_location_prompt(self, property_data: PropertyCreate, style: str) -> str:
+        """构建用于 OpenAI API 的德语地理位置 prompt"""
+        
+        city = property_data.city or "Stadt"
+        address = property_data.address or "Adresse"
+        
+        # 根据风格调整 prompt
+        style_instruction = ""
+        if style == "marketing":
+            style_instruction = "Schreibe in einem verkaufsfördernden, enthusiastischen Stil mit positiven Superlativen."
+        elif style == "family":
+            style_instruction = "Schreibe in einem warmen, familienfreundlichen Stil, der Sicherheit und Wohlbefinden betont."
+        else:  # formal
+            style_instruction = "Schreibe in einem seriösen, professionellen Stil mit klaren Fakten."
+        
+        # 使用德语地理位置 prompt 模板
+        prompt = LOCATION_PROMPT_DE.format(
+            city=city,
+            address=address,
+            location_keywords="n/a"
+        )
+        
+        # 添加风格指导
+        prompt += f"\n\nStil-Anweisung: {style_instruction}"
+        
+        return prompt
+    
+    def _generate_fallback_location_description(self, property_data: PropertyCreate, style: str = "formal") -> str:
+        """生成备用地理位置描述（当 OpenAI API 不可用时）"""
+        city = property_data.city or "Stadt"
+        address = property_data.address or "Adresse"
+        
+        if style == "marketing":
+            return f"🏠 Exzellente Lage! Diese Immobilie in {city} an der {address} bietet eine erstklassige Verkehrsanbindung mit perfekter Infrastruktur! In unmittelbarer Nähe befinden sich exklusive Einkaufsmöglichkeiten, renommierte Schulen und erstklassige medizinische Einrichtungen. Die Wohngegend ist absolut ruhig und bietet ein luxuriöses Wohnambiente mit großem Wertsteigerungspotenzial!"
+        elif style == "family":
+            return f"Die Immobilie befindet sich in der familienfreundlichen {city} an der {address}. Die Lage ist verkehrsgünstig gelegen und bietet eine sichere, ruhige Umgebung für Ihre Familie. In der Nähe befinden sich alle wichtigen Einrichtungen: Einkaufsmöglichkeiten, Schulen, Kindergärten und medizinische Versorgung. Die Wohngegend ist ideal für Familien mit Kindern."
+        else:  # formal
+            return f"Die Immobilie befindet sich in der {city} an der {address}. Die Lage ist verkehrsgünstig gelegen und bietet eine gute Anbindung an den öffentlichen Nahverkehr. In der Nähe befinden sich Einkaufsmöglichkeiten, Schulen und medizinische Einrichtungen. Die Wohngegend ist ruhig und familienfreundlich."
     
     def _generate_fallback_description(self, property_data: PropertyCreate, style: str) -> str:
         """生成备用描述（当 OpenAI API 不可用时）"""
-        property_type = property_data.property_type or "房屋"
-        address = property_data.address
-        city = property_data.city or "城市"
+        property_type = property_data.property_type or "Wohnung"
+        address = property_data.address or "Adresse"
+        city = property_data.city or "Stadt"
         area_sqm = property_data.area_sqm
         rooms = property_data.rooms
         year_built = property_data.year_built
         
         if style == "marketing":
-            return f"🏠 绝佳投资机会！位于{address}的精品{property_type}，地理位置优越，交通便利。{f'建筑面积{area_sqm}平方米，' if area_sqm else ''}{f'共{rooms}个房间，' if rooms else ''}{f'建于{year_built}年，' if year_built else ''}周边配套设施完善，升值潜力巨大！"
+            return f"🏠 Exzellente Investitionsmöglichkeit! Diese hochwertige {property_type} in {address} bietet eine erstklassige Lage mit hervorragender Verkehrsanbindung. {f'Die Wohnfläche beträgt {area_sqm} m², ' if area_sqm else ''}{f'die Immobilie verfügt über {rooms} Zimmer, ' if rooms else ''}{f'erbaut im Jahr {year_built}, ' if year_built else ''}mit perfekter Infrastruktur und großem Wertsteigerungspotenzial!"
         elif style == "family":
-            return f"温馨的{property_type}，位于{address}，为您的家庭提供完美的居住环境。{f'建筑面积{area_sqm}平方米，' if area_sqm else ''}{f'共{rooms}个房间，' if rooms else ''}{f'建于{year_built}年，' if year_built else ''}周边环境优美，适合家庭生活。"
+            return f"Gemütliche {property_type} in {address}, die Ihrer Familie eine perfekte Wohnumgebung bietet. {f'Die Wohnfläche beträgt {area_sqm} m², ' if area_sqm else ''}{f'die Immobilie verfügt über {rooms} Zimmer, ' if rooms else ''}{f'erbaut im Jahr {year_built}, ' if year_built else ''}mit schöner Umgebung, ideal für Familien."
         else:  # formal
-            return f"这座位于{address}的{property_type}展现了卓越的建筑品质和精心设计。{f'建筑面积约{area_sqm}平方米，' if area_sqm else ''}{f'共{rooms}个房间，' if rooms else ''}{f'建于{year_built}年，' if year_built else ''}地理位置优越，位于{city}的核心区域，周边配套设施完善。"
+            return f"Dieses {property_type} in {address} zeichnet sich durch außergewöhnliche Bauqualität und durchdachtes Design aus. {f'Die Wohnfläche beträgt etwa {area_sqm} m², ' if area_sqm else ''}{f'die Immobilie verfügt über {rooms} Zimmer, ' if rooms else ''}{f'erbaut im Jahr {year_built}, ' if year_built else ''}mit exzellenter Lage im Herzen von {city} und perfekter Infrastruktur."
     
     async def get_properties(self, skip: int = 0, limit: int = 100) -> List[Property]:
         """Get properties with pagination"""

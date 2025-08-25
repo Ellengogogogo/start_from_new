@@ -1,3 +1,12 @@
+export interface Photos {
+  wohnzimmer?: File[];
+  kueche?: File[];
+  schlafzimmer?: File[];
+  bad?: File[];
+  balkon?: File[];
+  grundriss?: File[];
+}
+
 export interface PropertyFormData {
   // 步骤1: 基本信息
   title: string;
@@ -19,14 +28,20 @@ export interface PropertyFormData {
   parking: string;
   renovation_quality: string;
   floor_type: string;
+  // 德语prompt需要的额外字段
+  features?: string;
+  grundstuecksflaeche?: number;
+  floor?: number;
   
   // 步骤3: 描述文本
   description?: string;
   suggested_description?: string;
   locationDescription?: string; // 新增：地理位置描述
+  suggested_location_description?: string; // 新增：AI生成的地理位置描述
   
-  // 步骤4: 图片
-  images: File[];
+  // 步骤4: 图片 - 更新为新的photos系统
+  photos: Photos; // 改为必需字段
+  images?: File[]; // 改为可选字段以保持兼容性
   floorPlan?: File; // 新增：平面图文件
   
   // 步骤5: 联系人信息
@@ -124,7 +139,6 @@ export interface ExposeGenerationRequest {
 
 export interface AgentInfo {
   companyLogo?: string;
-  responsiblePerson: string;
   address: string;
   website?: string;
   phone: string;

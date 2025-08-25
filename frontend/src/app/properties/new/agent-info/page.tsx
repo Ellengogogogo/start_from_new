@@ -10,7 +10,6 @@ import { Building2, Upload, ArrowRight, ArrowLeft, CheckCircle, Globe, Phone, Ma
 // Agent info schema
 const agentInfoSchema = z.object({
   companyLogo: z.any().optional(),
-  responsiblePerson: z.string().min(1, 'Verantwortliche Person ist erforderlich').max(100, 'Name darf maximal 100 Zeichen haben'),
   address: z.string().min(1, 'Adresse ist erforderlich').max(200, 'Adresse darf maximal 200 Zeichen haben'),
   website: z.string().url('Bitte geben Sie eine gültige URL ein').optional().or(z.literal('')),
   phone: z.string().min(1, 'Telefonnummer ist erforderlich').max(20, 'Telefonnummer darf maximal 20 Zeichen haben'),
@@ -153,24 +152,6 @@ export default function AgentInfoPage() {
                   </p>
                 </div>
               </div>
-            </div>
-
-            {/* Responsible Person */}
-            <div>
-              <label htmlFor="responsiblePerson" className="block text-lg font-semibold text-gray-900 mb-3">
-                <User className="w-5 h-5 inline mr-2 text-blue-600" />
-                Verantwortliche Person <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                id="responsiblePerson"
-                {...register('responsiblePerson')}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-lg"
-                placeholder="Name der verantwortlichen Person eingeben"
-              />
-              {errors.responsiblePerson && (
-                <p className="text-red-500 text-sm mt-2">{errors.responsiblePerson.message}</p>
-              )}
             </div>
 
             {/* Address */}
