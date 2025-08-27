@@ -2,7 +2,7 @@
 Cache management routes for temporary property data and images
 """
 
-from fastapi import APIRouter, HTTPException, status, UploadFile, File
+from fastapi import APIRouter, HTTPException, status, UploadFile, File, Form
 from typing import List
 import uuid
 import json
@@ -63,7 +63,9 @@ async def get_cached_property_data(property_id: str):
 async def cache_property_images(
     property_id: str,
     images: List[UploadFile] = File(...),
-    image_type: str = None  # 新增：图片类型参数
+    image_type: str = Form(None),  # 使用Form()包装可选参数
+    image_categories: List[str] = Form(None),  # 使用Form()包装可选参数
+    image_display_names: List[str] = Form(None)  # 使用Form()包装可选参数
 ):
     """Cache property images temporarily"""
     try:
@@ -108,9 +110,27 @@ async def cache_property_images(
             # 生成图片URL（相对于静态文件根目录）
             image_url = f"/static/cache/{filename}"
             
-            # 生成alt文本（使用原始文件名或默认描述）
-            original_filename = image.filename or "image"
-            alt_text = original_filename.split('.')[0] if '.' in original_filename else original_filename
+            # 生成alt文本（优先使用分类信息，否则使用原始文件名）
+            if image_categories and i < len(image_categories) and image_categories[i]:
+                # 使用分类信息作为alt文本
+                category = image_categories[i]
+                if image_display_names and i < len(image_display_names) and image_display_names[i]:
+                    alt_text = image_display_names[i]
+                else:
+                    # 将分类键转换为德语显示名称
+                    category_display_names = {
+                        'wohnzimmer': 'Wohnzimmer',
+                        'kueche': 'Küche',
+                        'schlafzimmer': 'Schlafzimmer',
+                        'bad': 'Bad',
+                        'balkon': 'Balkon & Außenbereich',
+                        'grundriss': 'Grundriss'
+                    }
+                    alt_text = category_display_names.get(category, category)
+            else:
+                # 使用原始文件名作为alt文本
+                original_filename = image.filename or "image"
+                alt_text = original_filename.split('.')[0] if '.' in original_filename else original_filename
             
             image_data = {
                 "id": str(uuid.uuid4()),
@@ -120,6 +140,7 @@ async def cache_property_images(
                 "alt": alt_text,
                 "isPrimary": i == 0,  # 第一张图片作为主图
                 "imageType": image_type,  # 新增：图片类型
+                "category": image_categories[i] if image_categories and i < len(image_categories) else None,  # 新增：图片分类
                 "createdAt": datetime.now().isoformat()
             }
             

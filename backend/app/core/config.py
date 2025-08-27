@@ -39,8 +39,8 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     
     # OpenAI
-    OPENAI_API_KEY: str = ""
-    OPENAI_MODEL: str = "gpt-4o"
+    OPENAI_API_KEY: str = "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"
+    OPENAI_MODEL: str = "gpt-4nano"
     
     # File Upload
     MAX_FILE_SIZE: int = 10 * 1024 * 1024  # 10MB

@@ -25,6 +25,17 @@ start_from_new/
 - **状态管理**: React Hook Form + Zod
 - **HTTP客户端**: Axios
 - **图标**: Lucide React
+- **组件架构**: Atomic Design (原子设计)
+
+### 组件架构说明
+前端采用 **Atomic Design** 设计系统，将组件按照复杂度和复用性分为四个层次：
+
+- **Atoms (原子)**: 最小的UI组件，如按钮、输入框、标签等
+- **Molecules (分子)**: 由原子组成的简单组合，如搜索框、价格标签等  
+- **Organisms (有机体)**: 由分子和原子组成的复杂组件，如表单、导航栏等
+- **Templates (模板)**: 页面级别的布局结构，如Expose展示模板
+
+这种架构确保了组件的可复用性、一致性和可维护性。
 
 ### 目录结构
 ```
@@ -34,33 +45,76 @@ frontend/
 │   │   ├── page.tsx                  # 首页
 │   │   ├── layout.tsx                # 根布局
 │   │   ├── globals.css               # 全局样式
+│   │   ├── favicon.ico               # 网站图标
 │   │   └── properties/               # 房源相关页面
 │   │       ├── new/                  # 创建新房源
-│   │       │   └── page.tsx          # 多步骤表单页面
+│   │       │   ├── page.tsx          # 多步骤表单页面
+│   │       │   ├── layout.tsx        # 新房源布局
+│   │       │   ├── user-type/        # 用户类型选择
+│   │       │   └── agent-info/       # 经纪人信息
 │   │       └── [id]/                 # 动态路由
-│   │           ├── preview/          # 房源预览
-│   │           │   └── page.tsx      # 预览页面
 │   │           └── expose/           # Expose生成
 │   │               └── [exposeId]/   # 动态expose ID
 │   │                   └── page.tsx  # Expose状态和预览页面
-│   ├── components/                   # 可复用组件
+│   ├── components/                   # 可复用组件 (Atomic Design)
+│   │   ├── atoms/                    # 原子组件
+│   │   │   ├── Avatar.tsx            # 头像组件
+│   │   │   ├── Badge.tsx             # 徽章组件
+│   │   │   ├── Button.tsx            # 按钮组件
+│   │   │   ├── Divider.tsx           # 分割线组件
+│   │   │   └── Input.tsx             # 输入框组件
+│   │   ├── molecules/                # 分子组件
+│   │   │   ├── FeatureList.tsx       # 特性列表
+│   │   │   ├── ImageGallery.tsx      # 图片画廊
+│   │   │   ├── PriceTag.tsx          # 价格标签
+│   │   │   └── PropertyCard.tsx      # 房源卡片
+│   │   ├── organisms/                # 有机体组件
+│   │   │   ├── ContactCard.tsx       # 联系卡片
+│   │   │   ├── MapSection.tsx        # 地图区域
+│   │   │   ├── ProgressIndicator.tsx # 进度指示器
+│   │   │   ├── PropertyFormContainer.tsx # 房源表单容器
+│   │   │   ├── PropertyFormNavigation.tsx # 表单导航
+│   │   │   ├── PropertyHeader.tsx    # 房源头部
+│   │   │   ├── index.ts              # 导出文件
+│   │   │   └── PropertyFormSteps/    # 表单步骤组件
+│   │   │       ├── BasicInfoStep.tsx     # 基本信息步骤
+│   │   │       ├── ContactInfoStep.tsx   # 联系信息步骤
+│   │   │       ├── DescriptionStep.tsx   # 描述步骤
+│   │   │       ├── ImageUploadStep.tsx   # 图片上传步骤
+│   │   │       ├── PropertyDetailsStep.tsx # 房源详情步骤
+│   │   │       └── index.ts              # 步骤导出文件
+│   │   └── templates/                # 模板组件
+│   │       └── Expose_PPT_Classic.tsx    # 经典PPT风格Expose模板
 │   ├── hooks/                        # 自定义Hooks
+│   │   ├── useAIGeneration.ts        # AI生成Hook
 │   │   ├── useMultiStepForm.ts       # 多步骤表单管理
-│   │   └── useUploadImages.ts        # 图片上传管理
+│   │   ├── usePhotoUpload.ts         # 图片上传管理
+│   │   ├── usePropertyForm.ts        # 房源表单管理
+│   │   └── index.ts                  # Hooks导出文件
 │   ├── lib/                          # 工具库
+│   │   ├── propertyDataConverter.ts  # 房源数据转换器
+│   │   ├── utils.ts                  # 通用工具函数
 │   │   └── validations.ts            # Zod验证模式
 │   ├── services/                     # API服务
 │   │   └── api.ts                    # 后端API调用
 │   └── types/                        # TypeScript类型定义
 │       └── property.ts               # 房源相关类型
+├── styles/                           # 样式文件
+│   └── tokens.ts                     # 设计令牌
 ├── public/                           # 静态资源
 ├── package.json                      # 依赖配置
+├── package-lock.json                 # 依赖锁定文件
 ├── next.config.ts                    # Next.js配置
-├── tailwind.config.js                # Tailwind配置
+├── next-env.d.ts                     # Next.js类型声明
+├── tailwind.config.ts                # Tailwind配置
 ├── postcss.config.mjs                # PostCSS配置
 ├── tsconfig.json                     # TypeScript配置
 ├── eslint.config.mjs                 # ESLint配置
-└── env.local                         # 环境变量配置
+├── env.local                         # 环境变量配置
+├── Dockerfile                        # 容器化配置
+├── README.md                         # 项目说明
+├── README_PREVIEW.md                 # 预览说明
+└── PROJECT_STRUCTURE.md              # 前端项目结构说明
 ```
 
 ### 核心功能页面
@@ -70,17 +124,15 @@ frontend/
 - **步骤2**: 房屋详情（房间数、面积、建成年份）
 - **步骤3**: 描述文本（支持AI自动生成）
 - **步骤4**: 图片上传（多图支持、预览、进度条）
+- **用户类型选择**: 支持不同用户角色（买家、卖家、经纪人）
+- **经纪人信息**: 经纪人专属信息收集
 
-#### 2. 房源预览 (`/properties/[id]/preview`)
-- 显示缓存的房源数据
-- 展示上传的图片
-- 响应式布局设计
-
-#### 3. Expose生成状态 (`/properties/[id]/expose/[exposeId]`)
+#### 2. Expose生成状态 (`/properties/[id]/expose/[exposeId]`)
 - 实时显示生成进度
 - 预览生成的expose
 - PDF下载功能
 - 打印和分享选项
+- 支持多种模板样式（经典PPT风格等）
 
 ## 🐍 Backend (FastAPI + Python)
 
@@ -265,14 +317,19 @@ CORS_ORIGINS=["http://localhost:3000"]
 
 ### ✅ 已完成
 - [x] 项目脚手架搭建
-- [x] 前端多步骤表单
+- [x] 前端多步骤表单 (包含用户类型选择和经纪人信息)
 - [x] 图片上传和预览
 - [x] 后端API路由
 - [x] 缓存管理系统
 - [x] Expose生成流程
 - [x] PDF下载功能
 - [x] 响应式UI设计
-- [x] 清理冗余代码 ⭐ 新增
+- [x] 清理冗余代码
+- [x] Atomic Design组件架构
+- [x] 多步骤表单步骤组件
+- [x] Expose模板系统
+- [x] 自定义Hooks系统
+- [x] 工具库和验证系统
 
 ### 🚧 进行中
 - [ ] 后端服务器启动问题解决
@@ -282,7 +339,6 @@ CORS_ORIGINS=["http://localhost:3000"]
 - [ ] AI描述生成集成
 - [ ] 图片AI优化
 - [ ] 真实PDF生成
-- [ ] 用户认证系统
 - [ ] 数据持久化
 - [ ] 生产环境部署
 

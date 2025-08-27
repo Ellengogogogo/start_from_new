@@ -31,33 +31,48 @@ export const getCachedPropertyImages = async (id: string): Promise<PropertyImage
 // 上传房源图片
 export const uploadPropertyImages = async (
   propertyId: string,
-  images: File[],
+  images: Array<File & { category?: keyof Photos; displayName?: string }>,
   onProgress?: (progress: number) => void,
   imageType?: string
 ): Promise<{ images: PropertyImage[] }> => {
   const formData = new FormData();
+  
+  // 添加所有图片到 images 字段
   images.forEach((image) => {
     formData.append('images', image);
   });
   
-  // 添加图片类型参数
+  // 添加图片类型参数（如果提供）
   if (imageType) {
     formData.append('image_type', imageType);
   }
 
-  const response = await api.post(`/app/endpoints/cache/property-images/${propertyId}`, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-    onUploadProgress: (progressEvent) => {
-      if (progressEvent.total && onProgress) {
-        const progress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
-        onProgress(progress);
-      }
-    },
+  console.log('Uploading images:', {
+    propertyId,
+    imageCount: images.length,
+    formDataEntries: Array.from(formData.entries())
   });
 
-  return response.data;
+  try {
+    const response = await api.post(`/app/endpoints/cache/property-images/${propertyId}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      onUploadProgress: (progressEvent) => {
+        if (progressEvent.total && onProgress) {
+          const progress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+          onProgress(progress);
+        }
+      },
+    });
+
+    console.log('Upload response:', response.data);
+    return response.data;
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('Upload error:', errorMessage);
+    throw error;
+  }
 };
 
 // 生成专业expose

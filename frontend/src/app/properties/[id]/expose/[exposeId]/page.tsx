@@ -349,7 +349,7 @@ export default function ExposeGenerationPage() {
             <AlertCircle className="w-8 h-8 text-red-600" />
           </div>
           <h2 className="text-xl font-semibold text-gray-900 mb-2">Ladefehler</h2>
-          <p className="text-gray-600 mb-4">{error || 'Konnte Expose-Daten nicht laden'}</p>
+          <p className="text-gray-600 mb-4">{error || 'Konnte Exposé-Daten nicht laden'}</p>
           <button
             onClick={() => router.push('/properties/new')}
             className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"

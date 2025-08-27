@@ -1,11 +1,17 @@
 import { useState, useCallback } from 'react';
 
+export interface FormStep {
+  id: number;
+  title: string;
+  description?: string;
+  icon?: string;
+  isCompleted?: boolean;
+  isValid?: boolean;
+  isRequired?: boolean;
+}
+
 export interface UseMultiStepFormOptions<T> {
-  steps: Array<{
-    id: string;
-    title: string;
-    description?: string;
-  }>;
+  steps: FormStep[];
   initialData?: Partial<T>;
   onStepChange?: (currentStep: number, data: T) => void;
 }

@@ -27,7 +27,7 @@ class PropertyExposeWorker:
     
     async def start(self):
         """Start the worker"""
-        logger.info("🚀 Starting Property Expose Worker...")
+        logger.info("🚀 Starting Property Exposé Worker...")
         self.running = True
         
         try:
@@ -40,7 +40,7 @@ class PropertyExposeWorker:
     
     async def stop(self):
         """Stop the worker"""
-        logger.info("🛑 Stopping Property Expose Worker...")
+        logger.info("🛑 Stopping Property Exposé Worker...")
         self.running = False
         
         # Cancel all running tasks

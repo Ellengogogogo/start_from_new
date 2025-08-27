@@ -1,7 +1,7 @@
 export interface Photos {
   wohnzimmer?: File[];
   kueche?: File[];
-  schlafzimmer?: File[];
+  zimmer?: File[];
   bad?: File[];
   balkon?: File[];
   grundriss?: File[];
