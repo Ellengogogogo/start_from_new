@@ -2,15 +2,15 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { PropertyFormData, AgentInfo, Photos } from '@/types/property';
-import { PropertyFormContainer } from '@/components/organisms';
+import { PropertyFormData, AgentInfo, Images } from '@/types/property';
+import { PropertyForm } from '@/components/organisms';
 import { cachePropertyData, uploadPropertyImages, generateExpose } from '@/services/api';
 
 export default function NewPropertyPage() {
   const router = useRouter();
   const [agentInfo, setAgentInfo] = useState<AgentInfo | null>(null);
   const [isClient, setIsClient] = useState(false);
-  const [updatePhotoUrlsRef, setUpdatePhotoUrlsRef] = useState<((category: keyof Photos, urls: string[]) => void) | null>(null);
+  const [updateImageUrlsRef, setUpdateImageUrlsRef] = useState<((category: keyof Images, urls: string[]) => void) | null>(null);
 
   // Check if we're on the client side to avoid hydration mismatch
   useEffect(() => {
@@ -60,42 +60,42 @@ export default function NewPropertyPage() {
       const propertyId = cachedProperty.id;
       
       // Upload images if any
-      if (data.photos) {
+      if (data.images) {
         try {
-          // Convert Photos object to flat array of files
-          const allPhotos: Array<File & { category?: keyof Photos; displayName?: string }> = [];
-          Object.entries(data.photos).forEach(([category, files]) => {
+          // Convert Images object to flat array of files
+          const allImages: Array<File & { category?: keyof Images; displayName?: string }> = [];
+          Object.entries(data.images).forEach(([category, files]) => {
             if (files && files.length > 0) {
               files.forEach((file: File) => {
-                allPhotos.push({
+                allImages.push({
                   ...file,
-                  category: category as keyof Photos,
+                  category: category as keyof Images,
                   displayName: category
                 });
               });
             }
           });
           
-          if (allPhotos.length > 0) {
-            const imageResult = await uploadPropertyImages(propertyId, allPhotos);
+          if (allImages.length > 0) {
+            const imageResult = await uploadPropertyImages(propertyId, allImages);
             // Store the uploaded image URLs for later use
             console.log('Images uploaded successfully:', imageResult.images);
             
-            // Update photoUrls state with the uploaded URLs
-            if (updatePhotoUrlsRef && imageResult.images) {
+            // Update imageUrls state with the uploaded URLs
+            if (updateImageUrlsRef && imageResult.images) {
               // Group images by category
               const imagesByCategory: Record<string, string[]> = {};
               imageResult.images.forEach((image, index) => {
-                const category = allPhotos[index]?.category || 'wohnzimmer';
+                const category = allImages[index]?.category || 'wohnzimmer';
                 if (!imagesByCategory[category]) {
                   imagesByCategory[category] = [];
                 }
                 imagesByCategory[category].push(image.url);
               });
               
-              // Update each category's photoUrls
+              // Update each category's imageUrls
               Object.entries(imagesByCategory).forEach(([category, urls]) => {
-                updatePhotoUrlsRef(category as keyof Photos, urls);
+                updateImageUrlsRef(category as keyof Images, urls);
               });
             }
           }
@@ -124,9 +124,9 @@ export default function NewPropertyPage() {
     }
   };
 
-  // Callback to receive updatePhotoUrls function from PropertyFormContainer
-  const handleUpdatePhotoUrlsRef = useCallback((updateFn: (category: keyof Photos, urls: string[]) => void) => {
-    setUpdatePhotoUrlsRef(() => updateFn);
+  // Callback to receive updateImageUrls function from PropertyForm
+  const handleUpdateImageUrlsRef = useCallback((updateFn: (category: keyof Images, urls: string[]) => void) => {
+    setUpdateImageUrlsRef(() => updateFn);
   }, []);
 
   // Show loading state while checking client side
@@ -143,11 +143,11 @@ export default function NewPropertyPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <PropertyFormContainer
+              <PropertyForm
         agentInfo={agentInfo}
         onSaveDraft={handleSaveDraft}
         onSubmit={handleSubmit}
-        onUpdatePhotoUrlsRef={handleUpdatePhotoUrlsRef}
+        onUpdateImageUrlsRef={handleUpdateImageUrlsRef}
         isEditMode={false}
       />
     </div>

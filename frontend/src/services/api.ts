@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { PropertyFormData, PropertyData, PropertyImage, Photos } from '@/types/property';
+import { PropertyFormData, PropertyData, PropertyImage, Images } from '@/types/property';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -11,7 +11,7 @@ const api = axios.create({
 });
 
 // 缓存房源数据
-export const cachePropertyData = async (data: Omit<PropertyFormData, 'images'> & { photos: Photos }): Promise<{ id: string }> => {
+export const cachePropertyData = async (data: Omit<PropertyFormData, 'images'> & { images: Images }): Promise<{ id: string }> => {
   const response = await api.post('/app/endpoints/cache/property-data', data);
   return response.data;
 };
@@ -31,21 +31,32 @@ export const getCachedPropertyImages = async (id: string): Promise<PropertyImage
 // 上传房源图片
 export const uploadPropertyImages = async (
   propertyId: string,
-  images: Array<File & { category?: keyof Photos; displayName?: string }>,
-  onProgress?: (progress: number) => void,
-  imageType?: string
+  images: Array<File & { category?: keyof Images }>,
+  onProgress?: (progress: number) => void
 ): Promise<{ images: PropertyImage[] }> => {
   const formData = new FormData();
   
   // 添加所有图片到 images 字段
-  images.forEach((image) => {
+  const categories: string[] = [];
+
+  images.forEach((image, index) => {
     formData.append('images', image);
+    
+    // 收集分类信息
+    const imageWithMeta = image as File & { category?: string };
+    categories.push(imageWithMeta.category || '');
   });
-  
-  // 添加图片类型参数（如果提供）
-  if (imageType) {
-    formData.append('image_type', imageType);
-  }
+
+  // 一次性添加所有分类
+  categories.forEach(category => {
+    formData.append('image_categories', category);
+  });
+
+  // 添加调试日志
+  console.log('FormData contents:', {
+    categories,
+    imageCount: images.length
+  });
 
   console.log('Uploading images:', {
     propertyId,
@@ -137,41 +148,12 @@ export const getExposePreview = async (exposeId: string): Promise<{
 
 // 生成 AI 描述
 export const generateAIDescription = async (
-  propertyData: Omit<PropertyFormData, 'images'>,
+  propertyData: Partial<PropertyFormData>,
   style: 'formal' | 'marketing' | 'family' = 'formal'
 ): Promise<{ suggested_description: string; style: string; message: string }> => {
   const response = await api.post('/app/endpoints/properties/generate-description', {
-    ...propertyData,
-    property_type: propertyData.property_type,
-    status: 'for_sale',
-    price_type: 'total',
-    area_sqm: propertyData.area,
-    rooms: propertyData.rooms,
-    bedrooms: propertyData.bedrooms,
-    bathrooms: propertyData.bathrooms,
-    year_built: propertyData.yearBuilt,
-    country: 'Germany',
-    city: propertyData.city,
-    heating_system: propertyData.heating_system,
-    energy_source: propertyData.energy_source,
-    energy_certificate: propertyData.energy_certificate,
-    parking: propertyData.parking,
-    renovation_quality: propertyData.renovation_quality,
-    floor_type: propertyData.floor_type,
-    contact_person: propertyData.contact_person,
-    contact_phone: propertyData.contact_phone,
-    contact_email: propertyData.contact_email,
-    contact_person2: propertyData.contact_person2,
-    contact_phone2: propertyData.contact_phone2,
-    contact_email2: propertyData.contact_email2,
-    // 添加德语prompt需要的字段
-    condition: propertyData.renovation_quality || 'gepflegt',
-    equipment: propertyData.features || '',
-    grundstuecksflaeche: propertyData.grundstuecksflaeche || null,
-    floor: propertyData.floor || null,
-    energy_class: propertyData.energy_certificate,
-  }, {
-    params: { style }
+    ...propertyData,  // 传递所有房源数据
+    style            // 添加风格参数
   });
   return response.data;
 };

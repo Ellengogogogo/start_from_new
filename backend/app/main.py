@@ -11,8 +11,6 @@ import os
 from contextlib import asynccontextmanager
 
 from app.routes.routers import router
-# from app.core.config import settings
-# from app.core.database import engine, Base
 
 
 @asynccontextmanager
@@ -20,11 +18,6 @@ async def lifespan(app: FastAPI):
     """Application lifespan events"""
     # Startup
     print("🚀 Starting Property Expose Generator Backend...")
-    
-    # 暂时注释掉数据库初始化，用于开发测试
-    # # Create database tables
-    # async with engine.begin() as conn:
-    #     await conn.run_sync(Base.metadata.create_all)
     
     print("✅ Backend started successfully (database disabled for testing)")
     yield

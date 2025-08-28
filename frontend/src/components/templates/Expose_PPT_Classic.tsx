@@ -39,8 +39,7 @@ export interface ExposePPTData {
   locationImage: string;
   locationDescription?: string; // Neu: Vom Benutzer eingegebene geografische Lagebeschreibung
   
-  // 平面图
-  floorPlanImage: string;
+  // 平面图相关信息
   floorPlanDetails: string[];
   
   // 联系信息
@@ -798,8 +797,7 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
             <div className="flex justify-center mb-8">
               <div className="w-[800px] h-[600px] bg-gray-200 rounded-lg shadow-lg overflow-hidden">
                 <img 
-                  src={data.floorPlanImage ? getFullImageUrl(data.floorPlanImage) : 
-                       data.images?.[1]?.url ? getFullImageUrl(data.images[1].url) : 
+                  src={data.images?.[1]?.url ? getFullImageUrl(data.images[1].url) : 
                        'https://source.unsplash.com/800x600/?floor-plan'} 
                   alt="Grundriss"
                   className="w-full h-full object-cover"

@@ -40,123 +40,31 @@ export default function ExposeGenerationPage() {
     }>;
   } | null>(null);
 
-
-
-  
-
-  // Helper function to convert English values to German
-  const translateToGerman = (key: string, value: string): string => {
-    const translations: { [key: string]: { [value: string]: string } } = {
-      heating_system: {
-        'central_heating': 'Zentralheizung',
-        'floor_heating': 'Fußbodenheizung',
-        'radiator_heating': 'Heizkörper',
-        'air_conditioning': 'Klimaanlage',
-        'wood_stove': 'Kaminofen',
-        'heat_pump': 'Wärmepumpe'
-      },
-      energy_source: {
-        'natural_gas': 'Erdgas',
-        'electricity': 'Strom',
-        'oil': 'Heizöl',
-        'district_heating': 'Fernwärme',
-        'wood': 'Holz',
-        'solar': 'Solarenergie',
-        'geothermal': 'Geothermie'
-      },
-      parking: {
-        'garage': 'Garage',
-        'parking_space': 'Parkplatz',
-        'street_parking': 'Straßenparken',
-        'underground_parking': 'Tiefgarage',
-        'none': 'Kein Parkplatz'
-      },
-      renovation_quality: {
-        'luxury': 'Luxuriös',
-        'high_quality': 'Hochwertig',
-        'standard': 'Standard',
-        'basic': 'Grundlegend',
-        'needs_renovation': 'Renovierungsbedürftig'
-      },
-      floor_type: {
-        'hardwood': 'Parkett',
-        'laminate': 'Laminat',
-        'tile': 'Fliesen',
-        'carpet': 'Teppich',
-        'vinyl': 'Vinyl',
-        'concrete': 'Beton',
-        'mixed': 'Gemischt'
-      }
-    };
-
-    if (translations[key] && translations[key][value]) {
-      return translations[key][value];
-    }
-    return value;
-  };
-
   // 转换数据格式以适配 Expose_PPT_Classic 组件
   const transformPreviewDataForPPT = (data: ExposeData['previewData']): ExposePPTData => {
     if (!data) {
-      // 返回默认数据
+      // 如果没有数据，返回空的默认对象
       return {
-        propertyName: 'Professionelle Immobilienpräsentation',
-        title: 'Professionelle Immobilienpräsentation',
-        address: 'Adressinformationen',
-        agendaItems: [
-          'Immobilienübersicht',
-          'Eckdaten',
-          'Immobiliendetails',
-          'Bildergalerie',
-          'Lagebeschreibung',
-          'Grundriss',
-          'Kontaktinformationen'
-        ],
-        keyFacts: {
-          baujahr: '2020',
-          wohnflaeche: '120 m²',
-          zimmer: '5',
-          schlafzimmer: '3',
-          badezimmer: '2',
-          heizungssystem: 'Fußbodenheizung',
-          energieklasse: 'A'
-        },
-        description: 'Dies ist eine hochwertige Immobilie in einer erstklassigen Lage mit ausgezeichneter Verkehrsanbindung. Die Wohnung ist durchdacht gestaltet, bietet viel Tageslicht und verfügt über eine vollständige Ausstattung.',
-                 locationDescription: '', // Neu: Geografische Lagebeschreibung
+        propertyName: 'Keine Daten verfügbar',
+        title: 'Keine Daten verfügbar',
+        address: 'Keine Adresse verfügbar',
+        agendaItems: [],
+        keyFacts: {},
+        description: 'Keine Beschreibung verfügbar',
+        locationDescription: '',
         images: [],
-                 locationText: '',
-        locationImage: 'https://source.unsplash.com/800x600/?city-map',
-        floorPlanImage: 'https://source.unsplash.com/800x600/?floor-plan',
-                 floorPlanDetails: [
-           '3 Zimmer, Hauptschlafzimmer mit eigenem Bad',
-           '2 Badezimmer, Trocken- und Nassbereich getrennt',
-           'Offene Küche, Essbereich integriert',
-           'Wohnzimmer geräumig, viel Tageslicht',
-           'Balkon verbindet Wohnzimmer und Hauptschlafzimmer',
-           'Abstellraum und Kleiderschrank vorhanden'
-         ],
-        contacts: [
-          {
-            name: 'Herr Zhang',
-            phone: '138-0013-8000',
-            email: 'zhang@example.com',
-            avatar: 'https://source.unsplash.com/100x100/?portrait-1'
-          },
-          {
-            name: 'Frau Li',
-            phone: '139-0013-8001',
-            email: 'li@example.com',
-            avatar: 'https://source.unsplash.com/100x100/?portrait-2'
-          }
-        ],
-                 agentInfo: undefined
+        locationText: '',
+        locationImage: '',
+        floorPlanDetails: [],
+        contacts: [],
+        agentInfo: undefined
       };
     }
-    
+      
     return {
-      propertyName: data.title || 'Professionelle Immobilienpräsentation',
-      title: data.title || 'Professionelle Immobilienpräsentation',
-      address: data.address || 'Adressinformationen',
+      propertyName: data.title || 'Immobilienpräsentation',
+      title: data.title || 'Immobilienpräsentation',
+      address: data.address || 'Adresse nicht verfügbar',
       agendaItems: [
         'Immobilienübersicht',
         'Eckdaten',
@@ -167,50 +75,47 @@ export default function ExposeGenerationPage() {
         'Kontaktinformationen'
       ],
       keyFacts: {
-        baujahr: data.yearBuilt?.toString() || '2020',
-        wohnflaeche: `${data.area || 120} m²`,
-        zimmer: data.rooms?.toString() || '5',
-        schlafzimmer: data.bedrooms?.toString() || '3',
-        badezimmer: data.bathrooms?.toString() || '2',
-        heizungssystem: translateToGerman('heating_system', data.heating_system || ''),
-        energieklasse: data.energy_certificate || 'A',
-        energietraeger: translateToGerman('energy_source', data.energy_source || ''),
-        parkplatz: translateToGerman('parking', data.parking || ''),
-        renovierungsqualitaet: translateToGerman('renovation_quality', data.renovation_quality || ''),
-        bodenbelag: translateToGerman('floor_type', data.floor_type || '')
+        baujahr: data.yearBuilt?.toString() || 'N/A',
+        wohnflaeche: data.area ? `${data.area} m²` : 'N/A',
+        zimmer: data.rooms?.toString() || 'N/A',
+        schlafzimmer: data.bedrooms?.toString() || 'N/A',
+        badezimmer: data.bathrooms?.toString() || 'N/A',
+        heizungssystem: data.heating_system || 'N/A',
+        energieklasse: data.energy_certificate || 'N/A',
+        energietraeger: data.energy_source || 'N/A',
+        parkplatz: data.parking || 'N/A',
+        renovierungsqualitaet: data.renovation_quality || 'N/A',
+        bodenbelag: data.floor_type || 'N/A'
       },
-      description: data.description || 'Dies ist eine hochwertige Immobilie in einer erstklassigen Lage mit ausgezeichneter Verkehrsanbindung. Die Wohnung ist durchdacht gestaltet, bietet viel Tageslicht und verfügt über eine vollständige Ausstattung.',
-             locationDescription: data.locationDescription || '', // Neu: Geografische Lagebeschreibung
+      description: data.description || 'Keine Beschreibung verfügbar',
+      locationDescription: data.locationDescription || '',
       images: (data.images || []).map((img, index: number) => ({
         id: `img_${index}`,
         url: img.url,
         alt: `Immobilienbild ${index + 1}`
       })),
-             locationText: data.locationDescription || 'Verkehrsgünstige Lage',
-       locationImage: data.images?.[0]?.url || 'https://source.unsplash.com/800x600/?city-map',
-             floorPlanImage: data.floorPlanImage || 'https://source.unsplash.com/800x600/?floor-plan',
-             floorPlanDetails: [
-         `${data.rooms || 3} Zimmer, Hauptschlafzimmer mit eigenem Bad`,
-         `${data.bathrooms || 2} Badezimmer, Trocken- und Nassbereich getrennt`,
-         'Offene Küche, Essbereich integriert',
-         'Wohnzimmer geräumig, viel Tageslicht',
-         'Balkon verbindet Wohnzimmer und Hauptschlafzimmer',
-         'Abstellraum und Kleiderschrank vorhanden'
-       ],
+      locationText: data.locationDescription || '',
+      locationImage: data.images?.[0]?.url || '',
+      floorPlanDetails: [
+        data.rooms ? `${data.rooms} Zimmer` : 'Zimmeranzahl nicht verfügbar',
+        data.bathrooms ? `${data.bathrooms} Badezimmer` : 'Badezimmeranzahl nicht verfügbar',
+        'Weitere Details folgen'
+      ],
       contacts: [
         {
-          name: data.contact_person || 'Herr Zhang',
-          phone: data.contact_phone || '138-0013-8000',
-          email: data.contact_email || 'zhang@example.com',
-          avatar: 'https://source.unsplash.com/100x100/?portrait-1'
+          name: data.contact_person || 'Kontaktperson nicht verfügbar',
+          phone: data.contact_phone || 'Telefon nicht verfügbar',
+          email: data.contact_email || 'E-Mail nicht verfügbar',
+          avatar: ''
         },
-        {
-          name: data.contact_person2 || 'Frau Li',
-          phone: data.contact_phone2 || '139-0013-8001',
-          email: data.contact_email2 || 'li@example.com',
-          avatar: 'https://source.unsplash.com/100x100/?portrait-2'
-        }
-      ]
+        ...(data.contact_person2 ? [{
+          name: data.contact_person2,
+          phone: data.contact_phone2 || '',
+          email: data.contact_email2 || '',
+          avatar: ''
+        }] : [])
+      ].filter(contact => contact.name !== 'Kontaktperson nicht verfügbar'),
+      agentInfo: undefined
     };
   };
 
@@ -286,48 +191,43 @@ export default function ExposeGenerationPage() {
   };
 
   const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return <CheckCircle className="w-8 h-8 text-green-500" />;
-      case 'processing':
-        return <Clock className="w-8 h-8 text-blue-500 animate-spin" />;
-      case 'pending':
-        return <Clock className="w-8 h-8 text-yellow-500" />;
-      case 'failed':
-        return <AlertCircle className="w-8 h-8 text-red-500" />;
-      default:
-        return <Clock className="w-8 h-8 text-gray-500" />;
-    }
+    const statusConfig = {
+      completed: { icon: CheckCircle, color: 'text-green-500', animate: false },
+      processing: { icon: Clock, color: 'text-blue-500', animate: true },
+      pending: { icon: Clock, color: 'text-yellow-500', animate: false },
+      failed: { icon: AlertCircle, color: 'text-red-500', animate: false }
+    };
+    
+    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
+    const IconComponent = config.icon;
+    
+    return (
+      <IconComponent 
+        className={`w-8 h-8 ${config.color} ${config.animate ? 'animate-spin' : ''}`} 
+      />
+    );
   };
 
   const getStatusText = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return 'Generierung abgeschlossen';
-      case 'processing':
-        return 'Wird generiert...';
-      case 'pending':
-        return 'Wartet auf Verarbeitung';
-      case 'failed':
-        return 'Generierung fehlgeschlagen';
-      default:
-        return 'Unbekannter Status';
-    }
+    const statusTexts = {
+      completed: 'Generierung abgeschlossen',
+      processing: 'Wird generiert...',
+      pending: 'Wartet auf Verarbeitung',
+      failed: 'Generierung fehlgeschlagen'
+    };
+    
+    return statusTexts[status as keyof typeof statusTexts] || 'Unbekannter Status';
   };
 
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return 'text-green-600';
-      case 'processing':
-        return 'text-blue-600';
-      case 'pending':
-        return 'text-yellow-600';
-      case 'failed':
-        return 'text-red-600';
-      default:
-        return 'text-gray-600';
-    }
+    const statusColors = {
+      completed: 'text-green-600',
+      processing: 'text-blue-600',
+      pending: 'text-yellow-600',
+      failed: 'text-red-600'
+    };
+    
+    return statusColors[status as keyof typeof statusColors] || 'text-gray-600';
   };
 
   if (isLoading) {
@@ -455,12 +355,10 @@ export default function ExposeGenerationPage() {
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
                     <Eye className="w-6 h-6 text-blue-600" />
-                    Professionelle Exposé Vorschau
+                    Exposé Vorschau
                   </h2>
-                  <p className="text-gray-600 mt-2">Dies ist Ihre professionelle Exposé Vorschau</p>
+                  <p className="text-gray-600 mt-2">Vorschau Ihrer Immobilienpräsentation</p>
                 </div>
-                
-
               </div>
             </div>
             
@@ -474,16 +372,16 @@ export default function ExposeGenerationPage() {
                   if (navigator.share) {
                     navigator.share({
                       title: previewData.title || 'Immobilienpräsentation',
-                      text: 'Siehe diese beeindruckende Immobilienpräsentation',
+                      text: 'Siehe diese Immobilienpräsentation',
                       url: window.location.href,
                     });
                   } else {
                     navigator.clipboard.writeText(window.location.href);
-                    alert('Link in die Zwischenablage kopiert');
+                    alert('Link kopiert');
                   }
                 }}
                 onContact={() => {
-                  alert('Kontaktfunktion: Anruf 138-0013-8000');
+                  alert('Kontaktfunktion - Verwenden Sie die Kontaktinformationen in der Präsentation');
                 }}
               />
             </div>

@@ -72,7 +72,7 @@ frontend/
 │   │   │   ├── ContactCard.tsx       # 联系卡片
 │   │   │   ├── MapSection.tsx        # 地图区域
 │   │   │   ├── ProgressIndicator.tsx # 进度指示器
-│   │   │   ├── PropertyFormContainer.tsx # 房源表单容器
+│   │   │   ├── PropertyForm.tsx # 房源表单主组件
 │   │   │   ├── PropertyFormNavigation.tsx # 表单导航
 │   │   │   ├── PropertyHeader.tsx    # 房源头部
 │   │   │   ├── index.ts              # 导出文件
@@ -92,15 +92,12 @@ frontend/
 │   │   ├── usePropertyForm.ts        # 房源表单管理
 │   │   └── index.ts                  # Hooks导出文件
 │   ├── lib/                          # 工具库
-│   │   ├── propertyDataConverter.ts  # 房源数据转换器
 │   │   ├── utils.ts                  # 通用工具函数
 │   │   └── validations.ts            # Zod验证模式
 │   ├── services/                     # API服务
 │   │   └── api.ts                    # 后端API调用
 │   └── types/                        # TypeScript类型定义
 │       └── property.ts               # 房源相关类型
-├── styles/                           # 样式文件
-│   └── tokens.ts                     # 设计令牌
 ├── public/                           # 静态资源
 ├── package.json                      # 依赖配置
 ├── package-lock.json                 # 依赖锁定文件

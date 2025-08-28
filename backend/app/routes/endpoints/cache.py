@@ -63,9 +63,7 @@ async def get_cached_property_data(property_id: str):
 async def cache_property_images(
     property_id: str,
     images: List[UploadFile] = File(...),
-    image_type: str = Form(None),  # 使用Form()包装可选参数
-    image_categories: List[str] = Form(None),  # 使用Form()包装可选参数
-    image_display_names: List[str] = Form(None)  # 使用Form()包装可选参数
+    image_categories: List[str] = Form(None)  # 使用Form()包装可选参数，用于标识图片类别（如客厅、厨房、平面图等）
 ):
     """Cache property images temporarily"""
     try:
@@ -86,10 +84,10 @@ async def cache_property_images(
         # 处理上传的图片
         uploaded_images = []
         for i, image in enumerate(images):
-            # 生成文件名，根据图片类型添加前缀
+            # 生成文件名
             file_extension = image.filename.split('.')[-1] if image.filename else 'jpg'
-            prefix = "floorplan" if image_type == "floorplan" else "image"
-            filename = f"{property_id}_{prefix}_{i}_{uuid.uuid4().hex[:8]}.{file_extension}"
+            # 根据分类确定前缀
+            filename = f"{property_id}_image_{i}_{uuid.uuid4().hex[:8]}.{file_extension}"
             
             # 保存图片到文件系统
             file_path = os.path.join(cache_dir, filename)
@@ -101,46 +99,28 @@ async def cache_property_images(
                 with open(file_path, "wb") as f:
                     f.write(content)
                 
-                print(f"Saved {image_type or 'image'}: {file_path}")
+                print(f"Saved image: {file_path}")
                 
             except Exception as e:
-                print(f"Error saving {image_type or 'image'} {filename}: {str(e)}")
+                print(f"Error saving image {filename}: {str(e)}")
                 continue
             
             # 生成图片URL（相对于静态文件根目录）
             image_url = f"/static/cache/{filename}"
             
-            # 生成alt文本（优先使用分类信息，否则使用原始文件名）
-            if image_categories and i < len(image_categories) and image_categories[i]:
-                # 使用分类信息作为alt文本
+            # 获取分类（如果存在）
+            category = None
+            if image_categories and i < len(image_categories):
                 category = image_categories[i]
-                if image_display_names and i < len(image_display_names) and image_display_names[i]:
-                    alt_text = image_display_names[i]
-                else:
-                    # 将分类键转换为德语显示名称
-                    category_display_names = {
-                        'wohnzimmer': 'Wohnzimmer',
-                        'kueche': 'Küche',
-                        'schlafzimmer': 'Schlafzimmer',
-                        'bad': 'Bad',
-                        'balkon': 'Balkon & Außenbereich',
-                        'grundriss': 'Grundriss'
-                    }
-                    alt_text = category_display_names.get(category, category)
-            else:
-                # 使用原始文件名作为alt文本
-                original_filename = image.filename or "image"
-                alt_text = original_filename.split('.')[0] if '.' in original_filename else original_filename
+
+            print(f"Processing image {i}: category={category}")  # 添加调试日志
             
             image_data = {
                 "id": str(uuid.uuid4()),
                 "propertyId": property_id,
                 "filename": filename,
                 "url": image_url,
-                "alt": alt_text,
-                "isPrimary": i == 0,  # 第一张图片作为主图
-                "imageType": image_type,  # 新增：图片类型
-                "category": image_categories[i] if image_categories and i < len(image_categories) else None,  # 新增：图片分类
+                "category": category,  # 图片分类
                 "createdAt": datetime.now().isoformat()
             }
             
@@ -149,7 +129,7 @@ async def cache_property_images(
         
         return {
             "images": uploaded_images,
-            "message": f"Successfully cached {len(uploaded_images)} {image_type or 'images'}"
+            "message": f"Successfully cached {len(uploaded_images)} images"
         }
     except HTTPException:
         raise

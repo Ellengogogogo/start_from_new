@@ -159,54 +159,6 @@ export default function ContactInfoStep({ register, errors, defaultValues }: Con
           </div>
         </div>
       </div>
-
-      {/* 联系信息预览 */}
-      <div className="bg-gray-50 rounded-lg p-4">
-        <h4 className="text-sm font-medium text-gray-700 mb-3">Kontakt-Übersicht</h4>
-        <div className="space-y-2 text-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-gray-600">Hauptkontakt:</span>
-            <span className="font-medium text-gray-900">
-              {defaultValues?.contact_person || 'Nicht angegeben'}
-            </span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-gray-600">Telefon:</span>
-            <span className="font-medium text-gray-900">
-              {defaultValues?.contact_phone || 'Nicht angegeben'}
-            </span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-gray-600">E-Mail:</span>
-            <span className="font-medium text-gray-900">
-              {defaultValues?.contact_email || 'Nicht angegeben'}
-            </span>
-          </div>
-          {defaultValues?.contact_person2 && (
-            <>
-              <div className="pt-2 border-t border-gray-200">
-                <div className="text-xs text-gray-500 mb-1">Zweiter Kontakt:</div>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600">Kontaktperson:</span>
-                <span className="font-medium text-gray-900">{defaultValues.contact_person2}</span>
-              </div>
-              {defaultValues.contact_phone2 && (
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Telefon:</span>
-                  <span className="font-medium text-gray-900">{defaultValues.contact_phone2}</span>
-                </div>
-              )}
-              {defaultValues.contact_email2 && (
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-600">E-Mail:</span>
-                  <span className="font-medium text-gray-900">{defaultValues.contact_email2}</span>
-                </div>
-              )}
-            </>
-          )}
-        </div>
-      </div>
     </div>
   );
 }

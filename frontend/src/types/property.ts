@@ -1,4 +1,4 @@
-export interface Photos {
+export interface Images {
   wohnzimmer?: File[];
   kueche?: File[];
   zimmer?: File[];
@@ -39,10 +39,8 @@ export interface PropertyFormData {
   locationDescription?: string; // 新增：地理位置描述
   suggested_location_description?: string; // 新增：AI生成的地理位置描述
   
-  // 步骤4: 图片 - 更新为新的photos系统
-  photos: Photos; // 改为必需字段
-  images?: File[]; // 改为可选字段以保持兼容性
-  floorPlan?: File; // 新增：平面图文件
+  // 步骤4: 图片 - 按分类管理的图片系统
+  images: Images; // 包含所有分类的图片（客厅、厨房、平面图等）
   
   // 步骤5: 联系人信息
   contact_person: string;
@@ -74,7 +72,7 @@ export interface PropertyImage {
   propertyId: string;
   filename: string;
   url: string;
-  isPrimary: boolean;
+  category?: string;
   createdAt: string;
 }
 
@@ -122,7 +120,6 @@ export interface ExposeData {
       isPrimary: boolean;
     }>;
     locationDescription?: string; // 新增：地理位置描述
-    floorPlanImage?: string; // 新增：平面图图片
   };
 }
 

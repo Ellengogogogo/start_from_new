@@ -1,9 +1,9 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { PropertyFormData, AgentInfo, Photos } from '@/types/property';
+import { PropertyFormData, AgentInfo, Images } from '@/types/property';
 import { 
   usePropertyForm, 
-  usePhotoUpload, 
+  useImageUpload, 
   useAIGeneration,
   useMultiStepForm,
   FormStep
@@ -14,12 +14,11 @@ import {
   DescriptionStep,
   ImageUploadStep,
   ContactInfoStep,
-  PropertyFormNavigation,
-  ProgressIndicator
+  PropertyFormNavigation
 } from '@/components/organisms';
 import { ProgressStep } from '@/components/organisms';
 
-// 表单步骤配置 - 移到组件外部作为常量，避免重新创建
+// 表单步骤配置
 const FORM_STEPS: FormStep[] = [
   {
     id: 0,
@@ -50,8 +49,8 @@ const FORM_STEPS: FormStep[] = [
   },
   {
     id: 3,
-    title: 'Fotos',
-    description: 'Kategorisierte Immobilienfotos',
+    title: 'Bilder',
+    description: 'Kategorisierte Immobilienbilder',
     icon: '📸',
     isCompleted: false,
     isValid: false,
@@ -68,23 +67,23 @@ const FORM_STEPS: FormStep[] = [
   },
 ];
 
-export interface PropertyFormContainerProps {
+export interface PropertyFormProps {
   initialData?: Partial<PropertyFormData>;
   agentInfo?: AgentInfo | null;
   onSaveDraft?: (data: PropertyFormData) => Promise<void>;
   onSubmit?: (data: PropertyFormData) => Promise<void>;
-  onUpdatePhotoUrlsRef?: (updateFn: (category: keyof Photos, urls: string[]) => void) => void;
+  onUpdateImageUrlsRef?: (updateFn: (category: keyof Images, urls: string[]) => void) => void;
   isEditMode?: boolean;
 }
 
-export default function PropertyFormContainer({
+export default function PropertyForm({
   initialData = {},
   agentInfo,
   onSaveDraft,
   onSubmit,
-  onUpdatePhotoUrlsRef,
+  onUpdateImageUrlsRef,
   isEditMode = false,
-}: PropertyFormContainerProps) {
+}: PropertyFormProps) {
   const router = useRouter();
 
   // 使用自定义hooks
@@ -133,10 +132,21 @@ export default function PropertyFormContainer({
     agentInfo,
   });
 
-  // 使用 useCallback 包装 onPhotoChange 回调，防止无限循环
-  const handlePhotoChange = useCallback((newPhotos: Photos) => {
-    updateLocalData({ photos: newPhotos });
-    setValue('photos', newPhotos);
+  // 使用 useCallback 包装 onImageChange 回调，防止无限循环
+  const handleImageChange = useCallback((newImages: Images) => {
+    console.log('🔄 图片数据变化:', newImages);
+    console.log('📊 图片统计:');
+    Object.entries(newImages).forEach(([category, files]) => {
+      if (files && files.length > 0) {
+        console.log(`  ${category}: ${files.length} 张图片`);
+        files.forEach((file: File, index: number) => {
+          console.log(`    - ${index}: ${file.name} (${file.size} bytes, ${file.type})`);
+        });
+      }
+    });
+    
+    updateLocalData({ images: newImages });
+    setValue('images', newImages);
   }, [updateLocalData, setValue]);
 
   // 使用 useCallback 包装 AI 生成回调，防止无限循环
@@ -151,34 +161,34 @@ export default function PropertyFormContainer({
   }, [setValue, updateLocalData]);
 
   const {
-    photos,
-    photoUrls,
+    images,
+    imageUrls,
     isDragOver,
     dragOverTab,
-    addPhotos,
-    removePhoto,
-    handlePhotoUpload,
+    addImages,
+    removeImage,
+    handleImageUpload,
     handleDrop,
     setDragState,
-    resetPhotos,
-    getCategoryPhotoCount,
-    getTotalPhotoCount,
+    resetImages,
+    getCategoryImageCount,
+    getTotalImageCount,
     isCategoryEmpty,
-    hasAnyPhotos,
-    getAllPhotos,
+    hasAnyImages,
+    getAllImages,
     getTabDisplayName,
-    maxPhotosPerCategory,
-    updatePhotoUrls,
-  } = usePhotoUpload({
-    onPhotoChange: handlePhotoChange,
+    maxImagesPerCategory,
+    updateImageUrls,
+  } = useImageUpload({
+    onImageChange: handleImageChange,
   });
 
-  // 将 updatePhotoUrls 函数传递给父组件
+  // 将 updateImageUrls 函数传递给父组件
   useEffect(() => {
-    if (onUpdatePhotoUrlsRef) {
-      onUpdatePhotoUrlsRef(updatePhotoUrls);
+    if (onUpdateImageUrlsRef) {
+      onUpdateImageUrlsRef(updateImageUrls);
     }
-  }, [onUpdatePhotoUrlsRef, updatePhotoUrls]);
+  }, [onUpdateImageUrlsRef, updateImageUrls]);
 
   const {
     generateDescription,
@@ -222,8 +232,8 @@ export default function PropertyFormContainer({
           isCompleted = true; // 描述是可选的
           isValid = true;
           break;
-        case 3: // 照片
-          isCompleted = hasAnyPhotos();
+        case 3: // 图片
+          isCompleted = hasAnyImages();
           isValid = isCompleted;
           break;
         case 4: // 联系信息
@@ -245,7 +255,7 @@ export default function PropertyFormContainer({
     });
 
     setProgressSteps(newProgressSteps);
-  }, [localFormData, errors, hasAnyPhotos]); // 移除 FORM_STEPS，因为它是常量
+  }, [localFormData, errors, hasAnyImages]);
 
   // 监听表单数据变化，更新进度
   useEffect(() => {
@@ -291,20 +301,77 @@ export default function PropertyFormContainer({
   }, [onSaveDraft, setIsSubmitting, getFormSnapshot]);
 
   // 表单提交
-  const handleFormSubmit = useCallback(async (data: PropertyFormData) => {
-    if (!onSubmit) return;
+  const handleFormSubmit = useCallback(async (data: any) => {
+    console.log('🚀 开始表单提交...');
+    console.log('📝 表单数据:', data);
+    console.log('🖼️ 图片数据:', images);
+    console.log('🔗 图片URLs:', imageUrls);
+    console.log('✅ 表单验证状态:', isValid);
+    console.log('❌ 表单错误:', errors);
+    
+    if (!onSubmit) {
+      console.warn('⚠️ onSubmit 回调未定义');
+      return;
+    }
+    
+    // 检查表单验证状态
+    if (!isValid) {
+      console.error('❌ 表单验证失败');
+      console.log('表单错误详情:', errors);
+      alert('请检查表单填写是否正确');
+      return;
+    }
+    
+    // 验证表单数据完整性
+    const requiredFields = ['title', 'property_type', 'city', 'postal_code', 'address', 'price'];
+    const missingFields = requiredFields.filter(field => !data[field]);
+    
+    if (missingFields.length > 0) {
+      console.error('❌ 缺少必填字段:', missingFields);
+      alert(`请填写以下必填字段: ${missingFields.join(', ')}`);
+      return;
+    }
+    
+    // 验证图片数据
+    if (!images || Object.keys(images).length === 0) {
+      console.warn('⚠️ 没有上传图片');
+      if (!confirm('您还没有上传任何图片，确定要继续吗？')) {
+        return;
+      }
+    } else {
+      // 检查图片数据完整性
+      let totalImages = 0;
+      Object.entries(images).forEach(([category, files]) => {
+        if (files && files.length > 0) {
+          totalImages += files.length;
+          console.log(`📁 ${category}: ${files.length} 张图片`);
+        }
+      });
+      
+      if (totalImages === 0) {
+        console.warn('⚠️ 图片数组为空');
+        if (!confirm('没有发现有效的图片数据，确定要继续吗？')) {
+          return;
+        }
+      } else {
+        console.log(`✅ 总共 ${totalImages} 张图片`);
+      }
+    }
     
     try {
       setIsSubmitting(true);
-      await onSubmit(data);
-      // 提交成功后可以跳转或显示成功信息
+      console.log('⏳ 设置提交状态为 true');
+      
+      await onSubmit(data as PropertyFormData);
+      console.log('✅ 表单提交成功');
     } catch (error) {
-      console.error('Form submission error:', error);
-      // 这里可以添加错误提示
+      console.error('❌ 表单提交失败:', error);
+      alert('表单提交失败，请重试');
     } finally {
       setIsSubmitting(false);
+      console.log('⏹️ 设置提交状态为 false');
     }
-  }, [onSubmit, setIsSubmitting]);
+  }, [onSubmit, setIsSubmitting, images, imageUrls, isValid, errors]);
 
   // 渲染当前步骤
   const renderCurrentStep = () => {
@@ -339,18 +406,18 @@ export default function PropertyFormContainer({
       case 3:
         return (
           <ImageUploadStep
-            photos={photos}
-            photoUrls={photoUrls}
+            images={images}
+            imageUrls={imageUrls}
             isDragOver={isDragOver}
             dragOverTab={dragOverTab}
-            onPhotoUpload={handlePhotoUpload}
-            onRemovePhoto={removePhoto}
+            onImageUpload={handleImageUpload}
+            onRemoveImage={removeImage}
             onDrop={handleDrop}
             onDragStateChange={setDragState}
             getTabDisplayName={getTabDisplayName}
-            getCategoryPhotoCount={getCategoryPhotoCount}
-            getTotalPhotoCount={getTotalPhotoCount}
-            maxPhotosPerCategory={maxPhotosPerCategory}
+            getCategoryImageCount={getCategoryImageCount}
+            getTotalImageCount={getTotalImageCount}
+            maxImagesPerCategory={maxImagesPerCategory}
           />
         );
       case 4:
@@ -381,7 +448,13 @@ export default function PropertyFormContainer({
 
           {/* 右侧：表单内容 */}
           <div className="lg:col-span-3">
-            <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-8">
+            <form 
+              onSubmit={(e) => {
+                console.log('📝 表单 onSubmit 事件被触发');
+                handleSubmit(handleFormSubmit)(e);
+              }} 
+              className="space-y-8"
+            >
               {/* 当前步骤内容 */}
               <div className="bg-white rounded-lg border border-gray-200 p-8">
                 {renderCurrentStep()}
@@ -409,18 +482,6 @@ export default function PropertyFormContainer({
 
                   {/* 右侧：操作按钮 */}
                   <div className="flex items-center space-x-3">
-                    {/* 保存草稿按钮 */}
-                    <button
-                      type="button"
-                      onClick={handleSaveDraft}
-                      disabled={isSubmitting}
-                      className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    >
-                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
-                      </svg>
-                      Als Entwurf speichern
-                    </button>
 
                     {/* 下一步按钮 */}
                     {canGoNext && currentStep < FORM_STEPS.length - 1 && (
@@ -442,6 +503,22 @@ export default function PropertyFormContainer({
                       <button
                         type="submit"
                         disabled={isSubmitting}
+                        onClick={() => {
+                          console.log('🔘 Expose erstellen 按钮被点击');
+                          console.log('📊 表单验证状态:', isValid);
+                          console.log('❌ 表单错误:', errors);
+                          
+                          // 手动触发表单验证
+                          console.log('🔍 手动触发表单验证...');
+                          trigger().then((isValid) => {
+                            console.log('✅ 表单验证结果:', isValid);
+                            if (isValid) {
+                              console.log('🎯 表单验证通过，应该可以提交');
+                            } else {
+                              console.log('❌ 表单验证失败，错误详情:', errors);
+                            }
+                          });
+                        }}
                         className="inline-flex items-center px-6 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                       >
                         {isSubmitting ? (

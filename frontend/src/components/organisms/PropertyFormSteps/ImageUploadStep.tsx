@@ -1,39 +1,39 @@
 import React, { useState } from 'react';
-import { Photos } from '@/types/property';
-import { PhotoCategory, PhotoFile } from '@/hooks/usePhotoUpload';
+import { Images } from '@/types/property';
+import { ImageCategory } from '@/hooks/useImageUpload';
 
 export interface ImageUploadStepProps {
-  photos: Photos;
-  photoUrls: Record<PhotoCategory, string[]>;
+  images: Images;
+  imageUrls: Record<ImageCategory, string[]>;
   isDragOver: boolean;
-  dragOverTab: PhotoCategory;
-  onPhotoUpload: (event: React.ChangeEvent<HTMLInputElement>, category: PhotoCategory) => void;
-  onRemovePhoto: (category: PhotoCategory, index: number) => void;
-  onDrop: (files: File[], category: PhotoCategory) => void;
-  onDragStateChange: (isOver: boolean, category?: PhotoCategory) => void;
-  getTabDisplayName: (category: PhotoCategory) => string;
-  getCategoryPhotoCount: (category: PhotoCategory) => number;
-  getTotalPhotoCount: () => number;
-  maxPhotosPerCategory: number;
+  dragOverTab: ImageCategory;
+  onImageUpload: (event: React.ChangeEvent<HTMLInputElement>, category: ImageCategory) => void;
+  onRemoveImage: (category: ImageCategory, index: number) => void;
+  onDrop: (files: File[], category: ImageCategory) => void;
+  onDragStateChange: (isOver: boolean, category?: ImageCategory) => void;
+  getTabDisplayName: (category: ImageCategory) => string;
+  getCategoryImageCount: (category: ImageCategory) => number;
+  getTotalImageCount: () => number;
+  maxImagesPerCategory: number;
 }
 
 export default function ImageUploadStep({
-  photos,
-  photoUrls,
+  images,
+  imageUrls,
   isDragOver,
   dragOverTab,
-  onPhotoUpload,
-  onRemovePhoto,
+  onImageUpload,
+  onRemoveImage,
   onDrop,
   onDragStateChange,
   getTabDisplayName,
-  getCategoryPhotoCount,
-  getTotalPhotoCount,
-  maxPhotosPerCategory,
+  getCategoryImageCount,
+  getTotalImageCount,
+  maxImagesPerCategory,
 }: ImageUploadStepProps) {
-  const [activePhotoTab, setActivePhotoTab] = useState<PhotoCategory>('wohnzimmer');
+  const [activeImageTab, setActiveImageTab] = useState<ImageCategory>('wohnzimmer');
 
-  const photoCategories: Array<{ id: PhotoCategory; name: string; icon: string }> = [
+  const imageCategories: Array<{ id: ImageCategory; name: string; icon: string }> = [
     { id: 'wohnzimmer', name: 'Wohnzimmer', icon: '🏠' },
     { id: 'kueche', name: 'Küche & Essbereich', icon: '🍳' },
     { id: 'zimmer', name: 'Zimmer', icon: '🛏️' },
@@ -44,21 +44,21 @@ export default function ImageUploadStep({
 
   return (
     <div className="space-y-8">
-      {/* 分类照片上传标签页 */}
+      {/* 分类图片上传标签页 */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-4">
-          Immobilienfotos nach Kategorien *
+          Immobilienbilder nach Kategorien *
         </label>
         
         {/* 标签导航 */}
         <div className="border-b border-gray-200">
           <nav className="-mb-px flex space-x-8" aria-label="Tabs">
-            {photoCategories.map((tab) => (
+            {imageCategories.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActivePhotoTab(tab.id)}
+                onClick={() => setActiveImageTab(tab.id)}
                 className={`whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
-                  activePhotoTab === tab.id
+                  activeImageTab === tab.id
                     ? 'border-blue-500 text-blue-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
@@ -80,11 +80,11 @@ export default function ImageUploadStep({
             </div>
             <div className="ml-3">
               <h3 className="text-sm font-medium text-blue-800">
-                Foto-Upload Anforderungen
+                Bild-Upload Anforderungen
               </h3>
               <div className="mt-2 text-sm text-blue-700">
-                <p>• Jede Kategorie kann maximal {maxPhotosPerCategory} Fotos enthalten</p>
-                <p>• Mindestens eine Kategorie muss Fotos enthalten</p>
+                <p>• Jede Kategorie kann maximal {maxImagesPerCategory} Bilder enthalten</p>
+                <p>• Mindestens eine Kategorie muss Bilder enthalten</p>
               </div>
             </div>
           </div>
@@ -93,20 +93,20 @@ export default function ImageUploadStep({
         {/* 标签内容 */}
         <div className="mt-6">
           {(() => {
-            const currentPhotos = photos[activePhotoTab] || [];
+            const currentImages = images[activeImageTab] || [];
             
             return (
               <div className="space-y-4">
                 {/* 统一的上传区域 - 支持点击和拖拽 */}
                 <div 
                   className={`border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-all ${
-                    isDragOver && dragOverTab === activePhotoTab
+                    isDragOver && dragOverTab === activeImageTab
                       ? 'border-blue-500 bg-blue-50'
                       : 'border-gray-300'
                   }`}
                   onDragOver={(e) => {
                     e.preventDefault();
-                    onDragStateChange(true, activePhotoTab);
+                    onDragStateChange(true, activeImageTab);
                   }}
                   onDragLeave={(e) => {
                     e.preventDefault();
@@ -117,82 +117,82 @@ export default function ImageUploadStep({
                     onDragStateChange(false);
                     const files = Array.from(e.dataTransfer.files);
                     
-                    // 检查是否可以添加更多照片
-                    const availableSlots = maxPhotosPerCategory - currentPhotos.length;
+                    // 检查是否可以添加更多图片
+                    const availableSlots = maxImagesPerCategory - currentImages.length;
                     
                     if (availableSlots <= 0) {
-                      alert(`Sie können maximal ${maxPhotosPerCategory} Fotos für ${getTabDisplayName(activePhotoTab)} hochladen.`);
+                      alert(`Sie können maximal ${maxImagesPerCategory} Bilder für ${getTabDisplayName(activeImageTab)} hochladen.`);
                       return;
                     }
                     
                     const filesToAdd = files.slice(0, availableSlots);
-                    onDrop(filesToAdd, activePhotoTab);
+                    onDrop(filesToAdd, activeImageTab);
                   }}
                 >
                   <input
                     type="file"
                     multiple
                     accept="image/*"
-                    onChange={(e) => onPhotoUpload(e, activePhotoTab)}
+                    onChange={(e) => onImageUpload(e, activeImageTab)}
                     className="hidden"
-                    id={`photo-upload-${activePhotoTab}`}
+                    id={`image-upload-${activeImageTab}`}
                   />
                   <label
-                    htmlFor={`photo-upload-${activePhotoTab}`}
+                    htmlFor={`image-upload-${activeImageTab}`}
                     className="cursor-pointer flex flex-col items-center"
                   >
                     <svg className="w-12 h-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                     </svg>
                     <div className="text-lg font-medium text-gray-700 mb-2">
-                      {getTabDisplayName(activePhotoTab)} Fotos hochladen
+                      {getTabDisplayName(activeImageTab)} Bilder hochladen
                     </div>
                     <div className="text-sm text-gray-500">
-                      JPG, PNG, WebP Formate unterstützt, maximal {maxPhotosPerCategory} Fotos
+                      JPG, PNG, WebP Formate unterstützt, maximal {maxImagesPerCategory} Bilder
                     </div>
                     <div className="text-xs text-gray-400 mt-1">
-                      {isDragOver && dragOverTab === activePhotoTab
-                        ? 'Fotos hier ablegen'
+                      {isDragOver && dragOverTab === activeImageTab
+                        ? 'Bilder hier ablegen'
                         : 'Drag & Drop oder Klick zum Auswählen'}
                     </div>
                   </label>
                 </div>
 
-                {/* 照片数量和上传按钮 */}
+                {/* 图片数量和上传按钮 */}
                 <div className="flex items-center justify-between">
                   <div className="text-sm text-gray-600">
-                    {currentPhotos.length} von {maxPhotosPerCategory} Fotos hochgeladen
+                    {currentImages.length} von {maxImagesPerCategory} Bilder hochgeladen
                   </div>
                   <button
                     type="button"
-                    onClick={() => document.getElementById(`photo-upload-${activePhotoTab}`)?.click()}
+                    onClick={() => document.getElementById(`image-upload-${activeImageTab}`)?.click()}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                   >
-                    Weitere Fotos hinzufügen
+                    Weitere Bilder hinzufügen
                   </button>
                 </div>
 
-                {/* 照片预览网格 */}
-                {currentPhotos.length > 0 && (
+                {/* 图片预览网格 */}
+                {currentImages.length > 0 && (
                   <div>
                     <h4 className="text-sm font-medium text-gray-700 mb-3">
-                      {getTabDisplayName(activePhotoTab)} Fotos
+                      {getTabDisplayName(activeImageTab)} Bilder
                     </h4>
                     <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                      {currentPhotos.map((file, index) => {
+                      {currentImages.map((file, index) => {
                         // 使用存储的URL或创建新的URL
-                        const photoUrl = photoUrls[activePhotoTab]?.[index] || URL.createObjectURL(file);
+                        const imageUrl = imageUrls[activeImageTab]?.[index] || URL.createObjectURL(file);
                         
                         return (
                           <div key={index} className="relative group">
                             <img
-                              src={photoUrl}
-                              alt={`${getTabDisplayName(activePhotoTab)} Foto ${index + 1}`}
+                              src={imageUrl}
+                              alt={`${getTabDisplayName(activeImageTab)} Bild ${index + 1}`}
                               className="w-full h-24 object-cover rounded-lg border border-gray-200"
                             />
                             <button
                               type="button"
-                              onClick={() => onRemovePhoto(activePhotoTab, index)}
+                              onClick={() => onRemoveImage(activeImageTab, index)}
                               className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
                             >
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -210,13 +210,13 @@ export default function ImageUploadStep({
                 )}
 
                 {/* 空状态 */}
-                {currentPhotos.length === 0 && (
+                {currentImages.length === 0 && (
                   <div className="text-center py-8 text-gray-500">
                     <svg className="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
-                    <p>Noch keine Fotos für {getTabDisplayName(activePhotoTab)} hochgeladen</p>
-                    <p className="text-sm">Laden Sie Fotos hoch, um diese Kategorie zu vervollständigen</p>
+                    <p>Noch keine Bilder für {getTabDisplayName(activeImageTab)} hochgeladen</p>
+                    <p className="text-sm">Laden Sie Bilder hoch, um diese Kategorie zu vervollständigen</p>
                   </div>
                 )}
               </div>
@@ -225,15 +225,15 @@ export default function ImageUploadStep({
         </div>
       </div>
 
-      {/* 照片摘要 */}
+      {/* 图片摘要 */}
       <div className="bg-gray-50 rounded-lg p-4">
-        <h4 className="text-sm font-medium text-gray-700 mb-3">Foto-Übersicht</h4>
+        <h4 className="text-sm font-medium text-gray-700 mb-3">Bild-Übersicht</h4>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
-          {photoCategories.map(({ id, name }) => (
+          {imageCategories.map(({ id, name }) => (
             <div key={id} className="flex items-center justify-between">
               <span className="text-gray-600">{name}:</span>
-              <span className={`font-medium ${getCategoryPhotoCount(id) > 0 ? 'text-green-600' : 'text-gray-400'}`}>
-                {getCategoryPhotoCount(id)} Fotos
+              <span className={`font-medium ${getCategoryImageCount(id) > 0 ? 'text-green-600' : 'text-gray-400'}`}>
+                {getCategoryImageCount(id)} Bilder
               </span>
             </div>
           ))}
@@ -242,7 +242,7 @@ export default function ImageUploadStep({
           <div className="flex items-center justify-between text-sm font-medium">
             <span>Gesamt:</span>
             <span className="text-blue-600">
-              {getTotalPhotoCount()} Fotos
+              {getTotalImageCount()} Bilder
             </span>
           </div>
         </div>

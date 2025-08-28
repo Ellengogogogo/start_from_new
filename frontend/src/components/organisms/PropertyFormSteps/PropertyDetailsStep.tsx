@@ -135,12 +135,12 @@ export default function PropertyDetailsStep({ register, errors, defaultValues }:
             defaultValue={defaultValues?.heating_system || ''}
           >
             <option value="">Heizsystem auswählen</option>
-            <option value="central_heating">Zentralheizung</option>
-            <option value="floor_heating">Fußbodenheizung</option>
-            <option value="radiator_heating">Heizkörper</option>
-            <option value="air_conditioning">Klimaanlage</option>
-            <option value="wood_stove">Kaminofen</option>
-            <option value="heat_pump">Wärmepumpe</option>
+            <option value="Zentralheizung">Zentralheizung</option>
+            <option value="Fußbodenheizung">Fußbodenheizung</option>
+            <option value="Heizkörper">Heizkörper</option>
+            <option value="Klimaanlage">Klimaanlage</option>
+            <option value="Kaminofen">Kaminofen</option>
+            <option value="Wärmepumpe">Wärmepumpe</option>
           </select>
           {errors.heating_system && (
             <p className="mt-1 text-sm text-red-600">{errors.heating_system.message}</p>
@@ -163,13 +163,13 @@ export default function PropertyDetailsStep({ register, errors, defaultValues }:
             defaultValue={defaultValues?.energy_source || ''}
           >
             <option value="">Energiequelle auswählen</option>
-            <option value="natural_gas">Erdgas</option>
-            <option value="electricity">Strom</option>
-            <option value="oil">Heizöl</option>
-            <option value="district_heating">Fernwärme</option>
-            <option value="wood">Holz</option>
-            <option value="solar">Solarenergie</option>
-            <option value="geothermal">Geothermie</option>
+            <option value="Erdgas">Erdgas</option>
+            <option value="Strom">Strom</option>
+            <option value="Heizöl">Heizöl</option>
+            <option value="Fernwärme">Fernwärme</option>
+            <option value="Holz">Holz</option>
+            <option value="Solarenergie">Solarenergie</option>
+            <option value="Geothermie">Geothermie</option>
           </select>
           {errors.energy_source && (
             <p className="mt-1 text-sm text-red-600">{errors.energy_source.message}</p>
@@ -217,11 +217,11 @@ export default function PropertyDetailsStep({ register, errors, defaultValues }:
             defaultValue={defaultValues?.parking || ''}
           >
             <option value="">Parkmöglichkeit auswählen</option>
-            <option value="garage">Garage</option>
-            <option value="parking_space">Parkplatz</option>
-            <option value="street_parking">Straßenparken</option>
-            <option value="underground_parking">Tiefgarage</option>
-            <option value="none">Kein Parkplatz</option>
+            <option value="Garage">Garage</option>
+            <option value="Parkplatz">Parkplatz</option>
+            <option value="Straßenparken">Straßenparken</option>
+            <option value="Tiefgarage">Tiefgarage</option>
+            <option value="Kein Parkplatz">Kein Parkplatz</option>
           </select>
           {errors.parking && (
             <p className="mt-1 text-sm text-red-600">{errors.parking.message}</p>
@@ -244,11 +244,11 @@ export default function PropertyDetailsStep({ register, errors, defaultValues }:
             defaultValue={defaultValues?.renovation_quality || ''}
           >
             <option value="">Renovierungsqualität auswählen</option>
-            <option value="luxury">Luxuriös</option>
-            <option value="high_quality">Hochwertig</option>
-            <option value="standard">Standard</option>
-            <option value="basic">Grundlegend</option>
-            <option value="needs_renovation">Renovierungsbedürftig</option>
+            <option value="Luxuriös">Luxuriös</option>
+            <option value="Hochwertig">Hochwertig</option>
+            <option value="Standard">Standard</option>
+            <option value="Grundlegend">Grundlegend</option>
+            <option value="Renovierungsbedürftig">Renovierungsbedürftig</option>
           </select>
           {errors.renovation_quality && (
             <p className="mt-1 text-sm text-red-600">{errors.renovation_quality.message}</p>
@@ -268,13 +268,13 @@ export default function PropertyDetailsStep({ register, errors, defaultValues }:
             defaultValue={defaultValues?.floor_type || ''}
           >
             <option value="">Bodenbelag auswählen</option>
-            <option value="hardwood">Parkett</option>
-            <option value="laminate">Laminat</option>
-            <option value="tile">Fliesen</option>
-            <option value="carpet">Teppich</option>
-            <option value="vinyl">Vinyl</option>
-            <option value="concrete">Beton</option>
-            <option value="mixed">Gemischt</option>
+            <option value="Parkett">Parkett</option>
+            <option value="Laminat">Laminat</option>
+            <option value="Fliesen">Fliesen</option>
+            <option value="Teppich">Teppich</option>
+            <option value="Vinyl">Vinyl</option>
+            <option value="Beton">Beton</option>
+            <option value="Gemischt">Gemischt</option>
           </select>
           {errors.floor_type && (
             <p className="mt-1 text-sm text-red-600">{errors.floor_type.message}</p>

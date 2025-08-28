@@ -48,7 +48,7 @@ export function usePropertyForm({ initialData = {}, agentInfo }: UsePropertyForm
       contact_person2: '',
       contact_phone2: '',
       contact_email2: '',
-      photos: {
+      images: {
         wohnzimmer: [],
         kueche: [],
         zimmer: [],
@@ -56,8 +56,6 @@ export function usePropertyForm({ initialData = {}, agentInfo }: UsePropertyForm
         balkon: [],
         grundriss: []
       },
-      images: [],
-      ...initialData
     } as PropertyFormData,
   });
 
@@ -70,10 +68,10 @@ export function usePropertyForm({ initialData = {}, agentInfo }: UsePropertyForm
     trigger,
   } = form;
 
-  // 初始化photos对象
+  // 初始化images对象
   useEffect(() => {
-    if (!localFormData.photos) {
-      const initialPhotos = {
+    if (!localFormData.images) {
+      const initialImages = {
         wohnzimmer: [],
         kueche: [],
         zimmer: [],
@@ -84,10 +82,10 @@ export function usePropertyForm({ initialData = {}, agentInfo }: UsePropertyForm
       
       setLocalFormData(prev => ({
         ...prev,
-        photos: initialPhotos
+        images: initialImages
       }));
       
-      setValue('photos', initialPhotos);
+      setValue('images', initialImages);
     }
   }, [setValue]);
 
@@ -120,9 +118,9 @@ export function usePropertyForm({ initialData = {}, agentInfo }: UsePropertyForm
         isValid = true; // Description is optional
         break;
       case 3:
-        // Photo validation
+        // Image validation
         const formData = watch();
-        if (formData.photos && Object.values(formData.photos).some(photos => photos && photos.length > 0)) {
+        if (formData.images && Object.values(formData.images).some(images => images && images.length > 0)) {
           isValid = true;
         } else {
           isValid = false;

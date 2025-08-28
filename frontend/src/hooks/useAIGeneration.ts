@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { PropertyFormData } from '@/types/property';
+import { PropertyFormData, Images } from '@/types/property';
 import { generateAIDescription, generateAILocationDescriptionSimple } from '@/services/api';
 
 export type DescriptionStyle = 'formal' | 'marketing' | 'family';
@@ -44,39 +44,8 @@ export function useAIGeneration(options: UseAIGenerationOptions = {}) {
 
     setIsGeneratingDescription(true);
     try {
-      const response = await generateAIDescription({
-        title: formData.title!,
-        property_type: formData.property_type!,
-        city: formData.city!,
-        postal_code: formData.postal_code!,
-        address: formData.address!,
-        price: formData.price || 0,
-        rooms: formData.rooms || 0,
-        bedrooms: formData.bedrooms || 0,
-        bathrooms: formData.bathrooms || 0,
-        area: formData.area || 0,
-        yearBuilt: formData.yearBuilt || 0,
-        heating_system: formData.heating_system || '',
-        energy_source: formData.energy_source || '',
-        energy_certificate: formData.energy_certificate || '',
-        parking: formData.parking || '',
-        renovation_quality: formData.renovation_quality || '',
-        floor_type: formData.floor_type || '',
-        contact_person: formData.contact_person || '',
-        contact_phone: formData.contact_phone || '',
-        contact_email: formData.contact_email || '',
-        contact_person2: formData.contact_person2 || '',
-        contact_phone2: formData.contact_phone2 || '',
-        contact_email2: formData.contact_email2 || '',
-        photos: {
-          wohnzimmer: [],
-          kueche: [],
-          zimmer: [],
-          bad: [],
-          balkon: [],
-          grundriss: []
-        },
-      }, style);
+      // 直接传递 formData，让 generateAIDescription 处理所有字段
+      const response = await generateAIDescription(formData, style);
       
       const description = response.suggested_description;
       options.onDescriptionGenerated?.(description);
