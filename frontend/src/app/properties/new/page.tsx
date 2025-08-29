@@ -67,11 +67,12 @@ export default function NewPropertyPage() {
           Object.entries(data.images).forEach(([category, files]) => {
             if (files && files.length > 0) {
               files.forEach((file: File) => {
-                allImages.push({
-                  ...file,
+                // 创建一个新的文件对象并添加category属性
+                const fileWithCategory = Object.assign(file, {
                   category: category as keyof Images,
                   displayName: category
                 });
+                allImages.push(fileWithCategory);
               });
             }
           });

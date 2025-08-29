@@ -63,11 +63,30 @@ async def get_cached_property_data(property_id: str):
 async def cache_property_images(
     property_id: str,
     images: List[UploadFile] = File(...),
-    image_categories: List[str] = Form(None)  # 使用Form()包装可选参数，用于标识图片类别（如客厅、厨房、平面图等）
+    image_categories: List[str] = Form(default=[])  # 明确设置默认值
 ):
     """Cache property images temporarily"""
     try:
+        print(f"Received request for property_id: {property_id}")
+        print(f"Number of images: {len(images) if images else 0}")
+        print(f"Image categories: {image_categories}")
+        print(f"Image categories type: {type(image_categories)}")
+        
+        # 验证输入参数
+        if not property_id:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="Property ID cannot be empty"
+            )
+        
+        if not images:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="No images provided"
+            )
+        
         if property_id not in property_cache:
+            print(f"Property {property_id} not found in cache. Available properties: {list(property_cache.keys())}")
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Property data not found in cache"
@@ -109,9 +128,9 @@ async def cache_property_images(
             image_url = f"/static/cache/{filename}"
             
             # 获取分类（如果存在）
-            category = None
-            if image_categories and i < len(image_categories):
-                category = image_categories[i]
+            category = 'wohnzimmer'  # 默认分类
+            if image_categories and i < len(image_categories) and image_categories[i].strip():
+                category = image_categories[i].strip()
 
             print(f"Processing image {i}: category={category}")  # 添加调试日志
             

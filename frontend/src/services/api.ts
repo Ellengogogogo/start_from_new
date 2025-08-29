@@ -36,32 +36,46 @@ export const uploadPropertyImages = async (
 ): Promise<{ images: PropertyImage[] }> => {
   const formData = new FormData();
   
+  // 验证输入
+  if (!images || images.length === 0) {
+    throw new Error('No images provided for upload');
+  }
+  
+  if (!propertyId) {
+    throw new Error('Property ID is required');
+  }
+  
   // 添加所有图片到 images 字段
   const categories: string[] = [];
 
   images.forEach((image, index) => {
     formData.append('images', image);
     
-    // 收集分类信息
+    // 收集分类信息，确保不为空
     const imageWithMeta = image as File & { category?: string };
-    categories.push(imageWithMeta.category || '');
+    const category = imageWithMeta.category || 'wohnzimmer'; // 默认值
+    categories.push(category);
   });
 
-  // 一次性添加所有分类
+  // 一次性添加所有分类 - 确保每个分类都有值
   categories.forEach(category => {
-    formData.append('image_categories', category);
+    formData.append('image_categories', category || 'wohnzimmer');
   });
 
   // 添加调试日志
   console.log('FormData contents:', {
     categories,
-    imageCount: images.length
+    imageCount: images.length,
+    imagesWithCategories: images.map(img => ({ name: img.name, category: img.category }))
   });
 
   console.log('Uploading images:', {
     propertyId,
     imageCount: images.length,
-    formDataEntries: Array.from(formData.entries())
+    formDataEntries: Array.from(formData.entries()).map(([key, value]) => [
+      key, 
+      value instanceof File ? `File: ${value.name}` : value
+    ])
   });
 
   try {
