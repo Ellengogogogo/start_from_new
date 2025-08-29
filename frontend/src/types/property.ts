@@ -69,10 +69,8 @@ export interface PropertyData {
 
 export interface PropertyImage {
   id: string;
-  propertyId: string;
-  filename: string;
   url: string;
-  category?: string;
+  category: string;
   createdAt: string;
 }
 
@@ -116,8 +114,10 @@ export interface ExposeData {
     contact_phone2?: string;
     contact_email2?: string;
     images?: Array<{
+      id: string;
       url: string;
-      isPrimary: boolean;
+      category: string;
+      createdAt: string;
     }>;
     locationDescription?: string; // 新增：地理位置描述
   };

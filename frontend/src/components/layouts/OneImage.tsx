@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BaseLayoutProps } from '@/types/layout';
+import { BaseLayoutProps } from './types';
 import { TextBlock } from '@/components/Shared/TextBlock';
 
 export const OneImage: React.FC<BaseLayoutProps> = ({
@@ -53,7 +53,7 @@ export const OneImage: React.FC<BaseLayoutProps> = ({
         {/* 图片 */}
         <img
           src={image.url}
-          alt={image.alt}
+          alt={image.category}
           className={`w-full h-full object-cover transition-all duration-700 ${
             isLoading ? 'opacity-0' : 'opacity-100'
           } hover:scale-110 hover:shadow-2xl`}
@@ -66,7 +66,7 @@ export const OneImage: React.FC<BaseLayoutProps> = ({
         {!isLoading && !hasError && (
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent p-6">
             <div className="text-white">
-              <h3 className="text-lg font-semibold mb-2">{image.displayName || '房间展示'}</h3>
+              <h3 className="text-lg font-semibold mb-2">{image.category}</h3>
               {image.category && (
                 <span className="inline-block px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm">
                   {image.category}

@@ -1,4 +1,5 @@
 import React from 'react';
+import { DynamicImageLayout, LayoutImage } from '@/components/layouts';
 
 export interface ExposePPTData {
   // 基本信息
@@ -31,7 +32,7 @@ export interface ExposePPTData {
   images: Array<{
     id: string;
     url: string;
-    alt: string;
+    category: string;
   }>;
   
   // 位置信息
@@ -93,6 +94,30 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
     // 如果是相对路径，构建完整URL
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
     return `${baseUrl}${url}`;
+  };
+  
+  // 根据category筛选图片
+  const getImagesByCategory = (category: string): string[] => {
+    return data.images
+      .filter(img => img.category === category)
+      .map(img => img.url);
+  };
+  
+  // 获取第一张指定类别的图片，如果没有则使用备用图片
+  const getFirstImageByCategory = (category: string, fallbackUrl: string): string => {
+    const categoryImages = getImagesByCategory(category);
+    return categoryImages.length > 0 ? getFullImageUrl(categoryImages[0]) : fallbackUrl;
+  };
+  
+  // 获取指定分类的图片并转换为LayoutImage格式
+  const getLayoutImagesByCategory = (category: string): LayoutImage[] => {
+    return data.images
+      .filter(img => img.category === category)
+      .map(img => ({
+        id: img.id,
+        url: getFullImageUrl(img.url),
+        category: img.category
+      }));
   };
   
   // 打印样式
@@ -396,43 +421,14 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
             <h2 className="text-4xl font-serif font-bold text-gray-900 mb-8 text-center">Wohnzimmer</h2>
             
             <div className="grid grid-cols-2 gap-12 items-center">
-              {/* 左侧图片展示区域 */}
+              {/* 左侧动态图片布局 */}
               <div className="space-y-4">
-                <div className="aspect-video bg-gray-200 rounded-lg shadow-lg overflow-hidden">
-                  <img 
-                    src={data.images?.[0]?.url ? getFullImageUrl(data.images[0].url) : 'https://source.unsplash.com/800x600/?living-room'} 
-                    alt="Wohnzimmer"
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = 'https://source.unsplash.com/800x600/?living-room';
-                    }}
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="aspect-video bg-gray-200 rounded-lg shadow-lg overflow-hidden">
-                    <img 
-                      src={data.images?.[1]?.url ? getFullImageUrl(data.images[1].url) : 'https://source.unsplash.com/400x300/?living-room-detail'} 
-                      alt="Wohnzimmer Detail"
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = 'https://source.unsplash.com/400x300/?living-room-detail';
-                      }}
-                    />
-                  </div>
-                  <div className="aspect-video bg-gray-200 rounded-lg shadow-lg overflow-hidden">
-                    <img 
-                      src={data.images?.[2]?.url ? getFullImageUrl(data.images[2].url) : 'https://source.unsplash.com/400x300/?living-room-view'} 
-                      alt="Wohnzimmer Ausblick"
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = 'https://source.unsplash.com/400x300/?living-room-view';
-                      }}
-                    />
-                  </div>
-                </div>
+                <DynamicImageLayout
+                  images={getLayoutImagesByCategory('wohnzimmer')}
+                  description="Das großzügige Wohnzimmer bietet viel Platz für Entspannung und Geselligkeit."
+                  category="Wohnzimmer"
+                  className="h-full"
+                />
               </div>
               
               {/* 右侧介绍文字 */}
@@ -465,43 +461,14 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
             <h2 className="text-4xl font-serif font-bold text-gray-900 mb-8 text-center">Küche</h2>
             
             <div className="grid grid-cols-2 gap-12 items-center">
-              {/* 左侧图片展示区域 */}
+              {/* 左侧动态图片布局 */}
               <div className="space-y-4">
-                <div className="aspect-video bg-gray-200 rounded-lg shadow-lg overflow-hidden">
-                  <img 
-                    src={data.images?.[3]?.url ? getFullImageUrl(data.images[3].url) : 'https://source.unsplash.com/800x600/?kitchen'} 
-                    alt="Küche"
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = 'https://source.unsplash.com/800x600/?kitchen';
-                    }}
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="aspect-video bg-gray-200 rounded-lg shadow-lg overflow-hidden">
-                    <img 
-                      src={data.images?.[4]?.url ? getFullImageUrl(data.images[4].url) : 'https://source.unsplash.com/400x300/?kitchen-appliances'} 
-                      alt="Küchengeräte"
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = 'https://source.unsplash.com/400x300/?kitchen-appliances';
-                      }}
-                    />
-                  </div>
-                  <div className="aspect-video bg-gray-200 rounded-lg shadow-lg overflow-hidden">
-                    <img 
-                      src={data.images?.[5]?.url ? getFullImageUrl(data.images[5].url) : 'https://source.unsplash.com/400x300/?kitchen-storage'} 
-                      alt="Küchenlagerung"
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = 'https://source.unsplash.com/400x300/?kitchen-storage';
-                      }}
-                    />
-                  </div>
-                </div>
+                <DynamicImageLayout
+                  images={getLayoutImagesByCategory('kueche')}
+                  description="Die vollausgestattete Einbauküche überzeugt durch funktionales Design und hochwertige Ausstattung."
+                  category="Küche"
+                  className="h-full"
+                />
               </div>
               
               {/* 右侧介绍文字 */}
@@ -534,43 +501,14 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
             <h2 className="text-4xl font-serif font-bold text-gray-900 mb-8 text-center">Schlafzimmer & Arbeitszimmer</h2>
             
             <div className="grid grid-cols-2 gap-12 items-center">
-              {/* 左侧图片展示区域 */}
+              {/* 左侧动态图片布局 */}
               <div className="space-y-4">
-                <div className="aspect-video bg-gray-200 rounded-lg shadow-lg overflow-hidden">
-                  <img 
-                    src={data.images?.[6]?.url ? getFullImageUrl(data.images[6].url) : 'https://source.unsplash.com/800x600/?bedroom'} 
-                    alt="Schlafzimmer"
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = 'https://source.unsplash.com/800x600/?bedroom';
-                    }}
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="aspect-video bg-gray-200 rounded-lg shadow-lg overflow-hidden">
-                    <img 
-                      src={data.images?.[7]?.url ? getFullImageUrl(data.images[7].url) : 'https://source.unsplash.com/400x300/?home-office'} 
-                      alt="Arbeitszimmer"
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = 'https://source.unsplash.com/400x300/?home-office';
-                      }}
-                    />
-                  </div>
-                  <div className="aspect-video bg-gray-200 rounded-lg shadow-lg overflow-hidden">
-                    <img 
-                      src={data.images?.[8]?.url ? getFullImageUrl(data.images[8].url) : 'https://source.unsplash.com/400x300/?bedroom-detail'} 
-                      alt="Schlafzimmer Detail"
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = 'https://source.unsplash.com/400x300/?bedroom-detail';
-                      }}
-                    />
-                  </div>
-                </div>
+                <DynamicImageLayout
+                  images={getLayoutImagesByCategory('zimmer')}
+                  description="Das geräumige Hauptschlafzimmer bietet einen Rückzugsort der Ruhe und Entspannung."
+                  category="Zimmer"
+                  className="h-full"
+                />
               </div>
               
               {/* 右侧介绍文字 */}
@@ -603,43 +541,14 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
             <h2 className="text-4xl font-serif font-bold text-gray-900 mb-8 text-center">Bad</h2>
             
             <div className="grid grid-cols-2 gap-12 items-center">
-              {/* 左侧图片展示区域 */}
+              {/* 左侧动态图片布局 */}
               <div className="space-y-4">
-                <div className="aspect-video bg-gray-200 rounded-lg shadow-lg overflow-hidden">
-                  <img 
-                    src={data.images?.[9]?.url ? getFullImageUrl(data.images[9].url) : 'https://source.unsplash.com/800x600/?bathroom'} 
-                    alt="Bad"
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = 'https://source.unsplash.com/800x600/?bathroom';
-                    }}
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="aspect-video bg-gray-200 rounded-lg shadow-lg overflow-hidden">
-                    <img 
-                      src={data.images?.[10]?.url ? getFullImageUrl(data.images[10].url) : 'https://source.unsplash.com/400x300/?bathroom-fixtures'} 
-                      alt="Badarmaturen"
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = 'https://source.unsplash.com/400x300/?bathroom-fixtures';
-                      }}
-                    />
-                  </div>
-                  <div className="aspect-video bg-gray-200 rounded-lg shadow-lg overflow-hidden">
-                    <img 
-                      src={data.images?.[11]?.url ? getFullImageUrl(data.images[11].url) : 'https://source.unsplash.com/400x300/?bathroom-storage'} 
-                      alt="Badlagerung"
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = 'https://source.unsplash.com/400x300/?bathroom-storage';
-                      }}
-                    />
-                  </div>
-                </div>
+                <DynamicImageLayout
+                  images={getLayoutImagesByCategory('bad')}
+                  description="Das elegante Hauptbad überzeugt durch hochwertige Materialien und durchdachtes Design."
+                  category="Bad"
+                  className="h-full"
+                />
               </div>
               
               {/* 右侧介绍文字 */}
@@ -672,43 +581,14 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
             <h2 className="text-4xl font-serif font-bold text-gray-900 mb-8 text-center">Balkon & Draußen</h2>
             
             <div className="grid grid-cols-2 gap-12 items-center">
-              {/* 左侧图片展示区域 */}
+              {/* 左侧动态图片布局 */}
               <div className="space-y-4">
-                <div className="aspect-video bg-gray-200 rounded-lg shadow-lg overflow-hidden">
-                  <img 
-                    src={data.images?.[12]?.url ? getFullImageUrl(data.images[12].url) : 'https://source.unsplash.com/800x600/?balcony'} 
-                    alt="Balkon"
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = 'https://source.unsplash.com/800x600/?balcony';
-                    }}
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="aspect-video bg-gray-200 rounded-lg shadow-lg overflow-hidden">
-                    <img 
-                      src={data.images?.[13]?.url ? getFullImageUrl(data.images[13].url) : 'https://source.unsplash.com/400x300/?outdoor-space'} 
-                      alt="Außenbereich"
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = 'https://source.unsplash.com/400x300/?outdoor-space';
-                      }}
-                    />
-                  </div>
-                  <div className="aspect-video bg-gray-200 rounded-lg shadow-lg overflow-hidden">
-                    <img 
-                      src={data.images?.[14]?.url ? getFullImageUrl(data.images[14].url) : 'https://source.unsplash.com/400x300/?garden-view'} 
-                      alt="Gartenblick"
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = 'https://source.unsplash.com/400x300/?garden-view';
-                      }}
-                    />
-                  </div>
-                </div>
+                <DynamicImageLayout
+                  images={getLayoutImagesByCategory('balkon')}
+                  description="Der großzügige Balkon bietet einen wunderbaren Außenbereich zum Entspannen und Genießen."
+                  category="Balkon"
+                  className="h-full"
+                />
               </div>
               
               {/* 右侧介绍文字 */}
@@ -797,8 +677,7 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
             <div className="flex justify-center mb-8">
               <div className="w-[800px] h-[600px] bg-gray-200 rounded-lg shadow-lg overflow-hidden">
                 <img 
-                  src={data.images?.[1]?.url ? getFullImageUrl(data.images[1].url) : 
-                       'https://source.unsplash.com/800x600/?floor-plan'} 
+                  src={getFirstImageByCategory('grundriss', 'https://source.unsplash.com/800x600/?floor-plan')} 
                   alt="Grundriss"
                   className="w-full h-full object-cover"
                   onError={(e) => {

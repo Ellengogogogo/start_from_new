@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BaseLayoutProps } from '@/types/layout';
+import { BaseLayoutProps } from './types';
 import { TextBlock } from '@/components/Shared/TextBlock';
 
 export const SixImages: React.FC<BaseLayoutProps> = ({
@@ -87,7 +87,7 @@ export const SixImages: React.FC<BaseLayoutProps> = ({
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-end">
             <div className="w-full p-3 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
               <div className="text-white text-center">
-                <h4 className="font-semibold text-sm mb-1">{image.displayName || '房间展示'}</h4>
+                <h4 className="font-semibold text-sm mb-1">{image.category || '房间展示'}</h4>
                 {image.category && (
                   <span className="inline-block px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs">
                     {image.category}

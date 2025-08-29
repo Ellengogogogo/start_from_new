@@ -35,8 +35,10 @@ export default function ExposeGenerationPage() {
     yearBuilt?: number;
     description?: string;
     images?: Array<{
+      id: string;
       url: string;
-      isPrimary: boolean;
+      category: string;
+      createdAt: string;
     }>;
   } | null>(null);
 
@@ -90,9 +92,10 @@ export default function ExposeGenerationPage() {
       description: data.description || 'Keine Beschreibung verfügbar',
       locationDescription: data.locationDescription || '',
       images: (data.images || []).map((img, index: number) => ({
-        id: `img_${index}`,
+        id: img.id || `img_${index}`,
         url: img.url,
-        alt: `Immobilienbild ${index + 1}`
+        category: img.category || 'wohnzimmer',
+        createdAt: img.createdAt || ''
       })),
       locationText: data.locationDescription || '',
       locationImage: data.images?.[0]?.url || '',

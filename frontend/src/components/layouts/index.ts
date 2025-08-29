@@ -4,3 +4,5 @@ export { ThreeImages } from './ThreeImages';
 export { FourImages } from './FourImages';
 export { FiveImages } from './FiveImages';
 export { SixImages } from './SixImages';
+export { DynamicImageLayout } from './DynamicImageLayout';
+export type { LayoutImage, BaseLayoutProps } from './types';

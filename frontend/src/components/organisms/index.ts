@@ -1,8 +1,3 @@
-// 导出所有organisms组件
-export { ContactCard } from './ContactCard';
-export { MapSection } from './MapSection';
-export { PropertyHeader } from './PropertyHeader';
-
 // 导出表单步骤组件
 export * from './PropertyFormSteps';
 

@@ -5,9 +5,7 @@ Expose generation routes for creating professional property presentations
 from fastapi import APIRouter, HTTPException, status, BackgroundTasks
 from typing import Dict, Any
 import uuid
-import json
 from datetime import datetime
-import time
 import asyncio
 import os
 
@@ -185,10 +183,7 @@ async def simulate_expose_generation(expose_id: str, property_id: str):
         # 从缓存中获取真实的房源数据和图片
         property_data = property_cache.get(property_id, {})
         cached_images = image_cache.get(property_id, [])
-        
-        # 分离普通图片和平面图
-        regular_images = [img for img in cached_images if img.get("imageType") != "floorplan"]
-        floorplan_images = [img for img in cached_images if img.get("imageType") == "floorplan"]
+        regular_images = [img for img in cached_images]
         
         # 生成预览数据（使用真实数据）
         expose_preview_data[expose_id] = {
@@ -219,12 +214,11 @@ async def simulate_expose_generation(expose_id: str, property_id: str):
                 {
                     "id": image.get("id", f"img_{i}"),
                     "url": image.get("url", ""),
-                    "alt": image.get("alt", f"Immobilienbild {i+1}"),
-                    "isPrimary": image.get("isPrimary", False)
+                    "category": image.get("category", "wohnzimmer"),
+                    "createdAt": image.get("createdAt", "")
                 }
                 for i, image in enumerate(regular_images)
             ] if regular_images else [],
-            "floorPlanImage": floorplan_images[0].get("url", "") if floorplan_images else "",  # 添加平面图
             "floorPlanDetails": [
                 f"{property_data.get('bedrooms', 0)} Schlafzimmer, Hauptschlafzimmer mit eigenem Bad",
                 f"{property_data.get('bathrooms', 0)} Badezimmer, Trocken- und Nassbereich getrennt",
