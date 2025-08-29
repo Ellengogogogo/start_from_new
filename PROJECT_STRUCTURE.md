@@ -63,18 +63,10 @@ frontend/
 │   │   │   ├── Button.tsx            # 按钮组件
 │   │   │   ├── Divider.tsx           # 分割线组件
 │   │   │   └── Input.tsx             # 输入框组件
-│   │   ├── molecules/                # 分子组件
-│   │   │   ├── FeatureList.tsx       # 特性列表
-│   │   │   ├── ImageGallery.tsx      # 图片画廊
-│   │   │   ├── PriceTag.tsx          # 价格标签
-│   │   │   └── PropertyCard.tsx      # 房源卡片
 │   │   ├── organisms/                # 有机体组件
-│   │   │   ├── ContactCard.tsx       # 联系卡片
-│   │   │   ├── MapSection.tsx        # 地图区域
 │   │   │   ├── ProgressIndicator.tsx # 进度指示器
 │   │   │   ├── PropertyForm.tsx # 房源表单主组件
 │   │   │   ├── PropertyFormNavigation.tsx # 表单导航
-│   │   │   ├── PropertyHeader.tsx    # 房源头部
 │   │   │   ├── index.ts              # 导出文件
 │   │   │   └── PropertyFormSteps/    # 表单步骤组件
 │   │   │       ├── BasicInfoStep.tsx     # 基本信息步骤
