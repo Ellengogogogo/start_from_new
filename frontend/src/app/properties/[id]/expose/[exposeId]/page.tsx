@@ -71,7 +71,11 @@ export default function ExposeGenerationPage() {
         'Immobilienübersicht',
         'Eckdaten',
         'Immobiliendetails',
-        'Bildergalerie',
+        'Wohnzimmer',
+        'Küche',
+        'Schlafzimmer & Arbeitszimmer',
+        'Bad',
+        'Balkon & Draußen',
         'Lagebeschreibung',
         'Grundriss',
         'Kontaktinformationen'

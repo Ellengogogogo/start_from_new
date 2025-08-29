@@ -268,19 +268,7 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
                     </span>
                     <span className="text-xl text-gray-700 font-medium">{item}</span>
                   </li>
-                )) || [
-                  'Immobilienübersicht',
-                  'Eckdaten',
-                  'Immobiliendetails',
-                  'Wohnzimmer',
-                  'Küche',
-                  'Schlafzimmer & Arbeitszimmer',
-                  'Bad',
-                  'Balkon & Draußen',
-                  'Lagebeschreibung',
-                  'Grundriss',
-                  'Kontaktinformationen'
-                ].map((item, index) => (
+                )) .map((item, index) => (
                   <li key={index} className="flex items-start gap-4">
                     <span className="flex-shrink-0 w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold text-lg">
                       {index + 1}
@@ -415,32 +403,19 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
         </div>
 
         {/* 第5页 - Wohnzimmer */}
-        <div className="slide w-full h-screen bg-white p-12 flex items-center pb-20" 
+        <div className="slide w-full h-screen bg-white p-8 flex flex-col pb-20" 
              style={{ aspectRatio: '16/9', minHeight: '1080px' }}>
-          <div className="w-full max-w-6xl mx-auto">
-            <h2 className="text-4xl font-serif font-bold text-gray-900 mb-8 text-center">Wohnzimmer</h2>
-            
-            <div className="grid grid-cols-2 gap-12 items-center">
-              {/* 左侧动态图片布局 */}
-              <div className="space-y-4">
-                <DynamicImageLayout
-                  images={getLayoutImagesByCategory('wohnzimmer')}
-                  description="Das großzügige Wohnzimmer bietet viel Platz für Entspannung und Geselligkeit."
-                  category="Wohnzimmer"
-                  className="h-full"
-                />
-              </div>
-              
-              {/* 右侧介绍文字 */}
-              <div className="space-y-6">
-                <h3 className="text-2xl font-serif font-semibold text-gray-800">Gemütliches Wohnambiente</h3>
-                <div className="space-y-4 text-lg text-gray-700 leading-relaxed">
-                  <p>Das großzügige Wohnzimmer bietet viel Platz für Entspannung und Geselligkeit. Die helle Raumgestaltung mit großen Fenstern sorgt für eine angenehme Atmosphäre.</p>
-                  <p>Hochwertige Materialien und durchdachte Details schaffen ein elegantes Ambiente, das zum Verweilen einlädt. Der Raum ist ideal für Familienleben und Unterhaltung.</p>
-                  <p>Die flexible Einrichtung ermöglicht verschiedene Nutzungsmöglichkeiten und passt sich Ihren individuellen Bedürfnissen an.</p>
-                </div>
-              </div>
-            </div>
+          {/* 标题 */}
+          <h2 className="text-4xl font-serif font-bold text-gray-900 mb-6 text-center">Wohnzimmer</h2>
+          
+          {/* 图片布局占据整个剩余空间 */}
+          <div className="flex-1 w-full">
+            <DynamicImageLayout
+              images={getLayoutImagesByCategory('wohnzimmer')}
+              description="Das großzügige Wohnzimmer bietet viel Platz für Entspannung und Geselligkeit."
+              category="Wohnzimmer"
+              className="w-full h-full"
+            />
           </div>
           
           {/* Footer */}
@@ -455,32 +430,19 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
         </div>
 
         {/* 第6页 - Küche */}
-        <div className="slide w-full h-screen bg-white p-12 flex items-center pb-20" 
+        <div className="slide w-full h-screen bg-white p-8 flex flex-col pb-20" 
              style={{ aspectRatio: '16/9', minHeight: '1080px' }}>
-          <div className="w-full max-w-6xl mx-auto">
-            <h2 className="text-4xl font-serif font-bold text-gray-900 mb-8 text-center">Küche</h2>
-            
-            <div className="grid grid-cols-2 gap-12 items-center">
-              {/* 左侧动态图片布局 */}
-              <div className="space-y-4">
-                <DynamicImageLayout
-                  images={getLayoutImagesByCategory('kueche')}
-                  description="Die vollausgestattete Einbauküche überzeugt durch funktionales Design und hochwertige Ausstattung."
-                  category="Küche"
-                  className="h-full"
-                />
-              </div>
-              
-              {/* 右侧介绍文字 */}
-              <div className="space-y-6">
-                <h3 className="text-2xl font-serif font-semibold text-gray-800">Moderne Einbauküche</h3>
-                <div className="space-y-4 text-lg text-gray-700 leading-relaxed">
-                  <p>Die vollausgestattete Einbauküche überzeugt durch funktionales Design und hochwertige Ausstattung. Alle modernen Geräte sind bereits integriert.</p>
-                  <p>Der großzügige Arbeitsbereich bietet optimale Bedingungen für das Kochen und Backen. Die praktische Anordnung der Schränke und Schubladen sorgt für Ordnung.</p>
-                  <p>Ein gemütlicher Essbereich lädt zum gemeinsamen Frühstück oder Abendessen ein und schafft eine warme, familiäre Atmosphäre.</p>
-                </div>
-              </div>
-            </div>
+          {/* 标题 */}
+          <h2 className="text-4xl font-serif font-bold text-gray-900 mb-6 text-center">Küche</h2>
+          
+          {/* 图片布局占据整个剩余空间 */}
+          <div className="flex-1 w-full">
+            <DynamicImageLayout
+              images={getLayoutImagesByCategory('kueche')}
+              description="Die vollausgestattete Einbauküche überzeugt durch funktionales Design und hochwertige Ausstattung."
+              category="Küche"
+              className="w-full h-full"
+            />
           </div>
           
           {/* Footer */}
@@ -495,32 +457,19 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
         </div>
 
         {/* 第7页 - Schlafzimmer & Arbeitszimmer */}
-        <div className="slide w-full h-screen bg-white p-12 flex items-center pb-20" 
+        <div className="slide w-full h-screen bg-white p-8 flex flex-col pb-20" 
              style={{ aspectRatio: '16/9', minHeight: '1080px' }}>
-          <div className="w-full max-w-6xl mx-auto">
-            <h2 className="text-4xl font-serif font-bold text-gray-900 mb-8 text-center">Schlafzimmer & Arbeitszimmer</h2>
-            
-            <div className="grid grid-cols-2 gap-12 items-center">
-              {/* 左侧动态图片布局 */}
-              <div className="space-y-4">
-                <DynamicImageLayout
-                  images={getLayoutImagesByCategory('zimmer')}
-                  description="Das geräumige Hauptschlafzimmer bietet einen Rückzugsort der Ruhe und Entspannung."
-                  category="Zimmer"
-                  className="h-full"
-                />
-              </div>
-              
-              {/* 右侧介绍文字 */}
-              <div className="space-y-6">
-                <h3 className="text-2xl font-serif font-semibold text-gray-800">Ruheoase & Produktivität</h3>
-                <div className="space-y-4 text-lg text-gray-700 leading-relaxed">
-                  <p>Das geräumige Hauptschlafzimmer bietet einen Rückzugsort der Ruhe und Entspannung. Die ruhige Lage und die hochwertige Ausstattung garantieren erholsamen Schlaf.</p>
-                  <p>Ein separates Arbeitszimmer ermöglicht konzentriertes Arbeiten von zu Hause aus. Die helle Raumgestaltung und die praktische Einrichtung schaffen optimale Arbeitsbedingungen.</p>
-                  <p>Beide Räume sind mit ausreichend Stauraum ausgestattet und bieten viel Flexibilität für individuelle Einrichtungsvorlieben.</p>
-                </div>
-              </div>
-            </div>
+          {/* 标题 */}
+          <h2 className="text-4xl font-serif font-bold text-gray-900 mb-6 text-center">Schlafzimmer & Arbeitszimmer</h2>
+          
+          {/* 图片布局占据整个剩余空间 */}
+          <div className="flex-1 w-full">
+            <DynamicImageLayout
+              images={getLayoutImagesByCategory('zimmer')}
+              description="Das geräumige Hauptschlafzimmer bietet einen Rückzugsort der Ruhe und Entspannung."
+              category="Zimmer"
+              className="w-full h-full"
+            />
           </div>
           
           {/* Footer */}
@@ -535,32 +484,19 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
         </div>
 
         {/* 第8页 - Bad */}
-        <div className="slide w-full h-screen bg-white p-12 flex items-center pb-20" 
+        <div className="slide w-full h-screen bg-white p-8 flex flex-col pb-20" 
              style={{ aspectRatio: '16/9', minHeight: '1080px' }}>
-          <div className="w-full max-w-6xl mx-auto">
-            <h2 className="text-4xl font-serif font-bold text-gray-900 mb-8 text-center">Bad</h2>
-            
-            <div className="grid grid-cols-2 gap-12 items-center">
-              {/* 左侧动态图片布局 */}
-              <div className="space-y-4">
-                <DynamicImageLayout
-                  images={getLayoutImagesByCategory('bad')}
-                  description="Das elegante Hauptbad überzeugt durch hochwertige Materialien und durchdachtes Design."
-                  category="Bad"
-                  className="h-full"
-                />
-              </div>
-              
-              {/* 右侧介绍文字 */}
-              <div className="space-y-6">
-                <h3 className="text-2xl font-serif font-semibold text-gray-800">Luxuriöse Badezimmer</h3>
-                <div className="space-y-4 text-lg text-gray-700 leading-relaxed">
-                  <p>Das elegante Hauptbad überzeugt durch hochwertige Materialien und durchdachtes Design. Moderne Armaturen und eine geräumige Dusche sorgen für Komfort.</p>
-                  <p>Ein separates Gäste-WC bietet zusätzliche Privatsphäre und ist praktisch für Besucher. Alle Badezimmer sind mit ausreichend Stauraum ausgestattet.</p>
-                  <p>Die hochwertige Ausstattung und die ruhige Atmosphäre schaffen einen Ort der Entspannung und des Wohlbefindens.</p>
-                </div>
-              </div>
-            </div>
+          {/* 标题 */}
+          <h2 className="text-4xl font-serif font-bold text-gray-900 mb-6 text-center">Bad</h2>
+          
+          {/* 图片布局占据整个剩余空间 */}
+          <div className="flex-1 w-full">
+            <DynamicImageLayout
+              images={getLayoutImagesByCategory('bad')}
+              description="Das elegante Hauptbad überzeugt durch hochwertige Materialien und durchdachtes Design."
+              category="Bad"
+              className="w-full h-full"
+            />
           </div>
           
           {/* Footer */}
@@ -575,32 +511,19 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
         </div>
 
         {/* 第9页 - Balkon & draußen */}
-        <div className="slide w-full h-screen bg-white p-12 flex items-center pb-20" 
+        <div className="slide w-full h-screen bg-white p-8 flex flex-col pb-20" 
              style={{ aspectRatio: '16/9', minHeight: '1080px' }}>
-          <div className="w-full max-w-6xl mx-auto">
-            <h2 className="text-4xl font-serif font-bold text-gray-900 mb-8 text-center">Balkon & Draußen</h2>
-            
-            <div className="grid grid-cols-2 gap-12 items-center">
-              {/* 左侧动态图片布局 */}
-              <div className="space-y-4">
-                <DynamicImageLayout
-                  images={getLayoutImagesByCategory('balkon')}
-                  description="Der großzügige Balkon bietet einen wunderbaren Außenbereich zum Entspannen und Genießen."
-                  category="Balkon"
-                  className="h-full"
-                />
-              </div>
-              
-              {/* 右侧介绍文字 */}
-              <div className="space-y-6">
-                <h3 className="text-2xl font-serif font-semibold text-gray-800">Außenleben genießen</h3>
-                <div className="space-y-4 text-lg text-gray-700 leading-relaxed">
-                  <p>Der großzügige Balkon bietet einen wunderbaren Außenbereich zum Entspannen und Genießen. Hier können Sie den Tag bei einem Kaffee beginnen oder den Abend ausklingen lassen.</p>
-                  <p>Die ruhige Lage und der schöne Ausblick auf die Umgebung schaffen eine entspannende Atmosphäre. Der Balkon ist ideal für kleine Pflanzen und Outdoor-Möbel.</p>
-                  <p>Die Außenanlagen sind gepflegt und bieten zusätzlichen Lebensraum im Freien, der das Wohngefühl der Immobilie perfekt ergänzt.</p>
-                </div>
-              </div>
-            </div>
+          {/* 标题 */}
+          <h2 className="text-4xl font-serif font-bold text-gray-900 mb-6 text-center">Balkon & Draußen</h2>
+          
+          {/* 图片布局占据整个剩余空间 */}
+          <div className="flex-1 w-full">
+            <DynamicImageLayout
+              images={getLayoutImagesByCategory('balkon')}
+              description="Der großzügige Balkon bietet einen wunderbaren Außenbereich zum Entspannen und Genießen."
+              category="Balkon"
+              className="w-full h-full"
+            />
           </div>
           
           {/* Footer */}
@@ -691,14 +614,7 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
             {/* 详情列表 - 紧凑布局 */}
             <div className="max-w-5xl mx-auto">
               <ul className="grid grid-cols-2 gap-4 text-base text-gray-700">
-                {(data.floorPlanDetails || [
-                  '3 Schlafzimmer, Hauptschlafzimmer mit eigenem Bad',
-                  '2 Badezimmer, Trocken- und Nassbereich getrennt',
-                  'Offene Küche, Essbereich integriert',
-                  'Wohnzimmer geräumig, viel Tageslicht',
-                  'Balkon verbindet Wohnzimmer und Hauptschlafzimmer',
-                  'Abstellraum und Kleiderschrank vorhanden'
-                ]).map((detail, index) => (
+                {(data.floorPlanDetails).map((detail, index) => (
                   <li key={index} className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></div>
                     <span className="text-sm">{detail}</span>
