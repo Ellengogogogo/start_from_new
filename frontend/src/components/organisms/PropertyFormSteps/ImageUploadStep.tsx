@@ -33,13 +33,13 @@ export default function ImageUploadStep({
 }: ImageUploadStepProps) {
   const [activeImageTab, setActiveImageTab] = useState<ImageCategory>('wohnzimmer');
 
-  const imageCategories: Array<{ id: ImageCategory; name: string; icon: string }> = [
-    { id: 'wohnzimmer', name: 'Wohnzimmer', icon: '🏠' },
-    { id: 'kueche', name: 'Küche & Essbereich', icon: '🍳' },
-    { id: 'zimmer', name: 'Zimmer', icon: '🛏️' },
-    { id: 'bad', name: 'Bad', icon: '🚿' },
-    { id: 'balkon', name: 'Balkon & Außenbereich', icon: '🌿' },
-    { id: 'grundriss', name: 'Grundriss', icon: '📐' }
+  const imageCategories: Array<{ id: ImageCategory; icon: string }> = [
+    { id: 'wohnzimmer', icon: '🏠' },
+    { id: 'kueche', icon: '🍳' },
+    { id: 'zimmer', icon: '🛏️' },
+    { id: 'bad', icon: '🚿' },
+    { id: 'balkon', icon: '🌿' },
+    { id: 'grundriss', icon: '📐' }
   ];
 
   return (
@@ -64,7 +64,7 @@ export default function ImageUploadStep({
                 }`}
               >
                 <span className="mr-2">{tab.icon}</span>
-                {tab.name}
+                {getTabDisplayName(tab.id)}
               </button>
             ))}
           </nav>
@@ -116,17 +116,7 @@ export default function ImageUploadStep({
                     e.preventDefault();
                     onDragStateChange(false);
                     const files = Array.from(e.dataTransfer.files);
-                    
-                    // 检查是否可以添加更多图片
-                    const availableSlots = maxImagesPerCategory - currentImages.length;
-                    
-                    if (availableSlots <= 0) {
-                      alert(`Sie können maximal ${maxImagesPerCategory} Bilder für ${getTabDisplayName(activeImageTab)} hochladen.`);
-                      return;
-                    }
-                    
-                    const filesToAdd = files.slice(0, availableSlots);
-                    onDrop(filesToAdd, activeImageTab);
+                    onDrop(files, activeImageTab);
                   }}
                 >
                   <input
@@ -229,9 +219,9 @@ export default function ImageUploadStep({
       <div className="bg-gray-50 rounded-lg p-4">
         <h4 className="text-sm font-medium text-gray-700 mb-3">Bild-Übersicht</h4>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
-          {imageCategories.map(({ id, name }) => (
+          {imageCategories.map(({ id }) => (
             <div key={id} className="flex items-center justify-between">
-              <span className="text-gray-600">{name}:</span>
+              <span className="text-gray-600">{getTabDisplayName(id)}:</span>
               <span className={`font-medium ${getCategoryImageCount(id) > 0 ? 'text-green-600' : 'text-gray-400'}`}>
                 {getCategoryImageCount(id)} Bilder
               </span>
