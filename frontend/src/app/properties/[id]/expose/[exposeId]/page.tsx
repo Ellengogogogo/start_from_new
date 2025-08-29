@@ -70,13 +70,13 @@ export default function ExposeGenerationPage() {
       agendaItems: [
         'Immobilienübersicht',
         'Eckdaten',
-        'Immobiliendetails',
+        'Objektbeschreibung',
+        'Lagebeschreibung',
         'Wohnzimmer',
         'Küche',
         'Schlafzimmer & Arbeitszimmer',
         'Bad',
         'Balkon & Draußen',
-        'Lagebeschreibung',
         'Grundriss',
         'Kontaktinformationen'
       ],
