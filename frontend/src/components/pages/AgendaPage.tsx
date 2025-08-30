@@ -17,18 +17,6 @@ export const AgendaPage: React.FC<AgendaPageProps> = ({
   backgroundColor = 'white',
   className = ''
 }) => {
-  const [imageLoading, setImageLoading] = useState(true);
-  const [imageError, setImageError] = useState(false);
-
-  const handleImageLoad = () => {
-    setImageLoading(false);
-  };
-
-  const handleImageError = () => {
-    setImageLoading(false);
-    setImageError(true);
-  };
-
   // 背景样式配置
   const backgroundClasses = {
     white: 'bg-white',
@@ -55,48 +43,31 @@ export const AgendaPage: React.FC<AgendaPageProps> = ({
   const defaultBackgroundImage = 'https://source.unsplash.com/800x600/?house-interior';
 
   const displayAgendaItems = agendaItems || defaultAgendaItems;
+  
+  // 确定要显示的图片URL
+  const imageUrl = backgroundImage || defaultBackgroundImage;
+  
+  // 调试信息
+  console.log('AgendaPage props:', { backgroundImage, imageUrl });
 
   return (
     <div className={`agenda-page w-full h-screen relative overflow-hidden ${backgroundClasses[backgroundColor]} ${className}`}>
       
       {/* 右侧背景图片 - 占满整个右侧 */}
       <div className="absolute right-0 top-0 w-1/2 h-full z-0">
-        {imageLoading && (
-          <div className="absolute inset-0 bg-gradient-to-br from-stone-100 to-slate-100 
-                          animate-pulse flex items-center justify-center">
-            <div className="text-center">
-              <div className="w-20 h-20 border-4 border-stone-400 border-t-transparent 
-                              rounded-full animate-spin mb-4"></div>
-              <p className="text-stone-700 font-medium">Bild wird geladen...</p>
-            </div>
-          </div>
-        )}
-        
-        {imageError && (
-          <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-slate-100 
-                          flex items-center justify-center">
-            <div className="text-center text-stone-600">
-              <div className="w-20 h-20 mx-auto mb-4 bg-stone-300 rounded-3xl flex items-center justify-center">
-                <svg className="w-10 h-10 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <p className="text-lg font-medium">Bild konnte nicht geladen werden</p>
-            </div>
-          </div>
-        )}
-        
-        {!imageLoading && !imageError && (
-          <img
-            src={backgroundImage || defaultBackgroundImage}
-            alt="Property Interior"
-            className="w-full h-full object-cover"
-            onLoad={handleImageLoad}
-            onError={handleImageError}
-            loading="lazy"
-          />
-        )}
+        <img
+          src={imageUrl}
+          alt="Property Interior"
+          className="w-full h-full object-cover"
+          loading="lazy"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            if (target.src !== defaultBackgroundImage) {
+              console.log('Image failed to load, falling back to default:', target.src);
+              target.src = defaultBackgroundImage;
+            }
+          }}
+        />
         
         {/* 右侧渐变遮罩 */}
         <div className="absolute inset-0 bg-gradient-to-l from-white/20 via-transparent to-transparent"></div>
