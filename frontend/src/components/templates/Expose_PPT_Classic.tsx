@@ -253,6 +253,7 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
         <DescriptionPage
           description={data.description}
           propertyName={data.propertyName}
+          backgroundImage={data.images?.[3]?.url ? getFullImageUrl(data.images[3].url) : undefined}
           pageNumber="4 / 12"
         />
 
