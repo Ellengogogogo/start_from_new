@@ -151,25 +151,33 @@ export const FourImagesRoom: React.FC<FourImagesProps> = ({
           </div>
         </div>
 
-        {/* 右侧图片区域 - 占2/3宽度，2x2网格布局 */}
-        <div className="col-span-8 relative">
-          <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 gap-2 p-8">
-            <ImageContainer 
-              image={image1} 
-              imageKey="image1"
-            />
-            <ImageContainer 
-              image={image2} 
-              imageKey="image2"
-            />
-            <ImageContainer 
-              image={image3} 
-              imageKey="image3"
-            />
-            <ImageContainer 
-              image={image4} 
-              imageKey="image4"
-            />
+        {/* 右侧图片区域 - 占2/3宽度，2x2网格布局，图片更小，间隙更大 */}
+        <div className="col-span-8 relative flex items-center justify-center">
+          <div className="w-full max-w-5xl grid grid-cols-2 grid-rows-2 gap-6 p-12">
+            <div className="aspect-[4/3]">
+              <ImageContainer 
+                image={image1} 
+                imageKey="image1"
+              />
+            </div>
+            <div className="aspect-[4/3]">
+              <ImageContainer 
+                image={image2} 
+                imageKey="image2"
+              />
+            </div>
+            <div className="aspect-[4/3]">
+              <ImageContainer 
+                image={image3} 
+                imageKey="image3"
+              />
+            </div>
+            <div className="aspect-[4/3]">
+              <ImageContainer 
+                image={image4} 
+                imageKey="image4"
+              />
+            </div>
           </div>
         </div>
       </div>
