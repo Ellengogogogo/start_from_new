@@ -3,21 +3,21 @@ import { TextBlockData } from '@/types/layout';
 
 interface TextBlockProps extends TextBlockData {
   className?: string;
-  variant?: 'default' | 'overlay' | 'card';
+  variant?: 'default' | 'overlay' | 'minimal';
 }
 
 export const TextBlock: React.FC<TextBlockProps> = ({
   title,
   description,
   className = '',
-  variant = 'default'
+  variant = 'minimal'
 }) => {
-  const baseClasses = 'p-4 rounded-lg transition-all duration-300';
+  const baseClasses = 'transition-all duration-200';
   
   const variantClasses = {
-    default: 'bg-gray-100 text-gray-800 border border-gray-200',
-    overlay: 'bg-black/70 text-white backdrop-blur-sm',
-    card: 'bg-white text-gray-800 shadow-lg border border-gray-100'
+    default: 'text-stone-800',
+    overlay: 'text-white',
+    minimal: 'text-stone-700'
   };
 
   const classes = `${baseClasses} ${variantClasses[variant]} ${className}`;
@@ -25,11 +25,11 @@ export const TextBlock: React.FC<TextBlockProps> = ({
   return (
     <div className={classes}>
       {title && (
-        <h3 className="text-lg font-semibold mb-2 text-inherit">
+        <h3 className="text-lg font-semibold mb-3 text-inherit">
           {title}
         </h3>
       )}
-      <p className="text-sm leading-relaxed text-inherit">
+      <p className="text-base leading-relaxed text-inherit">
         {description}
       </p>
     </div>

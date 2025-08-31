@@ -1,8 +1,9 @@
-export { OneImage } from './OneImage';
-export { TwoImages } from './TwoImages';
-export { ThreeImages } from './ThreeImages';
-export { FourImages } from './FourImages';
-export { FiveImages } from './FiveImages';
-export { SixImages } from './SixImages';
+export { OneImageRoom } from './OneImageRoom';
+export { TwoImagesRoom } from './TwoImagesRoom';
+export { ThreeImagesRoom } from './ThreeImagesRoom';
+export { FourImagesRoom } from './FourImagesRoom';
+export { FiveImagesRoom } from './FiveImagesRoom';
+export { SixImagesRoom } from './SixImagesRoom';
+export { GrundrissPage } from './GrundrissPage';
 export { DynamicImageLayout } from './DynamicImageLayout';
 export type { LayoutImage, BaseLayoutProps } from './types';

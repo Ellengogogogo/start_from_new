@@ -1,6 +1,6 @@
 import React from 'react';
-import { DynamicImageLayout, LayoutImage } from '@/components/layouts';
 import { CoverPage, AgendaPage, KeyDataPage, DescriptionPage, LocationDescriptionPage, ContactPage } from '@/components/pages';
+import { DynamicImageLayout, LayoutImage, GrundrissPage } from '@/components/layouts';
 
 export interface ExposePPTData {
   // 基本信息
@@ -24,6 +24,7 @@ export interface ExposePPTData {
     parkplatz?: string;
     renovierungsqualitaet?: string;
     bodenbelag?: string;
+    city?: string;
   };
   
   // 描述
@@ -236,215 +237,105 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
         {/* 第2页 - 议程 */}
         <AgendaPage
           agendaItems={data.agendaItems}
-          backgroundImage={data.images?.[1]?.url ? getFullImageUrl(data.images[1].url) : 
-                          data.images?.[0]?.url ? getFullImageUrl(data.images[0].url) : undefined}
+          backgroundImage={data.images?.[0]?.url ? getFullImageUrl(data.images[0].url) : undefined}
           propertyName={data.propertyName}
           pageNumber="2 / 12"
         />
 
-        {/* 第3页 - 关键数据 */}
-        <KeyDataPage
-          keyFacts={data.keyFacts}
+        {/* 第3页 - 位置信息 */}
+        <LocationDescriptionPage
+          locationDescription={data.locationDescription}
+          locationImage={data.locationImage ? getFullImageUrl(data.locationImage) : undefined}
+          cityName={data.keyFacts.city}
           propertyName={data.propertyName}
           pageNumber="3 / 12"
         />
 
-        {/* 第4页 - 房源描述 */}
+        {/* 第4页 - 关键数据 */}
+        <KeyDataPage
+          keyFacts={data.keyFacts}
+          propertyName={data.propertyName}
+          pageNumber="4 / 12"
+        />
+
+        {/* 第5页 - 房源描述 */}
         <DescriptionPage
           description={data.description}
           propertyName={data.propertyName}
           backgroundImage={data.images?.[3]?.url ? getFullImageUrl(data.images[3].url) : undefined}
-          pageNumber="4 / 12"
+          pageNumber="5 / 12"
         />
 
-        {/* 第5页 - Wohnzimmer */}
-        <div className="slide w-full h-screen bg-white p-8 flex flex-col pb-20" 
-             style={{ aspectRatio: '16/9', minHeight: '1080px' }}>
-          {/* 标题 */}
-          <h2 className="text-4xl font-serif font-bold text-gray-900 mb-6 text-center">Wohnzimmer</h2>
-          
-          {/* 图片布局占据整个剩余空间 */}
-          <div className="flex-1 w-full">
-            <DynamicImageLayout
-              images={getLayoutImagesByCategory('wohnzimmer')}
-              description="Das großzügige Wohnzimmer bietet viel Platz für Entspannung und Geselligkeit."
-              category="Wohnzimmer"
-              className="w-full h-full"
-            />
-          </div>
-          
-          {/* Footer */}
-          <div className="slide-footer">
-            <div className="footer-left">
-              {data.propertyName || 'Immobilienname'}
-            </div>
-            <div className="footer-right">
-              5 / 12
-            </div>
-          </div>
-        </div>
-
-        {/* 第6页 - Küche */}
-        <div className="slide w-full h-screen bg-white p-8 flex flex-col pb-20" 
-             style={{ aspectRatio: '16/9', minHeight: '1080px' }}>
-          {/* 标题 */}
-          <h2 className="text-4xl font-serif font-bold text-gray-900 mb-6 text-center">Küche</h2>
-          
-          {/* 图片布局占据整个剩余空间 */}
-          <div className="flex-1 w-full">
-            <DynamicImageLayout
-              images={getLayoutImagesByCategory('kueche')}
-              description="Die vollausgestattete Einbauküche überzeugt durch funktionales Design und hochwertige Ausstattung."
-              category="Küche"
-              className="w-full h-full"
-            />
-          </div>
-          
-          {/* Footer */}
-          <div className="slide-footer">
-            <div className="footer-left">
-              {data.propertyName || 'Immobilienname'}
-            </div>
-            <div className="footer-right">
-              6 / 12
-            </div>
-          </div>
-        </div>
-
-        {/* 第7页 - Schlafzimmer & Arbeitszimmer */}
-        <div className="slide w-full h-screen bg-white p-8 flex flex-col pb-20" 
-             style={{ aspectRatio: '16/9', minHeight: '1080px' }}>
-          {/* 标题 */}
-          <h2 className="text-4xl font-serif font-bold text-gray-900 mb-6 text-center">Schlafzimmer & Arbeitszimmer</h2>
-          
-          {/* 图片布局占据整个剩余空间 */}
-          <div className="flex-1 w-full">
-            <DynamicImageLayout
-              images={getLayoutImagesByCategory('zimmer')}
-              description="Das geräumige Hauptschlafzimmer bietet einen Rückzugsort der Ruhe und Entspannung."
-              category="Zimmer"
-              className="w-full h-full"
-            />
-          </div>
-          
-          {/* Footer */}
-          <div className="slide-footer">
-            <div className="footer-left">
-              {data.propertyName || 'Immobilienname'}
-            </div>
-            <div className="footer-right">
-              7 / 12
-            </div>
-          </div>
-        </div>
-
-        {/* 第8页 - Bad */}
-        <div className="slide w-full h-screen bg-white p-8 flex flex-col pb-20" 
-             style={{ aspectRatio: '16/9', minHeight: '1080px' }}>
-          {/* 标题 */}
-          <h2 className="text-4xl font-serif font-bold text-gray-900 mb-6 text-center">Bad</h2>
-          
-          {/* 图片布局占据整个剩余空间 */}
-          <div className="flex-1 w-full">
-            <DynamicImageLayout
-              images={getLayoutImagesByCategory('bad')}
-              description="Das elegante Hauptbad überzeugt durch hochwertige Materialien und durchdachtes Design."
-              category="Bad"
-              className="w-full h-full"
-            />
-          </div>
-          
-          {/* Footer */}
-          <div className="slide-footer">
-            <div className="footer-left">
-              {data.propertyName || 'Immobilienname'}
-            </div>
-            <div className="footer-right">
-              8 / 12
-            </div>
-          </div>
-        </div>
-
-        {/* 第9页 - Balkon & draußen */}
-        <div className="slide w-full h-screen bg-white p-8 flex flex-col pb-20" 
-             style={{ aspectRatio: '16/9', minHeight: '1080px' }}>
-          {/* 标题 */}
-          <h2 className="text-4xl font-serif font-bold text-gray-900 mb-6 text-center">Balkon & Draußen</h2>
-          
-          {/* 图片布局占据整个剩余空间 */}
-          <div className="flex-1 w-full">
-            <DynamicImageLayout
-              images={getLayoutImagesByCategory('balkon')}
-              description="Der großzügige Balkon bietet einen wunderbaren Außenbereich zum Entspannen und Genießen."
-              category="Balkon"
-              className="w-full h-full"
-            />
-          </div>
-          
-          {/* Footer */}
-          <div className="slide-footer">
-            <div className="footer-left">
-              {data.propertyName || 'Immobilienname'}
-            </div>
-            <div className="footer-right">
-              9 / 12
-            </div>
-          </div>
-        </div>
-
-        {/* 第10页 - 位置信息 */}
-        <LocationDescriptionPage
-          locationDescription={data.locationDescription}
-          locationImage={data.locationImage ? getFullImageUrl(data.locationImage) : undefined}
+        {/* 第6页 - 房间描述 - 动态布局 */}
+        <DynamicImageLayout
+          images={getLayoutImagesByCategory('wohnzimmer')}
           propertyName={data.propertyName}
-          pageNumber="10 / 12"
+          description="Das großzügige Wohnzimmer bietet viel Platz für Entspannung und Geselligkeit."
+          category="wohnzimmer"
+          pageNumber="6 / 12"
+          className="w-full h-full"
         />
 
-        {/* 第11页 - 平面图 */}
-        <div className="slide w-full h-screen bg-white p-12 flex items-center pb-20" 
-             style={{ aspectRatio: '16/9', minHeight: '1080px' }}>
-          <div className="w-full max-w-7xl mx-auto">
-            {/* 标题居中 */}
-            <h2 className="text-4xl font-serif font-bold text-gray-900 mb-8 text-center">Grundriss</h2>
-            
-            {/* 平面图居中展示 - 更大尺寸 */}
-            <div className="flex justify-center mb-8">
-              <div className="w-[800px] h-[600px] bg-gray-200 rounded-lg shadow-lg overflow-hidden">
-                <img 
-                  src={getFirstImageByCategory('grundriss', 'https://source.unsplash.com/800x600/?floor-plan')} 
-                  alt="Grundriss"
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = 'https://source.unsplash.com/800x600/?floor-plan';
-                  }}
-                />
-              </div>
-            </div>
-            
-            {/* 详情列表 - 紧凑布局 */}
-            <div className="max-w-5xl mx-auto">
-              <ul className="grid grid-cols-2 gap-4 text-base text-gray-700">
-                {(data.floorPlanDetails).map((detail, index) => (
-                  <li key={index} className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></div>
-                    <span className="text-sm">{detail}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-          
-          {/* Footer */}
-          <div className="slide-footer">
-            <div className="footer-left">
-              {data.propertyName || 'Immobilienname'}
-            </div>
-            <div className="footer-right">
-              11 / 12
-            </div>
-          </div>
-        </div>
+        {/* 第7页 - 房间描述 - 动态布局 */}
+          <DynamicImageLayout
+            images={getLayoutImagesByCategory('kueche')}
+            propertyName={data.propertyName}
+            description="Die vollausgestattete Einbauküche überzeugt durch funktionales Design und hochwertige Ausstattung."
+            category="kueche"
+            pageNumber="7 / 12"
+            className="w-full h-full"
+          />
+
+        {/* 第7页 - 房间描述 - 动态布局 */}
+          <DynamicImageLayout
+            images={getLayoutImagesByCategory('zimmer')}
+            propertyName={data.propertyName}
+            description="Das großzügige Schlafzimmer bietet viel Platz für Entspannung und Geselligkeit."
+            category="zimmer"
+            pageNumber="8 / 12"
+            className="w-full h-full"
+          />
+
+        {/* 第8页 - 房间描述 - 动态布局 */}
+          <DynamicImageLayout
+            images={getLayoutImagesByCategory('bad')}
+            propertyName={data.propertyName}
+            description="Das großzügige Bad bietet viel Platz für Entspannung und Geselligkeit."
+            category="Bad"
+            pageNumber="9 / 12"
+            className="w-full h-full"
+          />
+
+        {/* 第9页 - 房间描述 - 动态布局 */}
+          <DynamicImageLayout
+            images={getLayoutImagesByCategory('balkon')}
+            propertyName={data.propertyName}
+            description="Das großzügige Balkon bietet viel Platz für Entspannung und Geselligkeit."
+            category="Balkon"
+            pageNumber="10 / 12"
+            className="w-full h-full"
+          />
+
+        {/* 第9页 - 平面图 - 使用新的 GrundrissPage 组件 */}
+          <GrundrissPage
+            image={{
+              url: getFirstImageByCategory('grundriss', 'https://source.unsplash.com/800x600/?floor-plan'),
+              category: 'Grundriss',
+              alt: 'Grundriss'
+            }}
+            title="Grundriss"
+            roomStats={{
+              totalRooms: parseInt(data.keyFacts.zimmer || '0') || 0,
+              bedrooms: parseInt(data.keyFacts.schlafzimmer || '0') || 0,
+              bathrooms: parseInt(data.keyFacts.badezimmer || '0') || 0,
+              livingRooms: 1,
+              kitchens: 1,
+              balconies: 0
+            }}
+            propertyName={data.propertyName}
+            pageNumber="11 / 12"
+            className="w-full h-full"
+          />
 
         {/* 第12页 - 联系信息 */}
         <ContactPage

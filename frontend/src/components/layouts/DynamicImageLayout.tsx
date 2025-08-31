@@ -1,16 +1,18 @@
 import React from 'react';
 import { LayoutImage } from './types';
-import { OneImage } from './OneImage';
-import { TwoImages } from './TwoImages';
-import { ThreeImages } from './ThreeImages';
-import { FourImages } from './FourImages';
-import { FiveImages } from './FiveImages';
-import { SixImages } from './SixImages';
+import { OneImageRoom } from '@/components/layouts/OneImageRoom';
+import { TwoImagesRoom } from '@/components/layouts/TwoImagesRoom';
+import { ThreeImagesRoom } from '@/components/layouts/ThreeImagesRoom';
+import { FourImagesRoom } from '@/components/layouts/FourImagesRoom';
+import { FiveImagesRoom } from '@/components/layouts/FiveImagesRoom';
+import { SixImagesRoom } from '@/components/layouts/SixImagesRoom';
 
 interface DynamicImageLayoutProps {
   images: LayoutImage[];
   description: string;
   category: string;
+  propertyName?: string;
+  pageNumber?: string;
   className?: string;
 }
 
@@ -18,33 +20,107 @@ export const DynamicImageLayout: React.FC<DynamicImageLayoutProps> = ({
   images,
   description,
   category,
+  propertyName,
+  pageNumber,
   className = ''
 }) => {
+  // 添加调试信息
+  console.log('DynamicImageLayout received:', { images, description, category, propertyName, className });
+  
   // 根据图片数量选择合适的布局组件
   const getLayoutComponent = () => {
     const imageCount = images.length;
+    console.log('Image count:', imageCount);
     
     if (imageCount === 0) {
+      console.log('No images, returning null');
       return null; // 无图片时返回null
     }
     
-    const props = { images, description, className };
+    // 确保所有图片都有有效的URL
+    const validImages = images.filter(img => img && img.url);
+    console.log('Valid images:', validImages);
+    
+    if (validImages.length === 0) {
+      console.log('No valid images, returning null');
+      return null; // 没有有效图片时返回null
+    }
     
     switch (imageCount) {
       case 1:
-        return <OneImage {...props} />;
+        console.log('Using OneImageRoom layout with propertyName:', propertyName);
+        return (
+          <OneImageRoom
+            image={validImages[0]}
+            title={category}
+            description={description}
+            propertyName={propertyName}
+            pageNumber={pageNumber}
+            className={className}
+          />
+        );
       case 2:
-        return <TwoImages {...props} />;
+        console.log('Using TwoImagesRoom layout');
+        return (
+          <TwoImagesRoom
+            images={validImages.slice(0, 2)}
+            title={category}
+            description={description}
+            propertyName={propertyName}
+            pageNumber={pageNumber}
+            className={className}
+          />
+        );
       case 3:
-        return <ThreeImages {...props} />;
+        console.log('Using ThreeImagesRoom layout');
+        return (
+          <ThreeImagesRoom
+            images={validImages.slice(0, 3)}
+            title={category}
+            description={description}
+            propertyName={propertyName}
+            pageNumber={pageNumber}
+            className={className}
+          />
+        );
       case 4:
-        return <FourImages {...props} />;
+        console.log('Using FourImagesRoom layout');
+        return (
+          <FourImagesRoom
+            images={validImages.slice(0, 4)}
+            title={category}
+            description={description}
+            propertyName={propertyName}
+            pageNumber={pageNumber}
+            className={className}
+          />
+        );
       case 5:
-        return <FiveImages {...props} />;
+        console.log('Using FiveImagesRoom layout');
+        return (
+          <FiveImagesRoom
+            images={validImages.slice(0, 5)}
+            title={category}
+            description={description}
+            propertyName={propertyName}
+            pageNumber={pageNumber}
+            className={className}
+          />
+        );
       case 6:
       default:
+        console.log('Using SixImagesRoom layout');
         // 6张或更多图片时使用SixImages布局
-        return <SixImages {...props} images={images.slice(0, 6)} />;
+        return (
+          <SixImagesRoom
+            images={validImages.slice(0, 6)}
+            title={category}
+            description={description}
+            propertyName={propertyName}
+            pageNumber={pageNumber}
+            className={className}
+          />
+        );
     }
   };
 
