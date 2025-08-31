@@ -82,7 +82,7 @@ export const TwoImagesRoom: React.FC<TwoImagesRoomProps> = ({
           </div>
         )}
         
-        {/* 图片 - 全屏覆盖，去卡片化 */}
+        {/* 图片 - 保持比例，去卡片化 */}
         <img
           src={image.url}
           alt={image.alt || image.category}
@@ -103,20 +103,26 @@ export const TwoImagesRoom: React.FC<TwoImagesRoomProps> = ({
       {/* 背景渐变 - 低饱和度 */}
       <div className="absolute inset-0 bg-gradient-to-br from-stone-50/40 via-slate-50/30 to-gray-50/40"></div>
       
-      {/* 图片区域 - 页面上部，两张图片之间有细小分隔 */}
-      <div className="relative z-10 w-full h-1/2 grid grid-cols-2 gap-1">
-        <ImageContainer 
-          image={image1} 
-          imageKey="image1"
-        />
-        <ImageContainer 
-          image={image2} 
-          imageKey="image2"
-        />
+      {/* 图片区域 - 页面上部，两张图片之间有分隔，保持照片完整性 */}
+      <div className="relative z-10 w-full h-3/5 flex justify-center items-center px-16 py-8">
+        <div className="w-full max-w-6xl grid grid-cols-2 gap-6">
+          <div className="aspect-[4/3]">
+            <ImageContainer 
+              image={image1} 
+              imageKey="image1"
+            />
+          </div>
+          <div className="aspect-[4/3]">
+            <ImageContainer 
+              image={image2} 
+              imageKey="image2"
+            />
+          </div>
+        </div>
       </div>
 
-      {/* 内容区域 - 左下角标题和描述 */}
-      <div className="relative z-20 w-full h-1/2 flex flex-col justify-end items-start px-16 pb-32">
+      {/* 内容区域 - 左下角标题和描述，占据更多空间 */}
+      <div className="relative z-20 w-full h-2/5 flex flex-col justify-end items-start px-16 pb-32">
         
         {/* 左下角内容区域 - 无边界融合设计 */}
         <div className="max-w-4xl">
@@ -149,21 +155,7 @@ export const TwoImagesRoom: React.FC<TwoImagesRoomProps> = ({
               <div className="h-1 w-10 bg-gradient-to-r from-stone-400 via-stone-300 to-transparent rounded-full"></div>
             </div>
           </div>
-          
-          {/* 描述信息区域 - 现代化设计 */}
-          {description && (
-            <div className="relative">
-              {/* 背景模糊效果 */}
-              <div className="absolute inset-0 bg-white/20 backdrop-blur-sm rounded-2xl border border-white/30"></div>
-              
-              {/* 描述内容 */}
-              <div className="relative z-10 px-5 py-3">
-                <p className="text-sm md:text-base text-stone-700 font-medium leading-relaxed">
-                  {description}
-                </p>
-              </div>
-            </div>
-          )}
+
         </div>
       </div>
 
