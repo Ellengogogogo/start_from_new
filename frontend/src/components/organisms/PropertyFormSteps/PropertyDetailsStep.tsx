@@ -282,6 +282,143 @@ export default function PropertyDetailsStep({ register, errors, defaultValues }:
         </div>
       </div>
 
+      {/* 新增字段：地块大小、阳台/花园、能源信息 */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div>
+          <label htmlFor="grundstuecksgroesse" className="block text-sm font-medium text-gray-700 mb-2">
+            Grundstücksgröße (m²)
+          </label>
+          <input
+            {...register('grundstuecksgroesse', { valueAsNumber: true })}
+            type="number"
+            id="grundstuecksgroesse"
+            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
+              errors.grundstuecksgroesse ? 'border-red-500' : 'border-gray-300'
+            }`}
+            placeholder="z.B.: 500"
+            min="0"
+            step="0.01"
+            defaultValue={defaultValues?.grundstuecksgroesse}
+          />
+          {errors.grundstuecksgroesse && (
+            <p className="mt-1 text-sm text-red-600">{errors.grundstuecksgroesse.message}</p>
+          )}
+        </div>
+
+        <div>
+          <label htmlFor="balkon_garten" className="block text-sm font-medium text-gray-700 mb-2">
+            Balkon/Garten
+          </label>
+          <select
+            {...register('balkon_garten')}
+            id="balkon_garten"
+            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
+              errors.balkon_garten ? 'border-red-500' : 'border-gray-300'
+            }`}
+            defaultValue={defaultValues?.balkon_garten || ''}
+          >
+            <option value="">Balkon/Garten auswählen</option>
+            <option value="Balkon">Balkon</option>
+            <option value="Terrasse">Terrasse</option>
+            <option value="Garten">Garten</option>
+            <option value="Balkon + Garten">Balkon + Garten</option>
+            <option value="Terrasse + Garten">Terrasse + Garten</option>
+            <option value="Kein Außenbereich">Kein Außenbereich</option>
+          </select>
+          {errors.balkon_garten && (
+            <p className="mt-1 text-sm text-red-600">{errors.balkon_garten.message}</p>
+          )}
+        </div>
+
+        <div>
+          <label htmlFor="energieverbrauch" className="block text-sm font-medium text-gray-700 mb-2">
+            Energieverbrauch (kWh/m²)
+          </label>
+          <input
+            {...register('energieverbrauch', { valueAsNumber: true })}
+            type="number"
+            id="energieverbrauch"
+            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
+              errors.energieverbrauch ? 'border-red-500' : 'border-gray-300'
+            }`}
+            placeholder="z.B.: 120"
+            min="0"
+            step="0.1"
+            defaultValue={defaultValues?.energieverbrauch}
+          />
+          {errors.energieverbrauch && (
+            <p className="mt-1 text-sm text-red-600">{errors.energieverbrauch.message}</p>
+          )}
+        </div>
+      </div>
+
+      {/* 能源证书信息 */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label htmlFor="energieausweis_typ" className="block text-sm font-medium text-gray-700 mb-2">
+            Energieausweis
+          </label>
+          <select
+            {...register('energieausweis_typ')}
+            id="energieausweis_typ"
+            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
+              errors.energieausweis_typ ? 'border-red-500' : 'border-gray-300'
+            }`}
+            defaultValue={defaultValues?.energieausweis_typ || ''}
+          >
+            <option value="">Energieausweis auswählen</option>
+            <option value="Verbrauchsausweis">Verbrauchsausweis</option>
+            <option value="Bedarfsausweis">Bedarfsausweis</option>
+            <option value="Kein Energieausweis">Kein Energieausweis</option>
+          </select>
+          {errors.energieausweis_typ && (
+            <p className="mt-1 text-sm text-red-600">{errors.energieausweis_typ.message}</p>
+          )}
+        </div>
+
+        <div>
+          <label htmlFor="energieausweis_gueltig_bis" className="block text-sm font-medium text-gray-700 mb-2">
+            Energieausweis gültig bis
+          </label>
+          <input
+            {...register('energieausweis_gueltig_bis')}
+            type="date"
+            id="energieausweis_gueltig_bis"
+            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
+              errors.energieausweis_gueltig_bis ? 'border-red-500' : 'border-gray-300'
+            }`}
+            defaultValue={defaultValues?.energieausweis_gueltig_bis}
+          />
+          {errors.energieausweis_gueltig_bis && (
+            <p className="mt-1 text-sm text-red-600">{errors.energieausweis_gueltig_bis.message}</p>
+          )}
+        </div>
+      </div>
+
+      {/* Einbauküche 字段 */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label htmlFor="einbaukueche" className="block text-sm font-medium text-gray-700 mb-2">
+            Einbauküche
+          </label>
+          <select
+            {...register('einbaukueche')}
+            id="einbaukueche"
+            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
+              errors.einbaukueche ? 'border-red-500' : 'border-gray-300'
+            }`}
+            defaultValue={defaultValues?.einbaukueche || ''}
+          >
+            <option value="">Einbauküche auswählen</option>
+            <option value="Ja">Ja</option>
+            <option value="Nein">Nein</option>
+          </select>
+          {errors.einbaukueche && (
+            <p className="mt-1 text-sm text-red-600">{errors.einbaukueche.message}</p>
+          )}
+        </div>
+      </div>
+
       {/* 信息提示 */}
       <div className="bg-green-50 border border-green-200 rounded-lg p-4">
         <div className="flex items-start">
