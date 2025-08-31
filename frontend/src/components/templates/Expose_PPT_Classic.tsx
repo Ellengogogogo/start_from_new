@@ -7,6 +7,7 @@ export interface ExposePPTData {
   propertyName: string;
   title: string;
   address: string;
+  price?: number; // 价格
   
   // 议程
   agendaItems: string[];
@@ -15,12 +16,17 @@ export interface ExposePPTData {
   keyFacts: {
     baujahr?: string;
     wohnflaeche?: string;
+    grundstuecksgroesse?: string;
     zimmer?: string;
     schlafzimmer?: string;
     badezimmer?: string;
+    einbaukueche?: string;
     heizungssystem?: string;
     energieklasse?: string;
     energietraeger?: string;
+    energieverbrauch?: string;
+    energieausweis_typ?: string;
+    energieausweis_gueltig_bis?: string;
     parkplatz?: string;
     renovierungsqualitaet?: string;
     bodenbelag?: string;
@@ -254,6 +260,7 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
         {/* 第4页 - 关键数据 */}
         <KeyDataPage
           keyFacts={data.keyFacts}
+          price={data.price}
           propertyName={data.propertyName}
           pageNumber="4 / 12"
         />
