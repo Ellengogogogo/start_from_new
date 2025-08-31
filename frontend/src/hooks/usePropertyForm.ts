@@ -40,6 +40,14 @@ export function usePropertyForm({ initialData = {}, agentInfo }: UsePropertyForm
       parking: '',
       renovation_quality: '',
       floor_type: '',
+      // 新增字段默认值
+      grundstuecksgroesse: undefined,
+      balkon_garten: '',
+      energieverbrauch: undefined,
+      energieausweis_typ: '',
+      energieausweis_gueltig_bis: '',
+      einbaukueche: '',
+      floor: undefined,
       description: '',
       locationDescription: '',
       contact_person: '',
@@ -112,7 +120,7 @@ export function usePropertyForm({ initialData = {}, agentInfo }: UsePropertyForm
         isValid = await trigger(['title', 'property_type', 'city', 'postal_code', 'address', 'price']);
         break;
       case 1:
-        isValid = await trigger(['rooms', 'bedrooms', 'bathrooms', 'area', 'yearBuilt', 'heating_system', 'energy_source', 'energy_certificate', 'parking', 'renovation_quality', 'floor_type']);
+        isValid = await trigger(['rooms', 'bedrooms', 'bathrooms', 'area', 'yearBuilt', 'heating_system', 'energy_source', 'energy_certificate', 'parking', 'renovation_quality', 'floor_type', 'grundstuecksgroesse', 'balkon_garten', 'energieverbrauch', 'energieausweis_typ', 'energieausweis_gueltig_bis', 'einbaukueche']);
         break;
       case 2:
         isValid = true; // Description is optional

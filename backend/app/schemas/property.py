@@ -42,6 +42,9 @@ class PropertyBase(BaseModel):
     heating_system: Optional[str] = Field(None, max_length=100)
     energy_source: Optional[str] = Field(None, max_length=100)
     energy_certificate: Optional[str] = Field(None, max_length=10)
+    energieverbrauch: Optional[float] = Field(None, ge=0)
+    energieausweis_typ: Optional[str] = Field(None, max_length=100)
+    energieausweis_gueltig_bis: Optional[str] = Field(None, max_length=100)
     parking: Optional[str] = Field(None, max_length=100)
     renovation_quality: Optional[str] = Field(None, max_length=100)
     floor_type: Optional[str] = Field(None, max_length=100)
@@ -49,7 +52,7 @@ class PropertyBase(BaseModel):
     # Additional fields for German prompts
     condition: Optional[str] = Field(None, max_length=100)  # e.g., "frisch renoviert", "gepflegt"
     equipment: Optional[str] = Field(None, max_length=500)  # e.g., "Einbauküche", "Balkon", "Terrasse"
-    grundstuecksflaeche: Optional[float] = Field(None, ge=0)  # Land area in m²
+    grundstuecksgroesse: Optional[float] = Field(None, ge=0)  # Land area in m²
     floor: Optional[int] = Field(None, ge=0)  # Floor number
     
     # Features
@@ -101,6 +104,9 @@ class PropertyUpdate(BaseModel):
     heating_system: Optional[str] = Field(None, max_length=100)
     energy_source: Optional[str] = Field(None, max_length=100)
     energy_certificate: Optional[str] = Field(None, max_length=10)
+    energieverbrauch: Optional[float] = Field(None, ge=0)
+    energieausweis_typ: Optional[str] = Field(None, max_length=100)
+    energieausweis_gueltig_bis: Optional[str] = Field(None, max_length=100)
     parking: Optional[str] = Field(None, max_length=100)
     renovation_quality: Optional[str] = Field(None, max_length=100)
     floor_type: Optional[str] = Field(None, max_length=100)

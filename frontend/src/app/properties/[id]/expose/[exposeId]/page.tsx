@@ -67,6 +67,7 @@ export default function ExposeGenerationPage() {
       propertyName: data.title || 'Immobilienpräsentation',
       title: data.title || 'Immobilienpräsentation',
       address: data.address || 'Adresse nicht verfügbar',
+      price: data.price || 0, // 添加价格字段
       agendaItems: [
         'Immobilienübersicht',
         'Eckdaten',
@@ -91,7 +92,13 @@ export default function ExposeGenerationPage() {
         energietraeger: data.energy_source || 'N/A',
         parkplatz: data.parking || 'N/A',
         renovierungsqualitaet: data.renovation_quality || 'N/A',
-        bodenbelag: data.floor_type || 'N/A'
+        bodenbelag: data.floor_type || 'N/A',
+        grundstuecksgroesse: data.grundstuecksgroesse ? `${data.grundstuecksgroesse} m²` : 'N/A',
+        balkon_garten: data.balkon_garten || 'N/A',
+        energieverbrauch: data.energieverbrauch ? `${data.energieverbrauch} kWh/m²` : 'N/A',
+        energieausweis_typ: data.energieausweis_typ || 'N/A',
+        energieausweis_gueltig_bis: data.energieausweis_gueltig_bis || 'N/A',
+        einbaukueche: data.einbaukueche || 'N/A'
       },
       description: data.description || 'Keine Beschreibung verfügbar',
       locationDescription: data.locationDescription || '',
