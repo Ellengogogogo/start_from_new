@@ -474,7 +474,6 @@ export default function ExposeGenerationPage() {
                     <Eye className="w-6 h-6 text-blue-600" />
                     Exposé Vorschau
                   </h2>
-                  <p className="text-gray-600 mt-2">Vorschau Ihrer Immobilienpräsentation</p>
                 </div>
               </div>
             </div>

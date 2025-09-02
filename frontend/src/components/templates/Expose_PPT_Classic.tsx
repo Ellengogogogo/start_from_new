@@ -184,7 +184,9 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
           pageNumber="1 / 12"
           dividerStyle="gradient"
           dividerVariant="medium"
-          showPageIndicator={true}
+          propertyName={data.propertyName}
+          showFooterPageNumber={true}
+          showFooterPropertyName={true}
         >
           <CoverPage
             title={data.title}
@@ -195,12 +197,14 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
           />
         </PageWrapper>
 
-                {/* 第2页 - 议程 */}
+        {/* 第2页 - 议程 */}
         <PageWrapper
           pageNumber="2 / 12"
           dividerStyle="gradient"
           dividerVariant="medium"
-          showPageIndicator={true}
+          propertyName={data.propertyName}
+          showFooterPageNumber={true}
+          showFooterPropertyName={true}
         >
           <AgendaPage
             agendaItems={data.agendaItems}
@@ -215,7 +219,9 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
           pageNumber="3 / 12"
           dividerStyle="gradient"
           dividerVariant="medium"
-          showPageIndicator={true}
+          propertyName={data.propertyName}
+          showFooterPageNumber={true}
+          showFooterPropertyName={true}
         >
           <LocationDescriptionPage
             locationDescription={data.locationDescription}
@@ -231,7 +237,9 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
           pageNumber="4 / 12"
           dividerStyle="gradient"
           dividerVariant="medium"
-          showPageIndicator={true}
+          propertyName={data.propertyName}
+          showFooterPageNumber={true}
+          showFooterPropertyName={true}
         >
           <KeyDataPage
             keyFacts={data.keyFacts}
@@ -246,7 +254,9 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
           pageNumber="5 / 12"
           dividerStyle="gradient"
           dividerVariant="medium"
-          showPageIndicator={true}
+          propertyName={data.propertyName}
+          showFooterPageNumber={true}
+          showFooterPropertyName={true}
         >
           <DescriptionPage
             description={data.description}
@@ -261,29 +271,33 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
           pageNumber="6 / 12"
           dividerStyle="gradient"
           dividerVariant="medium"
-          showPageIndicator={true}
+          propertyName={data.propertyName}
+          showFooterPageNumber={true}
+          showFooterPropertyName={true}
         >
-          <DynamicImageLayout
-            images={getLayoutImagesByCategory('wohnzimmer')}
+                <DynamicImageLayout
+                  images={getLayoutImagesByCategory('wohnzimmer')}
             propertyName={data.propertyName}
-            description="Das großzügige Wohnzimmer bietet viel Platz für Entspannung und Geselligkeit."
+                  description="Das großzügige Wohnzimmer bietet viel Platz für Entspannung und Geselligkeit."
             category="wohnzimmer"
             pageNumber="6 / 12"
             className="w-full h-full"
           />
         </PageWrapper>
 
-                        {/* 第7页 - 房间描述 - 动态布局 */}
+        {/* 第7页 - 房间描述 - 动态布局 */}
         <PageWrapper
           pageNumber="7 / 12"
           dividerStyle="gradient"
           dividerVariant="medium"
-          showPageIndicator={true}
+          propertyName={data.propertyName}
+          showFooterPageNumber={true}
+          showFooterPropertyName={true}
         >
-          <DynamicImageLayout
-            images={getLayoutImagesByCategory('kueche')}
+                <DynamicImageLayout
+                  images={getLayoutImagesByCategory('kueche')}
             propertyName={data.propertyName}
-            description="Die vollausgestattete Einbauküche überzeugt durch funktionales Design und hochwertige Ausstattung."
+                  description="Die vollausgestattete Einbauküche überzeugt durch funktionales Design und hochwertige Ausstattung."
             category="kueche"
             pageNumber="7 / 12"
             className="w-full h-full"
@@ -295,10 +309,12 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
           pageNumber="8 / 12"
           dividerStyle="gradient"
           dividerVariant="medium"
-          showPageIndicator={true}
+          propertyName={data.propertyName}
+          showFooterPageNumber={true}
+          showFooterPropertyName={true}
         >
-          <DynamicImageLayout
-            images={getLayoutImagesByCategory('zimmer')}
+                <DynamicImageLayout
+                  images={getLayoutImagesByCategory('zimmer')}
             propertyName={data.propertyName}
             description="Das großzügige Schlafzimmer bietet viel Platz für Entspannung und Geselligkeit."
             category="zimmer"
@@ -312,13 +328,15 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
           pageNumber="9 / 12"
           dividerStyle="gradient"
           dividerVariant="medium"
-          showPageIndicator={true}
+          propertyName={data.propertyName}
+          showFooterPageNumber={true}
+          showFooterPropertyName={true}
         >
-          <DynamicImageLayout
-            images={getLayoutImagesByCategory('bad')}
+                <DynamicImageLayout
+                  images={getLayoutImagesByCategory('bad')}
             propertyName={data.propertyName}
             description="Das großzügige Bad bietet viel Platz für Entspannung und Geselligkeit."
-            category="Bad"
+                  category="Bad"
             pageNumber="9 / 12"
             className="w-full h-full"
           />
@@ -329,13 +347,15 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
           pageNumber="10 / 12"
           dividerStyle="gradient"
           dividerVariant="medium"
-          showPageIndicator={true}
+          propertyName={data.propertyName}
+          showFooterPageNumber={true}
+          showFooterPropertyName={true}
         >
-          <DynamicImageLayout
-            images={getLayoutImagesByCategory('balkon')}
+                <DynamicImageLayout
+                  images={getLayoutImagesByCategory('balkon')}
             propertyName={data.propertyName}
             description="Das großzügige Balkon bietet viel Platz für Entspannung und Geselligkeit."
-            category="Balkon"
+                  category="Balkon"
             pageNumber="10 / 12"
             className="w-full h-full"
           />
@@ -346,7 +366,9 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
           pageNumber="11 / 12"
           dividerStyle="gradient"
           dividerVariant="medium"
-          showPageIndicator={true}
+          propertyName={data.propertyName}
+          showFooterPageNumber={true}
+          showFooterPropertyName={true}
         >
           <GrundrissPage
             image={{
@@ -374,7 +396,9 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
           pageNumber="12 / 12"
           dividerStyle="gradient"
           dividerVariant="medium"
-          showPageIndicator={false}
+          propertyName={data.propertyName}
+          showFooterPageNumber={true}
+          showFooterPropertyName={true}
         >
           <ContactPage
             contacts={data.contacts}

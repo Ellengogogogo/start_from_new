@@ -233,25 +233,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({
         </div>
       </div>
 
-      {/* 现代化页脚 - 低饱和度 */}
-      <div className="absolute bottom-0 left-0 right-0 z-30">
-        <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-white/40 to-transparent"></div>
-        <div className="relative z-10 h-20 flex items-center justify-between px-16">
-          <div className="text-stone-700 font-medium text-lg">
-            {propertyName || 'Premium Immobilie'}
-          </div>
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-stone-400 rounded-full"></div>
-              <div className="w-8 h-1 bg-stone-200 rounded-full"></div>
-              <div className="w-2 h-2 bg-slate-400 rounded-full"></div>
-            </div>
-            <span className="text-stone-600 font-semibold text-sm bg-white/60 px-4 py-2 rounded-full">
-              {pageNumber}
-            </span>
-          </div>
-        </div>
-      </div>
+
     </div>
   );
 };

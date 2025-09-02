@@ -159,29 +159,7 @@ export const TwoImagesRoom: React.FC<TwoImagesRoomProps> = ({
         </div>
       </div>
 
-      {/* 现代化页脚 - 去边界设计，与 CoverPage 一致 */}
-      <div className="absolute bottom-0 left-0 right-0 z-30">
-        {/* 渐变背景 */}
-        <div className="absolute inset-0 bg-gradient-to-t from-white/60 via-white/20 to-transparent"></div>
-        
-        {/* 内容 */}
-        <div className="relative z-10 h-16 flex items-center justify-between px-8">
-          <div className="text-stone-700 font-medium tracking-wide">
-            {propertyName || 'Premium Immobilie'}
-          </div>
-          <div className="flex items-center space-x-3">
-            {/* 页码指示器 */}
-            <div className="flex items-center space-x-2">
-              <div className="w-1.5 h-1.5 bg-stone-400 rounded-full"></div>
-              <div className="w-6 h-0.5 bg-stone-200 rounded-full"></div>
-              <div className="w-1.5 h-1.5 bg-slate-400 rounded-full"></div>
-            </div>
-            <span className="text-stone-600 font-medium text-sm">
-              {pageNumber}
-            </span>
-          </div>
-        </div>
-      </div>
+
     </div>
   );
 };

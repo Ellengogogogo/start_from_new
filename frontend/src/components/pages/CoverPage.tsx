@@ -146,29 +146,7 @@ export const CoverPage: React.FC<CoverPageProps> = ({
         </div>
       </div>
 
-      {/* 现代化页脚 - 去边界设计 */}
-      <div className="absolute bottom-0 left-0 right-0 z-20">
-        {/* 渐变背景 */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent"></div>
-        
-        {/* 内容 */}
-        <div className="relative z-10 h-20 flex items-center justify-between px-8">
-          <div className="text-white/90 font-medium text-lg tracking-wide">
-            {propertyName || 'Premium Immobilie'}
-          </div>
-          <div className="flex items-center space-x-4">
-            {/* 页码指示器 */}
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-white rounded-full"></div>
-              <div className="w-6 h-1 bg-white/30 rounded-full"></div>
-              <div className="w-2 h-2 bg-white/50 rounded-full"></div>
-            </div>
-            <span className="text-white/80 font-semibold text-sm">
-              {pageNumber}
-            </span>
-          </div>
-        </div>
-      </div>
+
     </div>
   );
 };

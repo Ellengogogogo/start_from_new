@@ -1,5 +1,6 @@
 import React from 'react';
 import { pageDividerStyles } from '@/styles/pageDividerStyles';
+import { PageFooter } from './PageFooter';
 
 export interface PageWrapperProps {
   children: React.ReactNode;
@@ -8,7 +9,10 @@ export interface PageWrapperProps {
   dividerStyle?: 'gradient' | 'shadow' | 'border' | 'decorative';
   dividerVariant?: 'thin' | 'medium' | 'thick' | 'light' | 'dark' | 'subtle' | 'strong';
   className?: string;
-  showPageIndicator?: boolean;
+  showFooter?: boolean;
+  propertyName?: string;
+  showFooterPageNumber?: boolean;
+  showFooterPropertyName?: boolean;
 }
 
 export const PageWrapper: React.FC<PageWrapperProps> = ({
@@ -18,7 +22,10 @@ export const PageWrapper: React.FC<PageWrapperProps> = ({
   dividerStyle = 'gradient',
   dividerVariant = 'medium',
   className = '',
-  showPageIndicator = false
+  showFooter = true,
+  propertyName,
+  showFooterPageNumber = true,
+  showFooterPropertyName = true
 }) => {
   // 获取分割线样式类
   const getDividerClasses = () => {
@@ -51,27 +58,12 @@ export const PageWrapper: React.FC<PageWrapperProps> = ({
     );
   };
 
-  // 渲染页面指示器
-  const renderPageIndicator = () => {
-    if (!showPageIndicator || !pageNumber) return null;
-    
-    return (
-      <div className="absolute right-6 top-1/2 transform -translate-y-1/2 flex flex-col items-center space-y-2 z-10">
-        <div className="w-3 h-3 bg-stone-400 rounded-full"></div>
-        <div className="text-xs text-stone-500 font-medium">{pageNumber.split(' ')[0]}</div>
-      </div>
-    );
-  };
-
   return (
     <div className={`snap-start h-screen relative ${className}`}>
       {/* 页面内容 */}
       <div className="page-content">
         {children}
       </div>
-      
-      {/* 页面指示器 */}
-      {renderPageIndicator()}
       
       {/* 页面分割线 */}
       {showDivider && (
@@ -82,6 +74,16 @@ export const PageWrapper: React.FC<PageWrapperProps> = ({
             <div className={`w-full ${getDividerClasses()}`}></div>
           )}
         </div>
+      )}
+      
+      {/* 页面 Footer */}
+      {showFooter && (
+        <PageFooter
+          pageNumber={pageNumber}
+          propertyName={propertyName}
+          showPageNumber={showFooterPageNumber}
+          showPropertyName={showFooterPropertyName}
+        />
       )}
     </div>
   );
