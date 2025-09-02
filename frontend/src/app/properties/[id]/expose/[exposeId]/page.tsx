@@ -26,30 +26,18 @@ export default function ExposeGenerationPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [previewData, setPreviewData] = useState<{
-    title?: string;
-    address?: string;
-    price?: number;
-    rooms?: number;
-    area?: number;
-    yearBuilt?: number;
-    description?: string;
-    images?: Array<{
-      id: string;
-      url: string;
-      category: string;
-      createdAt: string;
-    }>;
-  } | null>(null);
+  // 删除 previewData，直接使用 exposeData
 
   // 转换数据格式以适配 Expose_PPT_Classic 组件
-  const transformPreviewDataForPPT = (data: ExposeData['previewData']): ExposePPTData => {
+  const transformPreviewDataForPPT = (data: ExposeData): ExposePPTData => {
     if (!data) {
       // 如果没有数据，返回空的默认对象
       return {
         propertyName: 'Keine Daten verfügbar',
         title: 'Keine Daten verfügbar',
         address: 'Keine Adresse verfügbar',
+        city: 'Keine Stadt verfügbar',
+        plz: 'Keine PLZ verfügbar',
         agendaItems: [],
         keyFacts: {},
         description: 'Keine Beschreibung verfügbar',
@@ -67,6 +55,8 @@ export default function ExposeGenerationPage() {
       propertyName: data.title || 'Immobilienpräsentation',
       title: data.title || 'Immobilienpräsentation',
       address: data.address || 'Adresse nicht verfügbar',
+      city: data.city || 'Stadt nicht verfügbar',
+      plz: data.plz || 'PLZ nicht verfügbar',
       price: data.price || 0, // 添加价格字段
       agendaItems: [
         'Immobilienübersicht',
@@ -98,7 +88,9 @@ export default function ExposeGenerationPage() {
         energieverbrauch: data.energieverbrauch ? `${data.energieverbrauch} kWh/m²` : 'N/A',
         energieausweis_typ: data.energieausweis_typ || 'N/A',
         energieausweis_gueltig_bis: data.energieausweis_gueltig_bis || 'N/A',
-        einbaukueche: data.einbaukueche || 'N/A'
+        einbaukueche: data.einbaukueche || 'N/A',
+        city: data.city || 'Berlin',
+        plz: data.plz || '10115'
       },
       description: data.description || 'Keine Beschreibung verfügbar',
       locationDescription: data.locationDescription || '',
@@ -143,11 +135,77 @@ export default function ExposeGenerationPage() {
           status: status.status as 'pending' | 'processing' | 'completed' | 'failed',
           progress: status.progress,
           createdAt: new Date().toISOString(),
+          // 添加必要的默认字段
+          title: 'Immobilienpräsentation',
+          city: 'Berlin',
+          plz: '10115',
+          address: 'Adresse nicht verfügbar',
+          price: 0,
+          rooms: 0,
+          area: 0,
+          yearBuilt: 0,
+          bedrooms: 0,
+          bathrooms: 0,
+          heating_system: 'N/A',
+          energy_source: 'N/A',
+          energy_certificate: 'N/A',
+          parking: 'N/A',
+          renovation_quality: 'N/A',
+          floor_type: 'N/A',
+          contact_person: 'N/A',
+          contact_phone: 'N/A',
+          contact_email: 'N/A',
+          completedAt: undefined,
+          pdfUrl: undefined,
+          locationDescription: '',
+          images: []
         });
 
         if (status.status === 'completed') {
           const preview = await getExposePreview(exposeId);
-          setPreviewData(preview);
+          // 更新 exposeData 包含所有必要字段
+          setExposeData(prev => ({
+            ...prev!,
+            status: 'completed',
+            progress: 100,
+            completedAt: new Date().toISOString(),
+            city: (preview as any).city || 'Berlin',
+            plz: (preview as any).plz || '10115',
+            title: preview.title || 'Immobilienpräsentation',
+            address: preview.address || 'Adresse nicht verfügbar',
+            price: preview.price || 0,
+            rooms: preview.rooms || 0,
+            area: preview.area || 0,
+            yearBuilt: preview.yearBuilt || 0,
+            bedrooms: preview.bedrooms || 0,
+            bathrooms: preview.bathrooms || 0,
+            heating_system: preview.heating_system || 'N/A',
+            energy_source: preview.energy_source || 'N/A',
+            energy_certificate: preview.energy_certificate || 'N/A',
+            parking: preview.parking || 'N/A',
+            renovation_quality: preview.renovation_quality || 'N/A',
+            floor_type: preview.floor_type || 'N/A',
+            contact_person: preview.contact_person || 'N/A',
+            contact_phone: preview.contact_phone || 'N/A',
+            contact_email: preview.contact_email || 'N/A',
+            contact_person2: preview.contact_person2,
+            contact_phone2: preview.contact_phone2,
+            contact_email2: preview.contact_email2,
+            grundstuecksgroesse: (preview as any).grundstuecksgroesse,
+            einbaukueche: (preview as any).einbaukueche,
+            energieverbrauch: (preview as any).energieverbrauch,
+            energieausweis_typ: (preview as any).energieausweis_typ,
+            energieausweis_gueltig_bis: (preview as any).energieausweis_gueltig_bis,
+            floor: (preview as any).floor,
+            balkon_garten: (preview as any).balkon_garten,
+            locationDescription: (preview as any).locationDescription || '',
+            images: preview.images ? preview.images.map((img: any) => ({
+              id: img.id || `img_${Date.now()}`,
+              url: img.url,
+              category: img.category || 'wohnzimmer',
+              createdAt: img.createdAt || new Date().toISOString()
+            })) : []
+          }));
         }
       } catch (err) {
         console.error('Statusabfrage fehlgeschlagen:', err);
@@ -172,7 +230,49 @@ export default function ExposeGenerationPage() {
           if (status.status === 'completed') {
             clearInterval(interval);
             const preview = await getExposePreview(exposeId);
-            setPreviewData(preview);
+            // 更新 exposeData 包含所有必要字段
+            setExposeData(prev => ({
+              ...prev!,
+              status: 'completed',
+              progress: 100,
+              completedAt: new Date().toISOString(),
+              city: (preview as any).city || 'Berlin',
+              plz: (preview as any).plz || '10115',
+              title: preview.title || 'Immobilienpräsentation',
+              address: preview.address || 'Adresse nicht verfügbar',
+              price: preview.price || 0,
+              rooms: preview.rooms || 0,
+              area: preview.area || 0,
+              yearBuilt: preview.yearBuilt || 0,
+              bedrooms: preview.bedrooms || 0,
+              bathrooms: preview.bathrooms || 0,
+              heating_system: preview.heating_system || 'N/A',
+              energy_source: preview.energy_source || 'N/A',
+              energy_certificate: preview.energy_certificate || 'N/A',
+              parking: preview.parking || 'N/A',
+              renovation_quality: preview.renovation_quality || 'N/A',
+              floor_type: preview.floor_type || 'N/A',
+              contact_person: preview.contact_person || 'N/A',
+              contact_phone: preview.contact_phone || 'N/A',
+              contact_email: preview.contact_email || 'N/A',
+              contact_person2: preview.contact_person2,
+              contact_phone2: preview.contact_phone2,
+              contact_email2: preview.contact_email2,
+              grundstuecksgroesse: (preview as any).grundstuecksgroesse,
+              einbaukueche: (preview as any).einbaukueche,
+              energieverbrauch: (preview as any).energieverbrauch,
+              energieausweis_typ: (preview as any).energieausweis_typ,
+              energieausweis_gueltig_bis: (preview as any).energieausweis_gueltig_bis,
+              floor: (preview as any).floor,
+              balkon_garten: (preview as any).balkon_garten,
+              locationDescription: (preview as any).locationDescription || '',
+              images: preview.images ? preview.images.map((img: any) => ({
+                id: img.id || `img_${Date.now()}`,
+                url: img.url,
+                category: img.category || 'wohnzimmer',
+                createdAt: img.createdAt || new Date().toISOString()
+              })) : []
+            }));
           }
         } catch (err) {
           console.error('Statusprüfung fehlgeschlagen:', err);
@@ -362,7 +462,7 @@ export default function ExposeGenerationPage() {
         </div>
 
         {/* Expose预览 */}
-        {exposeData.status === 'completed' && previewData && (
+        {exposeData.status === 'completed' && exposeData.title && (
           <div className="bg-white rounded-lg shadow-lg overflow-hidden">
             <div className="p-6 border-b border-gray-200">
               <div className="flex items-center justify-between">
@@ -379,13 +479,13 @@ export default function ExposeGenerationPage() {
             {/* 使用 PPT 模板展示预览 */}
             <div className="bg-gray-50">
               <Expose_PPT_Classic
-                data={transformPreviewDataForPPT(previewData)}
+                data={transformPreviewDataForPPT(exposeData)}
                 showNavigation={false}
                 onPrint={handlePrint}
                 onShare={() => {
                   if (navigator.share) {
                     navigator.share({
-                      title: previewData.title || 'Immobilienpräsentation',
+                      title: exposeData.title || 'Immobilienpräsentation',
                       text: 'Siehe diese Immobilienpräsentation',
                       url: window.location.href,
                     });
@@ -406,7 +506,7 @@ export default function ExposeGenerationPage() {
         <div className="mt-8 p-4 bg-gray-100 rounded-lg">
           <h3 className="text-sm font-medium text-gray-700 mb-2">Debug-Informationen</h3>
           <pre className="text-xs text-gray-600 overflow-auto">
-            {JSON.stringify({ propertyId, exposeId, exposeData, previewData }, null, 2)}
+            {JSON.stringify({ propertyId, exposeId, exposeData }, null, 2)}
           </pre>
         </div>
       </div>

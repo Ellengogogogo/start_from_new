@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { PropertyFormData, PropertyData, PropertyImage, Images } from '@/types/property';
+import { PropertyFormData, PropertyImage, Images } from '@/types/property';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -17,7 +17,7 @@ export const cachePropertyData = async (data: Omit<PropertyFormData, 'images'> &
 };
 
 // 获取缓存的房源数据
-export const getCachedPropertyData = async (id: string): Promise<PropertyData> => {
+export const getCachedPropertyData = async (id: string): Promise<PropertyFormData> => {
   const response = await api.get(`/app/endpoints/cache/property-data/${id}`);
   return response.data;
 };

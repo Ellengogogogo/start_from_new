@@ -154,7 +154,6 @@ backend/
 - `PropertyFormData`: 表单数据类型
 - `PropertyData`: 房源数据类型
 - `PropertyImage`: 图片数据类型
-- `PropertyPreview`: 预览页面数据类型
 
 ### 7. 表单验证 (`src/lib/validations.ts`)
 - 使用 Zod 定义验证规则

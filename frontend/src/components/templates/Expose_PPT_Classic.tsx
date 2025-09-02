@@ -7,6 +7,8 @@ export interface ExposePPTData {
   propertyName: string;
   title: string;
   address: string;
+  city: string;
+  plz: string;
   price?: number; // 价格
   
   // 议程
@@ -30,7 +32,9 @@ export interface ExposePPTData {
     parkplatz?: string;
     renovierungsqualitaet?: string;
     bodenbelag?: string;
+    balkon_garten?: string; // 添加阳台/花园字段
     city?: string;
+    plz?: string; // 添加邮政编码字段
   };
   
   // 描述
@@ -252,7 +256,7 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
         <LocationDescriptionPage
           locationDescription={data.locationDescription}
           locationImage={data.locationImage ? getFullImageUrl(data.locationImage) : undefined}
-          cityName={data.keyFacts.city}
+          cityName={data.city}
           propertyName={data.propertyName}
           pageNumber="3 / 12"
         />

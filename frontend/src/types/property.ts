@@ -10,6 +10,8 @@ export interface Images {
 // 基础属性接口 - 包含所有共同的属性
 export interface BasePropertyFields {
   title: string;
+  city: string;
+  plz: string;
   address: string;
   price: number;
   rooms: number;
@@ -60,13 +62,6 @@ export interface FormSpecificFields {
   agentInfo?: AgentInfo;
 }
 
-// 数据库特有字段
-export interface DatabaseFields {
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
 // 图片接口
 export interface PropertyImage {
   id: string;
@@ -78,24 +73,12 @@ export interface PropertyImage {
 // 重构后的接口定义
 export interface PropertyFormData extends BasePropertyFields, OptionalPropertyFields, FormSpecificFields, ContactInfo {}
 
-export interface PropertyData extends BasePropertyFields, OptionalPropertyFields, DatabaseFields {}
-
-export interface PropertyPreview {
-  property: PropertyData;
-  images: PropertyImage[];
-}
-
 export interface UploadProgress {
   [key: string]: number;
 }
 
-// ExposeData 的 previewData 字段
-export interface ExposePreviewData extends BasePropertyFields, OptionalPropertyFields, ContactInfo {
-  locationDescription?: string;
-  images?: PropertyImage[];
-}
-
-export interface ExposeData {
+// ExposeData 接口 - 包含所有必要的字段
+export interface ExposeData extends BasePropertyFields, OptionalPropertyFields, ContactInfo {
   id: string;
   propertyId: string;
   status: 'pending' | 'processing' | 'completed' | 'failed';
@@ -103,7 +86,8 @@ export interface ExposeData {
   createdAt: string;
   completedAt?: string;
   pdfUrl?: string;
-  previewData?: ExposePreviewData;
+  locationDescription?: string;
+  images?: PropertyImage[];
 }
 
 export interface ExposeGenerationRequest {

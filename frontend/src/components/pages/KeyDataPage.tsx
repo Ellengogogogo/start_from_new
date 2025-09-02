@@ -75,27 +75,27 @@ export const KeyDataPage: React.FC<KeyDataPageProps> = ({
     { label: 'Zimmer', value: displayKeyFacts.zimmer },
     { label: 'Schlafzimmer', value: displayKeyFacts.schlafzimmer },
     { label: 'Badezimmer', value: displayKeyFacts.badezimmer },
-    { label: 'Einbauküche', value: displayKeyFacts.einbaukueche },
-    { label: 'Balkon/Garten', value: displayKeyFacts.balkon_garten },
+    { label: 'Einbauküche', value: displayKeyFacts.einbaukueche }
   ];
 
   const rightColumnData = [
+    { label: 'Balkon/Garten', value: displayKeyFacts.balkon_garten },
     { label: 'Parkplatz', value: displayKeyFacts.parkplatz },
     { label: 'Bodenbelag', value: displayKeyFacts.bodenbelag },
     { label: 'Heizungssystem', value: displayKeyFacts.heizungssystem },
     { label: 'Renovierungsqualität', value: displayKeyFacts.renovierungsqualitaet },
+    { label: 'Energieklasse', value: displayKeyFacts.energieklasse },
+    { label: 'Energieträger', value: displayKeyFacts.energietraeger },
   ];
 
   // 第三列：价格和能源信息
   const thirdColumnData = [
+    { label: 'Energieverbrauch', value: displayKeyFacts.energieverbrauch },
+    { label: 'Energieausweis', value: displayKeyFacts.energieausweis_typ },
+    { label: 'Energieausweis gültig bis', value: displayKeyFacts.energieausweis_gueltig_bis },
     { label: 'Preis', value: price ? `€${price.toLocaleString()}` : 'Auf Anfrage' },
     { label: 'Preis pro m²', value: price && displayKeyFacts.wohnflaeche ? 
       `€${Math.round(price / parseFloat(displayKeyFacts.wohnflaeche.replace(' m²', '').replace('N/A', '0')))}` : '-' },
-    { label: 'Energieklasse', value: displayKeyFacts.energieklasse },
-    { label: 'Energieträger', value: displayKeyFacts.energietraeger },
-    { label: 'Energieverbrauch', value: displayKeyFacts.energieverbrauch },
-    { label: 'Energieausweis', value: displayKeyFacts.energieausweis_typ },
-    { label: 'Energieausweis gültig bis', value: displayKeyFacts.energieausweis_gueltig_bis }
   ];
 
   return (
