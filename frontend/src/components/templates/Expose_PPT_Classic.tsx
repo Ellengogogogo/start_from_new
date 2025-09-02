@@ -278,28 +278,28 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
         />
 
         {/* 第6页 - 房间描述 - 动态布局 */}
-        <DynamicImageLayout
-          images={getLayoutImagesByCategory('wohnzimmer')}
+                <DynamicImageLayout
+                  images={getLayoutImagesByCategory('wohnzimmer')}
           propertyName={data.propertyName}
-          description="Das großzügige Wohnzimmer bietet viel Platz für Entspannung und Geselligkeit."
+                  description="Das großzügige Wohnzimmer bietet viel Platz für Entspannung und Geselligkeit."
           category="wohnzimmer"
           pageNumber="6 / 12"
           className="w-full h-full"
         />
 
         {/* 第7页 - 房间描述 - 动态布局 */}
-          <DynamicImageLayout
-            images={getLayoutImagesByCategory('kueche')}
+                <DynamicImageLayout
+                  images={getLayoutImagesByCategory('kueche')}
             propertyName={data.propertyName}
-            description="Die vollausgestattete Einbauküche überzeugt durch funktionales Design und hochwertige Ausstattung."
+                  description="Die vollausgestattete Einbauküche überzeugt durch funktionales Design und hochwertige Ausstattung."
             category="kueche"
             pageNumber="7 / 12"
             className="w-full h-full"
           />
 
         {/* 第7页 - 房间描述 - 动态布局 */}
-          <DynamicImageLayout
-            images={getLayoutImagesByCategory('zimmer')}
+                <DynamicImageLayout
+                  images={getLayoutImagesByCategory('zimmer')}
             propertyName={data.propertyName}
             description="Das großzügige Schlafzimmer bietet viel Platz für Entspannung und Geselligkeit."
             category="zimmer"
@@ -308,21 +308,21 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
           />
 
         {/* 第8页 - 房间描述 - 动态布局 */}
-          <DynamicImageLayout
-            images={getLayoutImagesByCategory('bad')}
+                <DynamicImageLayout
+                  images={getLayoutImagesByCategory('bad')}
             propertyName={data.propertyName}
             description="Das großzügige Bad bietet viel Platz für Entspannung und Geselligkeit."
-            category="Bad"
+                  category="Bad"
             pageNumber="9 / 12"
             className="w-full h-full"
           />
 
         {/* 第9页 - 房间描述 - 动态布局 */}
-          <DynamicImageLayout
-            images={getLayoutImagesByCategory('balkon')}
+                <DynamicImageLayout
+                  images={getLayoutImagesByCategory('balkon')}
             propertyName={data.propertyName}
             description="Das großzügige Balkon bietet viel Platz für Entspannung und Geselligkeit."
-            category="Balkon"
+                  category="Balkon"
             pageNumber="10 / 12"
             className="w-full h-full"
           />

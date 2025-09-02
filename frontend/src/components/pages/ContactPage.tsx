@@ -179,79 +179,53 @@ export const ContactPage: React.FC<ContactPageProps> = ({
           </div>
         )}
         
-        {/* 联系人名片网格 - 现代设计 */}
+        {/* 联系人信息 - 简化设计 */}
         <div className="flex-1 grid grid-cols-2 gap-8 items-center">
           {displayContacts.map((contact, index) => (
-            <div key={index} 
-                 className="group relative"
-                 style={{ animationDelay: `${index * 0.2}s` }}>
+            <div key={index} className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-stone-300/60 shadow-sm">
               
-              {/* 名片容器 */}
-              <div className="relative h-64 bg-white/50 backdrop-blur-sm rounded-3xl p-8 
-                              border border-white/60 shadow-lg
-                              transform transition-all duration-500 ease-out
-                              hover:scale-105 hover:-rotate-1 hover:shadow-xl
-                              hover:bg-white/70 hover:border-stone-200/50">
+              {/* 头像和姓名 */}
+              <div className="flex items-center space-x-4 mb-4">
+                <div className="w-14 h-14 bg-stone-100 rounded-xl overflow-hidden">
+                  <img 
+                    src={contact.avatar ? getFullImageUrl(contact.avatar) : `https://source.unsplash.com/100x100/?portrait-${index + 1}`} 
+                    alt={contact.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = `https://source.unsplash.com/100x100/?portrait-${index + 1}`;
+                    }}
+                  />
+                </div>
                 
-                {/* 背景装饰 */}
-                <div className="absolute inset-0 bg-gradient-to-br from-stone-100/30 to-slate-100/20 rounded-3xl 
-                                opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div>
+                  <h3 className="text-lg font-semibold text-stone-800">{contact.name}</h3>
+                  <p className="text-stone-600 text-sm">Immobilienberater</p>
+                </div>
+              </div>
+              
+              {/* 联系方式 */}
+              <div className="space-y-2">
+                {/* 电话 */}
+                <div className="flex items-center space-x-3 text-stone-700">
+                  <div className="w-6 h-6 bg-stone-200 rounded-lg flex items-center justify-center">
+                    <svg className="w-3 h-3 text-stone-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                            d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                  </div>
+                  <span className="text-sm">{contact.phone}</span>
+                </div>
                 
-                {/* 名片内容 */}
-                <div className="relative z-10 h-full flex flex-col">
-                  
-                  {/* 头像和姓名 */}
-                  <div className="flex items-center space-x-4 mb-6">
-                    <div className="w-16 h-16 bg-stone-100 rounded-2xl overflow-hidden shadow-md">
-                      <img 
-                        src={contact.avatar ? getFullImageUrl(contact.avatar) : `https://source.unsplash.com/100x100/?portrait-${index + 1}`} 
-                        alt={contact.name}
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.src = `https://source.unsplash.com/100x100/?portrait-${index + 1}`;
-                        }}
-                      />
-                    </div>
-                    
-                    <div className="flex-1">
-                      <h3 className="text-xl font-bold text-stone-800 transition-colors duration-300 group-hover:text-stone-900">
-                        {contact.name}
-                      </h3>
-                      <p className="text-stone-600 font-medium">Immobilienberater</p>
-                    </div>
+                {/* 邮箱 */}
+                <div className="flex items-center space-x-3 text-stone-700">
+                  <div className="w-6 h-6 bg-stone-200 rounded-lg flex items-center justify-center">
+                    <svg className="w-3 h-3 text-stone-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                            d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
                   </div>
-                  
-                  {/* 联系方式 */}
-                  <div className="space-y-3 flex-1">
-                    {/* 电话 */}
-                    <div className="flex items-center space-x-3 bg-stone-50/50 rounded-2xl p-4 
-                                    transition-all duration-300 hover:bg-stone-100/60">
-                      <div className="w-8 h-8 bg-stone-200 rounded-xl flex items-center justify-center">
-                        <svg className="w-4 h-4 text-stone-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                                d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                        </svg>
-                      </div>
-                      <span className="text-stone-700 font-medium text-sm">{contact.phone}</span>
-                    </div>
-                    
-                    {/* 邮箱 */}
-                    <div className="flex items-center space-x-3 bg-stone-50/50 rounded-2xl p-4 
-                                    transition-all duration-300 hover:bg-stone-100/60">
-                      <div className="w-8 h-8 bg-stone-200 rounded-xl flex items-center justify-center">
-                        <svg className="w-4 h-4 text-stone-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                                d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                        </svg>
-                      </div>
-                      <span className="text-stone-700 font-medium text-sm break-all">{contact.email}</span>
-                    </div>
-                  </div>
-                  
-                  {/* 装饰元素 */}
-                  <div className="absolute top-6 right-6 w-2 h-2 bg-stone-300 rounded-full 
-                                  opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <span className="text-sm break-all">{contact.email}</span>
                 </div>
               </div>
             </div>
@@ -275,21 +249,6 @@ export const ContactPage: React.FC<ContactPageProps> = ({
             <span className="text-stone-600 font-semibold text-sm bg-white/60 px-4 py-2 rounded-full">
               {pageNumber}
             </span>
-          </div>
-        </div>
-      </div>
-
-      {/* 右上角现代日期 - 低饱和度 */}
-      <div className="absolute top-8 right-16 z-30">
-        <div className="bg-white/70 backdrop-blur-md rounded-2xl px-4 py-3 border border-white/40 shadow-lg">
-          <div className="text-sm font-medium text-stone-700 text-center">
-            <div className="text-xs text-stone-500 uppercase tracking-wider mb-1">Datum</div>
-            <div className="font-semibold">
-              {new Date().toLocaleDateString('de-DE', {
-                day: '2-digit',
-                month: 'short'
-              })}
-            </div>
           </div>
         </div>
       </div>
