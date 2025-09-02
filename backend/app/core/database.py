@@ -60,7 +60,7 @@ class Property(Base):
     # Location
     address = Column(String(500), nullable=False)
     city = Column(String(100), nullable=False)
-    postal_code = Column(String(20))
+    plz = Column(String(20))
     country = Column(String(100), default="Germany")
     
     # Property details

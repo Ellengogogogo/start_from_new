@@ -78,21 +78,21 @@ export default function BasicInfoStep({ register, errors, defaultValues }: Basic
         </div>
 
         <div>
-          <label htmlFor="postal_code" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="plz" className="block text-sm font-medium text-gray-700 mb-2">
             Postleitzahl *
           </label>
           <input
-            {...register('postal_code')}
+            {...register('plz')}
             type="text"
-            id="postal_code"
+            id="plz"
             className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-              errors.postal_code ? 'border-red-500' : 'border-gray-300'
+              errors.plz ? 'border-red-500' : 'border-gray-300'
             }`}
             placeholder="z.B.: 10115"
-            defaultValue={defaultValues?.postal_code}
+            defaultValue={defaultValues?.plz}
           />
-          {errors.postal_code && (
-            <p className="mt-1 text-sm text-red-600">{errors.postal_code.message}</p>
+          {errors.plz && (
+            <p className="mt-1 text-sm text-red-600">{errors.plz.message}</p>
           )}
         </div>
       </div>

@@ -26,7 +26,7 @@ export function usePropertyForm({ initialData = {}, agentInfo }: UsePropertyForm
       title: '',
       property_type: 'apartment',
       city: 'Berlin',
-      postal_code: '',
+      plz: '',
       address: '',
       price: 0,
       rooms: 0,
@@ -40,7 +40,6 @@ export function usePropertyForm({ initialData = {}, agentInfo }: UsePropertyForm
       parking: '',
       renovation_quality: '',
       floor_type: '',
-      // 新增字段默认值
       grundstuecksgroesse: undefined,
       balkon_garten: '',
       energieverbrauch: undefined,
@@ -64,7 +63,7 @@ export function usePropertyForm({ initialData = {}, agentInfo }: UsePropertyForm
         balkon: [],
         grundriss: []
       },
-    } as PropertyFormData,
+    } as unknown as PropertyFormData,
   });
 
   const {
@@ -117,7 +116,7 @@ export function usePropertyForm({ initialData = {}, agentInfo }: UsePropertyForm
     
     switch (currentStep) {
       case 0:
-        isValid = await trigger(['title', 'property_type', 'city', 'postal_code', 'address', 'price']);
+        isValid = await trigger(['title', 'property_type', 'city', 'plz', 'address', 'price']);
         break;
       case 1:
         isValid = await trigger(['rooms', 'bedrooms', 'bathrooms', 'area', 'yearBuilt', 'heating_system', 'energy_source', 'energy_certificate', 'parking', 'renovation_quality', 'floor_type', 'grundstuecksgroesse', 'balkon_garten', 'energieverbrauch', 'energieausweis_typ', 'energieausweis_gueltig_bis', 'einbaukueche']);
@@ -148,7 +147,7 @@ export function usePropertyForm({ initialData = {}, agentInfo }: UsePropertyForm
   const canGenerateDescription = !!(localFormData.title && 
     localFormData.property_type && 
     localFormData.city && 
-    localFormData.postal_code && 
+    localFormData.plz && 
     localFormData.address);
 
   // 检查是否可以生成位置描述

@@ -53,7 +53,7 @@ export interface ContactInfo {
 export interface FormSpecificFields {
   property_type: string;
   city: string;
-  postal_code: string;
+  plz: string;
   description?: string;
   suggested_description?: string;
   locationDescription?: string;

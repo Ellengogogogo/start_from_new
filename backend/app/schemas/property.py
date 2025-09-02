@@ -25,7 +25,7 @@ class PropertyBase(BaseModel):
     # Location
     address: str = Field(..., min_length=1, max_length=500)
     city: str = Field(..., min_length=1, max_length=100)
-    postal_code: Optional[str] = Field(None, max_length=20)
+    plz: Optional[str] = Field(None, max_length=20)
     country: str = Field(default="Germany", max_length=100)
     
     # Property details
@@ -87,7 +87,7 @@ class PropertyUpdate(BaseModel):
     # Location
     address: Optional[str] = Field(None, min_length=1, max_length=500)
     city: Optional[str] = Field(None, min_length=1, max_length=100)
-    postal_code: Optional[str] = Field(None, max_length=20)
+    plz: Optional[str] = Field(None, max_length=20)
     country: Optional[str] = Field(None, max_length=100)
     
     # Property details

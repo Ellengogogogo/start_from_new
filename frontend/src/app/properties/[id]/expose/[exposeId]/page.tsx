@@ -13,7 +13,7 @@ import {
   Printer
 } from 'lucide-react';
 import { ExposeData } from '@/types/property';
-import { getExposeStatus, downloadPDF, getExposePreview } from '@/services/api';
+import { getExposeStatus, downloadPDF, getExposePreview, getCachedPropertyData } from '@/services/api';
 import { Expose_PPT_Classic, ExposePPTData } from '@/components/templates/Expose_PPT_Classic';
 
 export default function ExposeGenerationPage() {
@@ -163,14 +163,16 @@ export default function ExposeGenerationPage() {
 
         if (status.status === 'completed') {
           const preview = await getExposePreview(exposeId);
+          // 获取缓存的房源数据以获取 city 和 plz
+          const cachedPropertyData = await getCachedPropertyData(propertyId);
           // 更新 exposeData 包含所有必要字段
           setExposeData(prev => ({
             ...prev!,
             status: 'completed',
             progress: 100,
             completedAt: new Date().toISOString(),
-            city: (preview as any).city || 'Berlin',
-            plz: (preview as any).plz || '10115',
+            city: cachedPropertyData.city || 'Berlin',
+            plz: cachedPropertyData.plz || '10115',
             title: preview.title || 'Immobilienpräsentation',
             address: preview.address || 'Adresse nicht verfügbar',
             price: preview.price || 0,
@@ -230,14 +232,16 @@ export default function ExposeGenerationPage() {
           if (status.status === 'completed') {
             clearInterval(interval);
             const preview = await getExposePreview(exposeId);
+            // 获取缓存的房源数据以获取 city 和 plz
+            const cachedPropertyData = await getCachedPropertyData(propertyId);
             // 更新 exposeData 包含所有必要字段
             setExposeData(prev => ({
               ...prev!,
               status: 'completed',
               progress: 100,
               completedAt: new Date().toISOString(),
-              city: (preview as any).city || 'Berlin',
-              plz: (preview as any).plz || '10115',
+              city: cachedPropertyData.city || 'Berlin',
+              plz: cachedPropertyData.plz || '10115',
               title: preview.title || 'Immobilienpräsentation',
               address: preview.address || 'Adresse nicht verfügbar',
               price: preview.price || 0,

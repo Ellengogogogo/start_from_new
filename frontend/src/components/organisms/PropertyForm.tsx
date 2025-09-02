@@ -219,9 +219,9 @@ export default function PropertyForm({
       // 根据步骤类型判断完成状态和验证状态
       switch (index) {
         case 0: // 基础信息
-          isCompleted = !!(localFormData.title && localFormData.property_type && localFormData.city && localFormData.postal_code && localFormData.address && localFormData.price);
+          isCompleted = !!(localFormData.title && localFormData.property_type && localFormData.city && localFormData.plz && localFormData.address && localFormData.price);
           isValid = isCompleted;
-          errorCount = Object.keys(errors).filter(key => ['title', 'property_type', 'city', 'postal_code', 'address', 'price'].includes(key)).length;
+          errorCount = Object.keys(errors).filter(key => ['title', 'property_type', 'city', 'plz', 'address', 'price'].includes(key)).length;
           break;
         case 1: // 房产详情
           isCompleted = !!(localFormData.rooms && localFormData.bedrooms && localFormData.bathrooms && localFormData.area && localFormData.yearBuilt);
@@ -323,7 +323,7 @@ export default function PropertyForm({
     }
     
     // 验证表单数据完整性
-    const requiredFields = ['title', 'property_type', 'city', 'postal_code', 'address', 'price'];
+    const requiredFields = ['title', 'property_type', 'city', 'plz', 'address', 'price'];
     const missingFields = requiredFields.filter(field => !data[field]);
     
     if (missingFields.length > 0) {

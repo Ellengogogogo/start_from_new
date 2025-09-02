@@ -23,7 +23,7 @@ export function useAIGeneration(options: UseAIGenerationOptions = {}) {
       formData.title && 
       formData.property_type && 
       formData.city && 
-      formData.postal_code && 
+      formData.plz && 
       formData.address
     );
   }, []);
