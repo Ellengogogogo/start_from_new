@@ -58,7 +58,6 @@ export interface FormSpecificFields {
   suggested_description?: string;
   locationDescription?: string;
   suggested_location_description?: string;
-  images: Images;
   agentInfo?: AgentInfo;
 }
 
@@ -78,7 +77,7 @@ export interface UploadProgress {
 }
 
 // ExposeData 接口 - 包含所有必要的字段
-export interface ExposeData extends BasePropertyFields, OptionalPropertyFields, ContactInfo {
+export interface ExposeData extends BasePropertyFields, OptionalPropertyFields, FormSpecificFields, ContactInfo {
   id: string;
   propertyId: string;
   status: 'pending' | 'processing' | 'completed' | 'failed';
@@ -86,7 +85,7 @@ export interface ExposeData extends BasePropertyFields, OptionalPropertyFields, 
   createdAt: string;
   completedAt?: string;
   pdfUrl?: string;
-  locationDescription?: string;
+  // Override images field to use PropertyImage[] instead of Images
   images?: PropertyImage[];
 }
 
