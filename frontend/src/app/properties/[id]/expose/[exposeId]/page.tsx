@@ -440,24 +440,13 @@ export default function ExposeGenerationPage() {
             )}
 
             {exposeData.status === 'completed' && (
-              <div className="flex items-center justify-center gap-4 mt-6">
+              <div className="flex items-center justify-center mt-6">
                 <button
                   onClick={handleDownloadPDF}
                   className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
                 >
                   <Download className="w-5 h-5" />
                   PDF herunterladen
-                </button>
-                <button
-                  onClick={handlePrint}
-                  className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  <Printer className="w-5 h-5" />
-                  Drucken
-                </button>
-                <button className="flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-                  <Share2 className="w-5 h-5" />
-                  Teilen
                 </button>
               </div>
             )}

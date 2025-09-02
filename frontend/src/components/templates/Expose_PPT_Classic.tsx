@@ -1,6 +1,10 @@
 import React from 'react';
 import { CoverPage, AgendaPage, KeyDataPage, DescriptionPage, LocationDescriptionPage, ContactPage } from '@/components/pages';
 import { DynamicImageLayout, LayoutImage, GrundrissPage } from '@/components/layouts';
+import { PageWrapper } from '@/components/common/PageWrapper';
+import { scrollSnapStyles } from '@/styles/scrollSnapStyles';
+import { pageDividerComponentStyles } from '@/styles/pageDividerStyles';
+import { exposeStyles } from '@/styles/exposeStyles';
 
 export interface ExposePPTData {
   // 基本信息
@@ -132,76 +136,16 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
       }));
   };
   
-  // 打印样式
-  const printStyles = `
-    @media print {
-      .slide { 
-        page-break-after: always; 
-        margin: 0; 
-        padding: 24px; 
-      }
-      .slide:last-child { 
-        page-break-after: auto; 
-      }
-      .no-print { display: none !important; }
-    }
-    
-    /* 幻灯片边界样式 */
-    .slide {
-      border: 2px solid #e5e7eb;
-      border-radius: 8px;
-      margin-bottom: 2rem;
-      position: relative;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      font-family: "Garamond", "Times New Roman", serif;
-    }
-    
-    /* 全局字体设置 */
-    .expose-ppt-container {
-      font-family: "Garamond", "Times New Roman", serif;
-    }
-    
-    .expose-ppt-container * {
-      font-family: "Garamond", "Times New Roman", serif;
-    }
-    
-    /* Footer 样式 */
-    .slide-footer {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 60px;
-      background: linear-gradient(to top, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.8));
-      border-top: 1px solid #e5e7eb;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 24px;
-      font-size: 14px;
-      color: #6b7280;
-      font-family: "Garamond", "Times New Roman", serif;
-    }
-    
-    .footer-left {
-      font-weight: 500;
-      color: #374151;
-      font-family: "Garamond", "Times New Roman", serif;
-    }
-    
-    .footer-right {
-      font-weight: 600;
-      color: #3b82f6;
-      background: rgba(59, 130, 246, 0.1);
-      padding: 4px 12px;
-      border-radius: 12px;
-      font-family: "Garamond", "Times New Roman", serif;
-    }
+  // 合并所有样式
+  const allStyles = `
+    ${exposeStyles}
+    ${scrollSnapStyles}
+    ${pageDividerComponentStyles}
   `;
 
   return (
     <div className={`expose-ppt-container ${className}`} style={{ fontFamily: '"Garamond", "Times New Roman", serif' }}>
-      <style jsx>{printStyles}</style>
+      <style jsx>{allStyles}</style>
       
       {/* 导航栏 */}
       {showNavigation && (
@@ -232,102 +176,178 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
          </div>
        )}
 
-      {/* 幻灯片容器 */}
-      <div className="slides-container">
+      {/* 幻灯片容器 - 全屏滚动 */}
+      <div className="slides-container snap-y snap-mandatory overflow-y-auto h-screen">
         
         {/* 第1页 - 封面页 */}
-        <CoverPage
-          title={data.title}
-          address={data.address}
-          backgroundImage={data.images?.[0]?.url ? getFullImageUrl(data.images[0].url) : undefined}
-          propertyName={data.propertyName}
+        <PageWrapper
           pageNumber="1 / 12"
-        />
+          dividerStyle="gradient"
+          dividerVariant="medium"
+          showPageIndicator={true}
+        >
+          <CoverPage
+            title={data.title}
+            address={data.address}
+            backgroundImage={data.images?.[0]?.url ? getFullImageUrl(data.images[0].url) : undefined}
+            propertyName={data.propertyName}
+            pageNumber="1 / 12"
+          />
+        </PageWrapper>
 
-        {/* 第2页 - 议程 */}
-        <AgendaPage
-          agendaItems={data.agendaItems}
-          backgroundImage={data.images?.[0]?.url ? getFullImageUrl(data.images[0].url) : undefined}
-          propertyName={data.propertyName}
+                {/* 第2页 - 议程 */}
+        <PageWrapper
           pageNumber="2 / 12"
-        />
-
+          dividerStyle="gradient"
+          dividerVariant="medium"
+          showPageIndicator={true}
+        >
+          <AgendaPage
+            agendaItems={data.agendaItems}
+            backgroundImage={data.images?.[0]?.url ? getFullImageUrl(data.images[0].url) : undefined}
+            propertyName={data.propertyName}
+            pageNumber="2 / 12"
+          />
+        </PageWrapper>
+            
         {/* 第3页 - 位置信息 */}
-        <LocationDescriptionPage
-          locationDescription={data.locationDescription}
-          locationImage={data.locationImage ? getFullImageUrl(data.locationImage) : undefined}
-          cityName={data.city}
-          propertyName={data.propertyName}
+        <PageWrapper
           pageNumber="3 / 12"
-        />
+          dividerStyle="gradient"
+          dividerVariant="medium"
+          showPageIndicator={true}
+        >
+          <LocationDescriptionPage
+            locationDescription={data.locationDescription}
+            locationImage={data.locationImage ? getFullImageUrl(data.locationImage) : undefined}
+            cityName={data.city}
+            propertyName={data.propertyName}
+            pageNumber="3 / 12"
+          />
+        </PageWrapper>
 
         {/* 第4页 - 关键数据 */}
-        <KeyDataPage
-          keyFacts={data.keyFacts}
-          price={data.price}
-          propertyName={data.propertyName}
+        <PageWrapper
           pageNumber="4 / 12"
-        />
+          dividerStyle="gradient"
+          dividerVariant="medium"
+          showPageIndicator={true}
+        >
+          <KeyDataPage
+            keyFacts={data.keyFacts}
+            price={data.price}
+            propertyName={data.propertyName}
+            pageNumber="4 / 12"
+          />
+        </PageWrapper>
 
         {/* 第5页 - 房源描述 */}
-        <DescriptionPage
-          description={data.description}
-          propertyName={data.propertyName}
-          backgroundImage={data.images?.[3]?.url ? getFullImageUrl(data.images[3].url) : undefined}
+        <PageWrapper
           pageNumber="5 / 12"
-        />
-
-        {/* 第6页 - 房间描述 - 动态布局 */}
-                <DynamicImageLayout
-                  images={getLayoutImagesByCategory('wohnzimmer')}
-          propertyName={data.propertyName}
-                  description="Das großzügige Wohnzimmer bietet viel Platz für Entspannung und Geselligkeit."
-          category="wohnzimmer"
-          pageNumber="6 / 12"
-          className="w-full h-full"
-        />
-
-        {/* 第7页 - 房间描述 - 动态布局 */}
-                <DynamicImageLayout
-                  images={getLayoutImagesByCategory('kueche')}
+          dividerStyle="gradient"
+          dividerVariant="medium"
+          showPageIndicator={true}
+        >
+          <DescriptionPage
+            description={data.description}
             propertyName={data.propertyName}
-                  description="Die vollausgestattete Einbauküche überzeugt durch funktionales Design und hochwertige Ausstattung."
+            backgroundImage={data.images?.[3]?.url ? getFullImageUrl(data.images[3].url) : undefined}
+            pageNumber="5 / 12"
+          />
+        </PageWrapper>
+
+                    {/* 第6页 - 房间描述 - 动态布局 */}
+        <PageWrapper
+          pageNumber="6 / 12"
+          dividerStyle="gradient"
+          dividerVariant="medium"
+          showPageIndicator={true}
+        >
+          <DynamicImageLayout
+            images={getLayoutImagesByCategory('wohnzimmer')}
+            propertyName={data.propertyName}
+            description="Das großzügige Wohnzimmer bietet viel Platz für Entspannung und Geselligkeit."
+            category="wohnzimmer"
+            pageNumber="6 / 12"
+            className="w-full h-full"
+          />
+        </PageWrapper>
+
+                        {/* 第7页 - 房间描述 - 动态布局 */}
+        <PageWrapper
+          pageNumber="7 / 12"
+          dividerStyle="gradient"
+          dividerVariant="medium"
+          showPageIndicator={true}
+        >
+          <DynamicImageLayout
+            images={getLayoutImagesByCategory('kueche')}
+            propertyName={data.propertyName}
+            description="Die vollausgestattete Einbauküche überzeugt durch funktionales Design und hochwertige Ausstattung."
             category="kueche"
             pageNumber="7 / 12"
             className="w-full h-full"
           />
-
-        {/* 第7页 - 房间描述 - 动态布局 */}
-                <DynamicImageLayout
-                  images={getLayoutImagesByCategory('zimmer')}
+        </PageWrapper>
+              
+                        {/* 第8页 - 房间描述 - 动态布局 */}
+        <PageWrapper
+          pageNumber="8 / 12"
+          dividerStyle="gradient"
+          dividerVariant="medium"
+          showPageIndicator={true}
+        >
+          <DynamicImageLayout
+            images={getLayoutImagesByCategory('zimmer')}
             propertyName={data.propertyName}
             description="Das großzügige Schlafzimmer bietet viel Platz für Entspannung und Geselligkeit."
             category="zimmer"
             pageNumber="8 / 12"
             className="w-full h-full"
           />
-
-        {/* 第8页 - 房间描述 - 动态布局 */}
-                <DynamicImageLayout
-                  images={getLayoutImagesByCategory('bad')}
+        </PageWrapper>
+              
+                        {/* 第9页 - 房间描述 - 动态布局 */}
+        <PageWrapper
+          pageNumber="9 / 12"
+          dividerStyle="gradient"
+          dividerVariant="medium"
+          showPageIndicator={true}
+        >
+          <DynamicImageLayout
+            images={getLayoutImagesByCategory('bad')}
             propertyName={data.propertyName}
             description="Das großzügige Bad bietet viel Platz für Entspannung und Geselligkeit."
-                  category="Bad"
+            category="Bad"
             pageNumber="9 / 12"
             className="w-full h-full"
           />
-
-        {/* 第9页 - 房间描述 - 动态布局 */}
-                <DynamicImageLayout
-                  images={getLayoutImagesByCategory('balkon')}
+        </PageWrapper>
+              
+                        {/* 第10页 - 房间描述 - 动态布局 */}
+        <PageWrapper
+          pageNumber="10 / 12"
+          dividerStyle="gradient"
+          dividerVariant="medium"
+          showPageIndicator={true}
+        >
+          <DynamicImageLayout
+            images={getLayoutImagesByCategory('balkon')}
             propertyName={data.propertyName}
             description="Das großzügige Balkon bietet viel Platz für Entspannung und Geselligkeit."
-                  category="Balkon"
+            category="Balkon"
             pageNumber="10 / 12"
             className="w-full h-full"
           />
-
-        {/* 第9页 - 平面图 - 使用新的 GrundrissPage 组件 */}
+        </PageWrapper>
+              
+        {/* 第11页 - 平面图 - 使用新的 GrundrissPage 组件 */}
+        <PageWrapper
+          pageNumber="11 / 12"
+          dividerStyle="gradient"
+          dividerVariant="medium"
+          showPageIndicator={true}
+        >
           <GrundrissPage
             image={{
               url: getFirstImageByCategory('grundriss', 'https://source.unsplash.com/800x600/?floor-plan'),
@@ -347,14 +367,22 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
             pageNumber="11 / 12"
             className="w-full h-full"
           />
+        </PageWrapper>
 
         {/* 第12页 - 联系信息 */}
-        <ContactPage
-          contacts={data.contacts}
-          agentInfo={data.agentInfo}
-          propertyName={data.propertyName}
+        <PageWrapper
           pageNumber="12 / 12"
-        />
+          dividerStyle="gradient"
+          dividerVariant="medium"
+          showPageIndicator={false}
+        >
+          <ContactPage
+            contacts={data.contacts}
+            agentInfo={data.agentInfo}
+            propertyName={data.propertyName}
+            pageNumber="12 / 12"
+          />
+        </PageWrapper>
       </div>
     </div>
   );
