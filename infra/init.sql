@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS properties (
     -- Location
     address VARCHAR(500) NOT NULL,
     city VARCHAR(100) NOT NULL,
-    postal_code VARCHAR(20),
+    plz VARCHAR(20),
     country VARCHAR(100) DEFAULT 'Germany',
     
     -- Property details

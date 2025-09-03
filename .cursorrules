@@ -1,0 +1,43 @@
+# Cursor Rules for Immobilien Exposé Generator Project
+
+## General Guidelines
+- Always implement features using the simplest possible solution that still follows modern best practices, without adding any unnecessary code, dependencies, or scripts.
+- If you want to run some command in the backend folder, always run .\.venv\Scripts\activate firstly to activate the virtual environment.
+- You should make a plan for the problem firstly, after that execute.
+- If you encounter any problems during execution, record the lessons learned back into the .cursorrules file.
+
+## Lessons Learned
+
+### Translation and Localization
+- When translating large form files from Chinese to German, it's more efficient to:
+  1. First update the steps array and main navigation elements
+  2. Then translate each form step section individually
+  3. Use search_replace for specific sections rather than trying to replace entire large blocks
+  4. Focus on user-facing text first (labels, placeholders, options) before internal logic
+  5. Maintain consistent German terminology throughout (e.g., "Immobilie" for property, "Wohnung" for apartment)
+
+### Professional Real-Estate Design Implementation
+- Professional real-estate design should include:
+  1. Clean, modern typography with proper hierarchy
+  2. Professional color schemes (blues, grays, whites)
+  3. Better spacing and padding for readability
+  4. Gradient backgrounds and modern shadows
+  5. Hover effects and smooth transitions
+  6. Real-estate specific icons and visual elements
+  7. Consistent rounded corners and modern button styles
+  8. Professional form layouts with clear visual separation
+
+### Form Translation Strategy
+- For multi-step forms, translate in this order:
+  1. Step titles and descriptions in the steps array
+  2. Page headers and progress indicators
+  3. Form field labels and placeholders
+  4. Select options and validation messages
+  5. Button text and navigation elements
+  6. Error messages and help text
+
+### Code Organization
+- When dealing with large form files (1000+ lines), break down translations into logical sections
+- Use grep_search to find specific text patterns before attempting replacements
+- Consider creating a translation mapping file for consistency
+- Test each translated section individually to avoid breaking the form functionality

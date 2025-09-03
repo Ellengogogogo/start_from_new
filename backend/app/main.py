@@ -10,9 +10,7 @@ import uvicorn
 import os
 from contextlib import asynccontextmanager
 
-from app.routes import properties, images, cache, expose_generation
-# from app.core.config import settings
-# from app.core.database import engine, Base
+from app.routes.routers import router
 
 
 @asynccontextmanager
@@ -20,11 +18,6 @@ async def lifespan(app: FastAPI):
     """Application lifespan events"""
     # Startup
     print("🚀 Starting Property Expose Generator Backend...")
-    
-    # 暂时注释掉数据库初始化，用于开发测试
-    # # Create database tables
-    # async with engine.begin() as conn:
-    #     await conn.run_sync(Base.metadata.create_all)
     
     print("✅ Backend started successfully (database disabled for testing)")
     yield
@@ -58,25 +51,8 @@ print(f"Static files directory: {static_dir}")
 app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 # Include API routers
-# 主要业务路由
-app.include_router(properties.router, prefix="/api/properties", tags=["Properties"])
-app.include_router(images.router, prefix="/api/images", tags=["Images"])
-
-# 缓存和expose生成路由（使用 /api 前缀以匹配前端调用）
-app.include_router(cache.router, prefix="/api/cache", tags=["Cache"])
-app.include_router(expose_generation.router, prefix="/api/expose", tags=["Expose Generation"])
-
-
-@app.get("/")
-async def root():
-    """Root endpoint"""
-    return {
-        "message": "Property Expose Generator API",
-        "version": "1.0.0",
-        "status": "running",
-        "docs": "/docs"
-    }
-
+# 使用新的路由结构
+app.include_router(router)
 
 @app.get("/health")
 async def health_check():

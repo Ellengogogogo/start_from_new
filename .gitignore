@@ -135,3 +135,4 @@ poetry.lock
 
 backend/static/cache
 backend/.venv
+backend/app/core/config.py

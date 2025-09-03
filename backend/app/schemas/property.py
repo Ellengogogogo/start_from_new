@@ -6,6 +6,13 @@ from pydantic import BaseModel, Field
 from typing import Optional, List
 from datetime import datetime
 
+class AgentInfo(BaseModel):
+    companyLogo: Optional[str] = None
+    responsiblePerson: str = Field(..., max_length=100)
+    address: str = Field(..., max_length=200)
+    website: Optional[str] = Field(None, max_length=255)
+    phone: str = Field(..., max_length=20)
+    userType: str = "agent"
 
 class PropertyBase(BaseModel):
     """Base property model"""
@@ -18,7 +25,7 @@ class PropertyBase(BaseModel):
     # Location
     address: str = Field(..., min_length=1, max_length=500)
     city: str = Field(..., min_length=1, max_length=100)
-    postal_code: Optional[str] = Field(None, max_length=20)
+    plz: Optional[str] = Field(None, max_length=20)
     country: str = Field(default="Germany", max_length=100)
     
     # Property details
@@ -31,13 +38,37 @@ class PropertyBase(BaseModel):
     floors: Optional[int] = Field(None, ge=0)
     year_built: Optional[int] = Field(None, ge=1800, le=2030)
     
+    # Additional property details
+    heating_system: Optional[str] = Field(None, max_length=100)
+    energy_source: Optional[str] = Field(None, max_length=100)
+    energy_certificate: Optional[str] = Field(None, max_length=10)
+    energieverbrauch: Optional[float] = Field(None, ge=0)
+    energieausweis_typ: Optional[str] = Field(None, max_length=100)
+    energieausweis_gueltig_bis: Optional[str] = Field(None, max_length=100)
+    parking: Optional[str] = Field(None, max_length=100)
+    renovation_quality: Optional[str] = Field(None, max_length=100)
+    floor_type: Optional[str] = Field(None, max_length=100)
+    
+    # Additional fields for German prompts
+    condition: Optional[str] = Field(None, max_length=100)  # e.g., "frisch renoviert", "gepflegt"
+    equipment: Optional[str] = Field(None, max_length=500)  # e.g., "Einbauküche", "Balkon", "Terrasse"
+    grundstuecksgroesse: Optional[float] = Field(None, ge=0)  # Land area in m²
+    floor: Optional[int] = Field(None, ge=0)  # Floor number
+    
     # Features
     features: Optional[str] = None  # JSON string
     energy_class: Optional[str] = Field(None, pattern="^[A-G]$")
     
     # Contact info
+    contact_person: Optional[str] = Field(None, max_length=100)
     contact_phone: Optional[str] = Field(None, max_length=50)
     contact_email: Optional[str] = Field(None, max_length=255)
+    contact_person2: Optional[str] = Field(None, max_length=100)
+    contact_phone2: Optional[str] = Field(None, max_length=50)
+    contact_email2: Optional[str] = Field(None, max_length=255)
+
+    # Agent information (optional)
+    agentInfo: Optional[AgentInfo] = None
 
 
 class PropertyCreate(PropertyBase):
@@ -56,7 +87,7 @@ class PropertyUpdate(BaseModel):
     # Location
     address: Optional[str] = Field(None, min_length=1, max_length=500)
     city: Optional[str] = Field(None, min_length=1, max_length=100)
-    postal_code: Optional[str] = Field(None, max_length=20)
+    plz: Optional[str] = Field(None, max_length=20)
     country: Optional[str] = Field(None, max_length=100)
     
     # Property details
@@ -69,13 +100,34 @@ class PropertyUpdate(BaseModel):
     floors: Optional[int] = Field(None, ge=0)
     year_built: Optional[int] = Field(None, ge=1800, le=2030)
     
+    # Additional property details
+    heating_system: Optional[str] = Field(None, max_length=100)
+    energy_source: Optional[str] = Field(None, max_length=100)
+    energy_certificate: Optional[str] = Field(None, max_length=10)
+    energieverbrauch: Optional[float] = Field(None, ge=0)
+    energieausweis_typ: Optional[str] = Field(None, max_length=100)
+    energieausweis_gueltig_bis: Optional[str] = Field(None, max_length=100)
+    parking: Optional[str] = Field(None, max_length=100)
+    renovation_quality: Optional[str] = Field(None, max_length=100)
+    floor_type: Optional[str] = Field(None, max_length=100)
+    
+    # Additional fields for German prompts
+    condition: Optional[str] = Field(None, max_length=100)  # e.g., "frisch renoviert", "gepflegt"
+    equipment: Optional[str] = Field(None, max_length=500)  # e.g., "Einbauküche", "Balkon", "Terrasse"
+    grundstuecksflaeche: Optional[float] = Field(None, ge=0)  # Land area in m²
+    floor: Optional[int] = Field(None, ge=0)  # Floor number
+    
     # Features
-    features: Optional[str] = None
+    features: Optional[str] = Field(None, max_length=500)
     energy_class: Optional[str] = Field(None, pattern="^[A-G]$")
     
     # Contact info
+    contact_person: Optional[str] = Field(None, max_length=100)
     contact_phone: Optional[str] = Field(None, max_length=50)
     contact_email: Optional[str] = Field(None, max_length=255)
+    contact_person2: Optional[str] = Field(None, max_length=100)
+    contact_phone2: Optional[str] = Field(None, max_length=50)
+    contact_email2: Optional[str] = Field(None, max_length=255)
 
 
 class PropertyResponse(PropertyBase):
@@ -90,3 +142,8 @@ class PropertyResponse(PropertyBase):
         json_encoders = {
             datetime: lambda v: v.isoformat()
         }
+
+class LocationDescriptionRequest(BaseModel):
+    """Minimal schema for location description generation"""
+    city: str = Field(..., min_length=1, max_length=100)
+    address: str = Field(..., min_length=1, max_length=500)

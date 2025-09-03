@@ -13,8 +13,7 @@ import {
   Printer
 } from 'lucide-react';
 import { ExposeData } from '@/types/property';
-import { getExposeStatus, downloadPDF, getExposePreview } from '@/services/api';
-import { Expose_A4_Classic, ExposeData as ExposeTemplateData } from '@/components/templates/Expose_A4_Classic';
+import { getExposeStatus, downloadPDF, getExposePreview, getCachedPropertyData } from '@/services/api';
 import { Expose_PPT_Classic, ExposePPTData } from '@/components/templates/Expose_PPT_Classic';
 
 export default function ExposeGenerationPage() {
@@ -26,202 +25,103 @@ export default function ExposeGenerationPage() {
   const [exposeData, setExposeData] = useState<ExposeData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedTemplate, setSelectedTemplate] = useState<'a4' | 'ppt'>('a4');
-  const [previewData, setPreviewData] = useState<{
-    title?: string;
-    address?: string;
-    price?: number;
-    rooms?: number;
-    area?: number;
-    yearBuilt?: number;
-    description?: string;
-    images?: Array<{
-      url: string;
-      isPrimary: boolean;
-    }>;
-  } | null>(null);
 
-  // 转换数据格式以适配 Expose_A4_Classic 组件
-  const transformPreviewDataForExpose = (data: any): ExposeTemplateData => {
-    if (!data) {
-      // 返回默认数据
-      return {
-        title: 'Professionelle Immobilienpräsentation',
-        address: 'Adressinformationen',
-        price: 0,
-        priceUnit: 'Tsd.',
-        tags: ['Ausstattung', 'Verkehrsgünstige Lage', 'Schlafzimmer'],
-        rooms: 0,
-        area: 0,
-        areaUnit: 'm²',
-        yearBuilt: 0,
-        floor: '15',
-        totalFloors: 28,
-        orientation: 'Nord-Süd-Orientierung',
-        renovation: 'Ausstattung',
-        description: 'Keine Beschreibung verfügbar',
-        images: [],
-        contact: {
-          name: 'Herr Zhang',
-          title: 'Erfolgreicher Immobilienberater',
-          avatar: 'https://source.unsplash.com/100x100/?portrait',
-          phone: '138-0013-8000',
-          email: 'zhang@example.com',
-          company: 'Guomao Immobilienmakler GmbH',
-          license: 'B-00123456789'
-        },
-        coordinates: {
-          lat: 39.9042,
-          lng: 116.4074
-        }
-      };
-    }
-    
-    return {
-      title: data.title || 'Professionelle Immobilienpräsentation',
-      address: data.address || 'Adressinformationen',
-      price: data.price || 0,
-      priceUnit: 'Tsd.',
-      tags: ['Ausstattung', 'Verkehrsgünstige Lage', 'Schlafzimmer'],
-      rooms: data.rooms || 0,
-      area: data.area || 0,
-      areaUnit: 'm²',
-      yearBuilt: data.yearBuilt || 0,
-      floor: '15',
-      totalFloors: 28,
-      orientation: 'Nord-Süd-Orientierung',
-      renovation: 'Ausstattung',
-      description: data.description || 'Keine Beschreibung verfügbar',
-      images: (data.images || []).map((img: any, index: number) => ({
-        id: `img_${index}`,
-        url: img.url,
-        alt: `Immobilienbild ${index + 1}`
-      })),
-      contact: {
-        name: 'Herr Zhang',
-        title: 'Erfolgreicher Immobilienberater',
-        avatar: 'https://source.unsplash.com/100x100/?portrait',
-        phone: '138-0013-8000',
-        email: 'zhang@example.com',
-        company: 'Guomao Immobilienmakler GmbH',
-        license: 'B-00123456789'
-      },
-      coordinates: {
-        lat: 39.9042,
-        lng: 116.4074
-      }
-    };
-  };
+  // 删除 previewData，直接使用 exposeData
 
   // 转换数据格式以适配 Expose_PPT_Classic 组件
-  const transformPreviewDataForPPT = (data: any): ExposePPTData => {
+  const transformPreviewDataForPPT = (data: ExposeData): ExposePPTData => {
     if (!data) {
-      // 返回默认数据
+      // 如果没有数据，返回空的默认对象
       return {
-        propertyName: 'Professionelle Immobilienpräsentation',
-        title: 'Professionelle Immobilienpräsentation',
-        address: 'Adressinformationen',
-        agendaItems: [
-          'Immobilienübersicht',
-          'Eckdaten',
-          'Immobiliendetails',
-          'Bildergalerie',
-          'Lagebeschreibung',
-          'Grundriss',
-          'Kontaktinformationen'
-        ],
-        keyFacts: {
-          baujahr: '2020',
-          wohnflaeche: '120 m²',
-          zimmer: '5',
-          schlafzimmer: '3',
-          badezimmer: '2',
-          heizungssystem: 'Fußbodenheizung',
-          energieklasse: 'A'
-        },
-        description: 'Dies ist eine hochwertige Immobilie in einer erstklassigen Lage mit ausgezeichneter Verkehrsanbindung. Die Wohnung ist durchdacht gestaltet, bietet viel Tageslicht und verfügt über eine vollständige Ausstattung.',
+        propertyName: 'Keine Daten verfügbar',
+        title: 'Keine Daten verfügbar',
+        address: 'Keine Adresse verfügbar',
+        city: 'Keine Stadt verfügbar',
+        plz: 'Keine PLZ verfügbar',
+        agendaItems: [],
+        keyFacts: {},
+        description: 'Keine Beschreibung verfügbar',
+        locationDescription: '',
         images: [],
-        locationText: 'Verkehrsgünstige Lage',
-        locationImage: 'https://source.unsplash.com/800x600/?city-map',
-        floorPlanImage: 'https://source.unsplash.com/800x600/?floor-plan',
-        floorPlanDetails: [
-          '3 Schlafzimmer, Hauptschlafzimmer mit eigenem Bad',
-          '2 Badezimmer, Trocken- und Nassbereich getrennt',
-          'Offene Küche, Essbereich integriert',
-          'Wohnzimmer geräumig, viel Tageslicht',
-          'Balkon verbindet Wohnzimmer und Hauptschlafzimmer',
-          'Abstellraum und Kleiderschrank vorhanden'
-        ],
-        contacts: [
-          {
-            name: 'Herr Zhang',
-            phone: '138-0013-8000',
-            email: 'zhang@example.com',
-            avatar: 'https://source.unsplash.com/100x100/?portrait-1'
-          },
-          {
-            name: 'Frau Li',
-            phone: '139-0013-8001',
-            email: 'li@example.com',
-            avatar: 'https://source.unsplash.com/100x100/?portrait-2'
-          }
-        ]
+        locationText: '',
+        locationImage: '',
+        floorPlanDetails: [],
+        contacts: [],
+        agentInfo: undefined
       };
     }
-    
+      
     return {
-      propertyName: data.title || 'Professionelle Immobilienpräsentation',
-      title: data.title || 'Professionelle Immobilienpräsentation',
-      address: data.address || 'Adressinformationen',
+      propertyName: data.title || 'Immobilienpräsentation',
+      title: data.title || 'Immobilienpräsentation',
+      address: data.address || 'Adresse nicht verfügbar',
+      city: data.city || 'Stadt nicht verfügbar',
+      plz: data.plz || 'PLZ nicht verfügbar',
+      price: data.price || 0, // 添加价格字段
       agendaItems: [
         'Immobilienübersicht',
         'Eckdaten',
-        'Immobiliendetails',
-        'Bildergalerie',
+        'Objektbeschreibung',
         'Lagebeschreibung',
+        'Wohnzimmer',
+        'Küche',
+        'Schlafzimmer & Arbeitszimmer',
+        'Bad',
+        'Balkon & Draußen',
         'Grundriss',
         'Kontaktinformationen'
       ],
       keyFacts: {
-        baujahr: data.yearBuilt?.toString() || '2020',
-        wohnflaeche: `${data.area || 120} m²`,
-        zimmer: data.rooms?.toString() || '5',
-        schlafzimmer: Math.floor((data.rooms || 5) * 0.6).toString(),
-        badezimmer: Math.max(1, Math.floor((data.rooms || 5) * 0.4)).toString(),
-        heizungssystem: 'Fußbodenheizung',
-        energieklasse: 'A'
+        baujahr: data.yearBuilt?.toString() || 'N/A',
+        wohnflaeche: data.area ? `${data.area} m²` : 'N/A',
+        zimmer: data.rooms?.toString() || 'N/A',
+        schlafzimmer: data.bedrooms?.toString() || 'N/A',
+        badezimmer: data.bathrooms?.toString() || 'N/A',
+        heizungssystem: data.heating_system || 'N/A',
+        energieklasse: data.energy_certificate || 'N/A',
+        energietraeger: data.energy_source || 'N/A',
+        parkplatz: data.parking || 'N/A',
+        renovierungsqualitaet: data.renovation_quality || 'N/A',
+        bodenbelag: data.floor_type || 'N/A',
+        grundstuecksgroesse: data.grundstuecksgroesse ? `${data.grundstuecksgroesse} m²` : 'N/A',
+        balkon_garten: data.balkon_garten || 'N/A',
+        energieverbrauch: data.energieverbrauch ? `${data.energieverbrauch} kWh/m²` : 'N/A',
+        energieausweis_typ: data.energieausweis_typ || 'N/A',
+        energieausweis_gueltig_bis: data.energieausweis_gueltig_bis || 'N/A',
+        einbaukueche: data.einbaukueche || 'N/A',
+        city: data.city || 'Berlin',
+        plz: data.plz || '10115'
       },
-      description: data.description || 'Dies ist eine hochwertige Immobilie in einer erstklassigen Lage mit ausgezeichneter Verkehrsanbindung. Die Wohnung ist durchdacht gestaltet, bietet viel Tageslicht und verfügt über eine vollständige Ausstattung.',
-      images: (data.images || []).map((img: any, index: number) => ({
-        id: `img_${index}`,
+      description: data.description || 'Keine Beschreibung verfügbar',
+      locationDescription: data.locationDescription || '',
+      images: (data.images || []).map((img, index: number) => ({
+        id: img.id || `img_${index}`,
         url: img.url,
-        alt: `Immobilienbild ${index + 1}`
+        category: img.category || 'wohnzimmer',
+        createdAt: img.createdAt || ''
       })),
-      locationText: 'Verkehrsgünstige Lage',
-      locationImage: data.images?.[0]?.url || 'https://source.unsplash.com/800x600/?city-map',
-      floorPlanImage: data.images?.[1]?.url || 'https://source.unsplash.com/800x600/?floor-plan',
+      locationText: data.locationDescription || '',
+      locationImage: data.images?.[0]?.url || '',
       floorPlanDetails: [
-        `${data.rooms || 3} Schlafzimmer, Hauptschlafzimmer mit eigenem Bad`,
-        `${Math.max(1, Math.floor((data.rooms || 3) * 0.4))} Badezimmer, Trocken- und Nassbereich getrennt`,
-        'Offene Küche, Essbereich integriert',
-        'Wohnzimmer geräumig, viel Tageslicht',
-        'Balkon verbindet Wohnzimmer und Hauptschlafzimmer',
-        'Abstellraum und Kleiderschrank vorhanden'
+        data.rooms ? `${data.rooms} Zimmer` : 'Zimmeranzahl nicht verfügbar',
+        data.bathrooms ? `${data.bathrooms} Badezimmer` : 'Badezimmeranzahl nicht verfügbar',
+        'Weitere Details folgen'
       ],
       contacts: [
         {
-          name: 'Herr Zhang',
-          phone: '138-0013-8000',
-          email: 'zhang@example.com',
-          avatar: 'https://source.unsplash.com/100x100/?portrait-1'
+          name: data.contact_person || 'Kontaktperson nicht verfügbar',
+          phone: data.contact_phone || 'Telefon nicht verfügbar',
+          email: data.contact_email || 'E-Mail nicht verfügbar',
+          avatar: ''
         },
-        {
-          name: 'Frau Li',
-          phone: '139-0013-8001',
-          email: 'li@example.com',
-          avatar: 'https://source.unsplash.com/100x100/?portrait-2'
-        }
-      ]
+        ...(data.contact_person2 ? [{
+          name: data.contact_person2,
+          phone: data.contact_phone2 || '',
+          email: data.contact_email2 || '',
+          avatar: ''
+        }] : [])
+      ].filter(contact => contact.name !== 'Kontaktperson nicht verfügbar'),
+      agentInfo: undefined
     };
   };
 
@@ -235,15 +135,90 @@ export default function ExposeGenerationPage() {
           status: status.status as 'pending' | 'processing' | 'completed' | 'failed',
           progress: status.progress,
           createdAt: new Date().toISOString(),
+          property_type: 'N/A',
+          title: 'Immobilienpräsentation',
+          city: 'Berlin',
+          plz: '10115',
+          address: 'Adresse nicht verfügbar',
+          price: 0,
+          rooms: 0,
+          area: 0,
+          yearBuilt: 0,
+          bedrooms: 0,
+          bathrooms: 0,
+          heating_system: 'N/A',
+          energy_source: 'N/A',
+          energy_certificate: 'N/A',
+          parking: 'N/A',
+          renovation_quality: 'N/A',
+          floor_type: 'N/A',
+          contact_person: 'N/A',
+          contact_phone: 'N/A',
+          contact_email: 'N/A',
+          completedAt: undefined,
+          pdfUrl: undefined,
+          description: '',
+          suggested_description: '',
+          suggested_location_description: '',
+          locationDescription: '',
+          images: []
         });
 
         if (status.status === 'completed') {
           const preview = await getExposePreview(exposeId);
-          setPreviewData(preview);
+          // 获取缓存的房源数据以获取 city 和 plz
+          const cachedPropertyData = await getCachedPropertyData(propertyId);
+          // 更新 exposeData 包含所有必要字段
+          setExposeData(prev => ({
+            ...prev!,
+            status: 'completed',
+            progress: 100,
+            completedAt: new Date().toISOString(),
+            city: cachedPropertyData.city || 'Berlin',
+            plz: cachedPropertyData.plz || '10115',
+            property_type: cachedPropertyData.property_type || 'N/A',
+            title: preview.title || 'Immobilienpräsentation',
+            address: preview.address || 'Adresse nicht verfügbar',
+            price: preview.price || 0,
+            rooms: preview.rooms || 0,
+            area: preview.area || 0,
+            yearBuilt: preview.yearBuilt || 0,
+            bedrooms: preview.bedrooms || 0,
+            bathrooms: preview.bathrooms || 0,
+            heating_system: preview.heating_system || 'N/A',
+            energy_source: preview.energy_source || 'N/A',
+            energy_certificate: preview.energy_certificate || 'N/A',
+            parking: preview.parking || 'N/A',
+            renovation_quality: preview.renovation_quality || 'N/A',
+            floor_type: preview.floor_type || 'N/A',
+            contact_person: preview.contact_person || 'N/A',
+            contact_phone: preview.contact_phone || 'N/A',
+            contact_email: preview.contact_email || 'N/A',
+            contact_person2: preview.contact_person2,
+            contact_phone2: preview.contact_phone2,
+            contact_email2: preview.contact_email2,
+            description: preview.description || cachedPropertyData.description || '',
+            suggested_description: cachedPropertyData.suggested_description || '',
+            suggested_location_description: cachedPropertyData.suggested_location_description || '',
+            grundstuecksgroesse: (preview as any).grundstuecksgroesse,
+            einbaukueche: (preview as any).einbaukueche,
+            energieverbrauch: (preview as any).energieverbrauch,
+            energieausweis_typ: (preview as any).energieausweis_typ,
+            energieausweis_gueltig_bis: (preview as any).energieausweis_gueltig_bis,
+            floor: (preview as any).floor,
+            balkon_garten: (preview as any).balkon_garten,
+            locationDescription: (preview as any).locationDescription || cachedPropertyData.locationDescription || '',
+            images: preview.images ? preview.images.map((img: any) => ({
+              id: img.id || `img_${Date.now()}`,
+              url: img.url,
+              category: img.category || 'wohnzimmer',
+              createdAt: img.createdAt || new Date().toISOString()
+            })) : []
+          }));
         }
       } catch (err) {
-        console.error('获取状态失败:', err);
-        setError('获取生成状态失败');
+        console.error('Statusabfrage fehlgeschlagen:', err);
+        setError('Statusabfrage fehlgeschlagen');
       } finally {
         setIsLoading(false);
       }
@@ -264,10 +239,57 @@ export default function ExposeGenerationPage() {
           if (status.status === 'completed') {
             clearInterval(interval);
             const preview = await getExposePreview(exposeId);
-            setPreviewData(preview);
+            // 获取缓存的房源数据以获取 city 和 plz
+            const cachedPropertyData = await getCachedPropertyData(propertyId);
+            // 更新 exposeData 包含所有必要字段
+            setExposeData(prev => ({
+              ...prev!,
+              status: 'completed',
+              progress: 100,
+              completedAt: new Date().toISOString(),
+              city: cachedPropertyData.city || 'Berlin',
+              plz: cachedPropertyData.plz || '10115',
+              title: preview.title || 'Immobilienpräsentation',
+              address: preview.address || 'Adresse nicht verfügbar',
+              price: preview.price || 0,
+              rooms: preview.rooms || 0,
+              area: preview.area || 0,
+              yearBuilt: preview.yearBuilt || 0,
+              bedrooms: preview.bedrooms || 0,
+              bathrooms: preview.bathrooms || 0,
+              heating_system: preview.heating_system || 'N/A',
+              energy_source: preview.energy_source || 'N/A',
+              energy_certificate: preview.energy_certificate || 'N/A',
+              parking: preview.parking || 'N/A',
+              renovation_quality: preview.renovation_quality || 'N/A',
+              floor_type: preview.floor_type || 'N/A',
+              contact_person: preview.contact_person || 'N/A',
+              contact_phone: preview.contact_phone || 'N/A',
+              contact_email: preview.contact_email || 'N/A',
+                          contact_person2: preview.contact_person2,
+            contact_phone2: preview.contact_phone2,
+            contact_email2: preview.contact_email2,
+            description: preview.description || cachedPropertyData.description || '',
+            suggested_description: cachedPropertyData.suggested_description || '',
+            suggested_location_description: cachedPropertyData.suggested_location_description || '',
+            grundstuecksgroesse: (preview as any).grundstuecksgroesse,
+            einbaukueche: (preview as any).einbaukueche,
+            energieverbrauch: (preview as any).energieverbrauch,
+            energieausweis_typ: (preview as any).energieausweis_typ,
+            energieausweis_gueltig_bis: (preview as any).energieausweis_gueltig_bis,
+            floor: (preview as any).floor,
+            balkon_garten: (preview as any).balkon_garten,
+            locationDescription: (preview as any).locationDescription || cachedPropertyData.locationDescription || '',
+              images: preview.images ? preview.images.map((img: any) => ({
+                id: img.id || `img_${Date.now()}`,
+                url: img.url,
+                category: img.category || 'wohnzimmer',
+                createdAt: img.createdAt || new Date().toISOString()
+              })) : []
+            }));
           }
         } catch (err) {
-          console.error('检查状态失败:', err);
+          console.error('Statusprüfung fehlgeschlagen:', err);
         }
       }
     }, 3000);
@@ -275,20 +297,33 @@ export default function ExposeGenerationPage() {
     return () => clearInterval(interval);
   }, [exposeId, propertyId, exposeData?.status]);
 
+  // 处理PDF下载
   const handleDownloadPDF = async () => {
     try {
+      if (!exposeData || exposeData.status !== 'completed') {
+        alert('Exposé ist noch nicht fertig generiert');
+        return;
+      }
+
       const blob = await downloadPDF(exposeId);
+      
+      // 创建下载链接
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `Immobilienpräsentation_${propertyId}_${exposeId}.pdf`;
-      document.body.appendChild(a);
-      a.click();
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `expose_${exposeId.slice(0, 8)}.pdf`;
+      
+      // 触发下载
+      document.body.appendChild(link);
+      link.click();
+      
+      // 清理
+      document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
+      
     } catch (error) {
-      console.error('下载失败:', error);
-      alert('下载失败，请重试');
+      console.error('Download error:', error);
+      alert('Download fehlgeschlagen, bitte versuchen Sie es erneut');
     }
   };
 
@@ -297,48 +332,43 @@ export default function ExposeGenerationPage() {
   };
 
   const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return <CheckCircle className="w-8 h-8 text-green-500" />;
-      case 'processing':
-        return <Clock className="w-8 h-8 text-blue-500 animate-spin" />;
-      case 'pending':
-        return <Clock className="w-8 h-8 text-yellow-500" />;
-      case 'failed':
-        return <AlertCircle className="w-8 h-8 text-red-500" />;
-      default:
-        return <Clock className="w-8 h-8 text-gray-500" />;
-    }
+    const statusConfig = {
+      completed: { icon: CheckCircle, color: 'text-green-500', animate: false },
+      processing: { icon: Clock, color: 'text-blue-500', animate: true },
+      pending: { icon: Clock, color: 'text-yellow-500', animate: false },
+      failed: { icon: AlertCircle, color: 'text-red-500', animate: false }
+    };
+    
+    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
+    const IconComponent = config.icon;
+    
+    return (
+      <IconComponent 
+        className={`w-8 h-8 ${config.color} ${config.animate ? 'animate-spin' : ''}`} 
+      />
+    );
   };
 
   const getStatusText = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return 'Generierung abgeschlossen';
-      case 'processing':
-        return 'Wird generiert...';
-      case 'pending':
-        return 'Wartet auf Verarbeitung';
-      case 'failed':
-        return 'Generierung fehlgeschlagen';
-      default:
-        return 'Unbekannter Status';
-    }
+    const statusTexts = {
+      completed: 'Generierung abgeschlossen',
+      processing: 'Wird generiert...',
+      pending: 'Wartet auf Verarbeitung',
+      failed: 'Generierung fehlgeschlagen'
+    };
+    
+    return statusTexts[status as keyof typeof statusTexts] || 'Unbekannter Status';
   };
 
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return 'text-green-600';
-      case 'processing':
-        return 'text-blue-600';
-      case 'pending':
-        return 'text-yellow-600';
-      case 'failed':
-        return 'text-red-600';
-      default:
-        return 'text-gray-600';
-    }
+    const statusColors = {
+      completed: 'text-green-600',
+      processing: 'text-blue-600',
+      pending: 'text-yellow-600',
+      failed: 'text-red-600'
+    };
+    
+    return statusColors[status as keyof typeof statusColors] || 'text-gray-600';
   };
 
   if (isLoading) {
@@ -360,7 +390,7 @@ export default function ExposeGenerationPage() {
             <AlertCircle className="w-8 h-8 text-red-600" />
           </div>
           <h2 className="text-xl font-semibold text-gray-900 mb-2">Ladefehler</h2>
-          <p className="text-gray-600 mb-4">{error || 'Konnte Expose-Daten nicht laden'}</p>
+          <p className="text-gray-600 mb-4">{error || 'Konnte Exposé-Daten nicht laden'}</p>
           <button
             onClick={() => router.push('/properties/new')}
             className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -423,24 +453,13 @@ export default function ExposeGenerationPage() {
             )}
 
             {exposeData.status === 'completed' && (
-              <div className="flex items-center justify-center gap-4 mt-6">
+              <div className="flex items-center justify-center mt-6">
                 <button
                   onClick={handleDownloadPDF}
                   className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
                 >
                   <Download className="w-5 h-5" />
                   PDF herunterladen
-                </button>
-                <button
-                  onClick={handlePrint}
-                  className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  <Printer className="w-5 h-5" />
-                  Drucken
-                </button>
-                <button className="flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-                  <Share2 className="w-5 h-5" />
-                  Teilen
                 </button>
               </div>
             )}
@@ -459,92 +478,41 @@ export default function ExposeGenerationPage() {
         </div>
 
         {/* Expose预览 */}
-        {exposeData.status === 'completed' && previewData && (
+        {exposeData.status === 'completed' && exposeData.title && (
           <div className="bg-white rounded-lg shadow-lg overflow-hidden">
             <div className="p-6 border-b border-gray-200">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
                     <Eye className="w-6 h-6 text-blue-600" />
-                    Professionelle Exposé Vorschau
+                    Exposé Vorschau
                   </h2>
-                  <p className="text-gray-600 mt-2">Dies ist Ihre professionelle Exposé Vorschau</p>
-                </div>
-                
-                {/* 模板选择 */}
-                <div className="flex items-center gap-4">
-                  <span className="text-sm font-medium text-gray-700">Vorlage auswählen:</span>
-                  <div className="flex bg-gray-100 rounded-lg p-1">
-                    <button
-                      onClick={() => setSelectedTemplate('a4')}
-                      className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                        selectedTemplate === 'a4'
-                          ? 'bg-white text-blue-600 shadow-sm'
-                          : 'text-gray-600 hover:text-gray-900'
-                      }`}
-                    >
-                      A4-Klassisch
-                    </button>
-                    <button
-                      onClick={() => setSelectedTemplate('ppt')}
-                      className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                        selectedTemplate === 'ppt'
-                          ? 'bg-white text-blue-600 shadow-sm'
-                          : 'text-blue-600 shadow-sm'
-                      }`}
-                    >
-                      PowerPoint-Stil
-                    </button>
-                  </div>
                 </div>
               </div>
             </div>
             
-            {/* 使用选择的模板展示预览 */}
+            {/* 使用 PPT 模板展示预览 */}
             <div className="bg-gray-50">
-              {selectedTemplate === 'a4' ? (
-                <Expose_A4_Classic
-                  data={transformPreviewDataForExpose(previewData)}
-                  showPrintButton={false}
-                  onPrint={handlePrint}
-                  onShare={() => {
-                    if (navigator.share) {
-                      navigator.share({
-                        title: previewData.title || 'Immobilienpräsentation',
-                        text: 'Siehe diese beeindruckende Immobilienpräsentation',
-                        url: window.location.href,
-                      });
-                    } else {
-                      navigator.clipboard.writeText(window.location.href);
-                      alert('Link in die Zwischenablage kopiert');
-                    }
-                  }}
-                  onContact={() => {
-                    alert('Kontaktfunktion: Anruf 138-0013-8000');
-                  }}
-                />
-              ) : (
-                <Expose_PPT_Classic
-                  data={transformPreviewDataForPPT(previewData)}
-                  showNavigation={false}
-                  onPrint={handlePrint}
-                  onShare={() => {
-                    if (navigator.share) {
-                      navigator.share({
-                        title: previewData.title || 'Immobilienpräsentation',
-                        text: 'Siehe diese beeindruckende Immobilienpräsentation',
-                        url: window.location.href,
-                      });
-                    } else {
-                      navigator.clipboard.writeText(window.location.href);
-                      alert('Link in die Zwischenablage kopiert');
-                    }
-                  }}
-                  onContact={() => {
-                    alert('Kontaktfunktion: Anruf 138-0013-8000');
-                  }}
-                />
-              )}
+              <Expose_PPT_Classic
+                data={transformPreviewDataForPPT(exposeData)}
+                showNavigation={false}
+                onPrint={handlePrint}
+                onShare={() => {
+                  if (navigator.share) {
+                    navigator.share({
+                      title: exposeData.title || 'Immobilienpräsentation',
+                      text: 'Siehe diese Immobilienpräsentation',
+                      url: window.location.href,
+                    });
+                  } else {
+                    navigator.clipboard.writeText(window.location.href);
+                    alert('Link kopiert');
+                  }
+                }}
+                onContact={() => {
+                  alert('Kontaktfunktion - Verwenden Sie die Kontaktinformationen in der Präsentation');
+                }}
+              />
             </div>
           </div>
         )}
@@ -553,7 +521,7 @@ export default function ExposeGenerationPage() {
         <div className="mt-8 p-4 bg-gray-100 rounded-lg">
           <h3 className="text-sm font-medium text-gray-700 mb-2">Debug-Informationen</h3>
           <pre className="text-xs text-gray-600 overflow-auto">
-            {JSON.stringify({ propertyId, exposeId, exposeData, previewData }, null, 2)}
+            {JSON.stringify({ propertyId, exposeId, exposeData }, null, 2)}
           </pre>
         </div>
       </div>

@@ -1,10 +1,19 @@
 import React from 'react';
+import { CoverPage, AgendaPage, KeyDataPage, DescriptionPage, LocationDescriptionPage, ContactPage } from '@/components/pages';
+import { DynamicImageLayout, LayoutImage, GrundrissPage } from '@/components/layouts';
+import { PageWrapper } from '@/components/common/PageWrapper';
+import { scrollSnapStyles } from '@/styles/scrollSnapStyles';
+import { pageDividerComponentStyles } from '@/styles/pageDividerStyles';
+import { exposeStyles } from '@/styles/exposeStyles';
 
 export interface ExposePPTData {
   // 基本信息
   propertyName: string;
   title: string;
   address: string;
+  city: string;
+  plz: string;
+  price?: number; // 价格
   
   // 议程
   agendaItems: string[];
@@ -13,11 +22,23 @@ export interface ExposePPTData {
   keyFacts: {
     baujahr?: string;
     wohnflaeche?: string;
+    grundstuecksgroesse?: string;
     zimmer?: string;
     schlafzimmer?: string;
     badezimmer?: string;
+    einbaukueche?: string;
     heizungssystem?: string;
     energieklasse?: string;
+    energietraeger?: string;
+    energieverbrauch?: string;
+    energieausweis_typ?: string;
+    energieausweis_gueltig_bis?: string;
+    parkplatz?: string;
+    renovierungsqualitaet?: string;
+    bodenbelag?: string;
+    balkon_garten?: string; // 添加阳台/花园字段
+    city?: string;
+    plz?: string; // 添加邮政编码字段
   };
   
   // 描述
@@ -27,15 +48,15 @@ export interface ExposePPTData {
   images: Array<{
     id: string;
     url: string;
-    alt: string;
+    category: string;
   }>;
   
   // 位置信息
   locationText: string;
   locationImage: string;
+  locationDescription?: string; // Neu: Vom Benutzer eingegebene geografische Lagebeschreibung
   
-  // 平面图
-  floorPlanImage: string;
+  // 平面图相关信息
   floorPlanDetails: string[];
   
   // 联系信息
@@ -48,6 +69,16 @@ export interface ExposePPTData {
   
   // 样式配置
   accentColor?: string;
+  
+  // 代理信息
+  agentInfo?: {
+    companyLogo?: string;
+    responsiblePerson: string;
+    address: string;
+    website?: string;
+    phone: string;
+    userType: string;
+  };
 }
 
 export interface Expose_PPT_ClassicProps {
@@ -81,67 +112,44 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
     return `${baseUrl}${url}`;
   };
   
-  // 打印样式
-  const printStyles = `
-    @media print {
-      .slide { 
-        page-break-after: always; 
-        margin: 0; 
-        padding: 24px; 
-      }
-      .slide:last-child { 
-        page-break-after: auto; 
-      }
-      .no-print { display: none !important; }
-    }
-    
-    /* 幻灯片边界样式 */
-    .slide {
-      border: 2px solid #e5e7eb;
-      border-radius: 8px;
-      margin-bottom: 2rem;
-      position: relative;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    }
-    
-    /* Footer 样式 */
-    .slide-footer {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 60px;
-      background: linear-gradient(to top, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.8));
-      border-top: 1px solid #e5e7eb;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 24px;
-      font-size: 14px;
-      color: #6b7280;
-    }
-    
-    .footer-left {
-      font-weight: 500;
-      color: #374151;
-    }
-    
-    .footer-right {
-      font-weight: 600;
-      color: #3b82f6;
-      background: rgba(59, 130, 246, 0.1);
-      padding: 4px 12px;
-      border-radius: 12px;
-    }
+  // 根据category筛选图片
+  const getImagesByCategory = (category: string): string[] => {
+    return data.images
+      .filter(img => img.category === category)
+      .map(img => img.url);
+  };
+  
+  // 获取第一张指定类别的图片，如果没有则使用备用图片
+  const getFirstImageByCategory = (category: string, fallbackUrl: string): string => {
+    const categoryImages = getImagesByCategory(category);
+    return categoryImages.length > 0 ? getFullImageUrl(categoryImages[0]) : fallbackUrl;
+  };
+  
+  // 获取指定分类的图片并转换为LayoutImage格式
+  const getLayoutImagesByCategory = (category: string): LayoutImage[] => {
+    return data.images
+      .filter(img => img.category === category)
+      .map(img => ({
+        id: img.id,
+        url: getFullImageUrl(img.url),
+        category: img.category
+      }));
+  };
+  
+  // 合并所有样式
+  const allStyles = `
+    ${exposeStyles}
+    ${scrollSnapStyles}
+    ${pageDividerComponentStyles}
   `;
 
   return (
-    <div className={`expose-ppt-container ${className}`}>
-      <style jsx>{printStyles}</style>
+    <div className={`expose-ppt-container ${className}`} style={{ fontFamily: '"Garamond", "Times New Roman", serif' }}>
+      <style jsx>{allStyles}</style>
       
       {/* 导航栏 */}
       {showNavigation && (
-        <div className="no-print sticky top-0 z-40 bg-white border-b border-gray-200 px-6 py-4 shadow-sm">
+        <div className="no-print sticky top-0 z-40 bg-white border-b border-gray-200 px-6 py-4 shadow-sm" style={{ fontFamily: '"Garamond", "Times New Roman", serif' }}>
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             <h2 className="text-lg font-semibold text-gray-900">PowerPoint Stil Exposé</h2>
             <div className="flex gap-3">
@@ -168,370 +176,237 @@ const Expose_PPT_Classic: React.FC<Expose_PPT_ClassicProps> = ({
          </div>
        )}
 
-      {/* 幻灯片容器 */}
-      <div className="slides-container">
+      {/* 幻灯片容器 - 全屏滚动 */}
+      <div className="slides-container snap-y snap-mandatory overflow-y-auto h-screen">
         
         {/* 第1页 - 封面页 */}
-        <div className="slide w-full h-screen bg-cover bg-center bg-no-repeat relative" 
-             style={{ 
-               backgroundImage: `url(${data.images?.[0]?.url ? getFullImageUrl(data.images[0].url) : 'https://source.unsplash.com/1920x1080/?modern-house'})`,
-               aspectRatio: '16/9',
-               minHeight: '1080px'
-             }}>
-          {/* 底部白色覆盖条 */}
-          <div className="absolute bottom-0 left-0 right-0 bg-white bg-opacity-95 p-8">
-            <div className="text-center">
-              <h1 className="text-5xl font-serif font-bold text-gray-900 mb-4">
-                {data.title || 'Professionelle Immobilienpräsentation'}
-              </h1>
-              <p className="text-xl text-gray-600 font-sans">
-                {data.address || 'Adressinformationen'}
-              </p>
-            </div>
-          </div>
-          
-          {/* Footer */}
-          <div className="slide-footer">
-            <div className="footer-left">
-              {data.propertyName || 'Immobilienname'}
-            </div>
-            <div className="footer-right">
-              1 / 8
-            </div>
-          </div>
-        </div>
+        <PageWrapper
+          pageNumber="1 / 12"
+          dividerStyle="gradient"
+          dividerVariant="medium"
+          propertyName={data.propertyName}
+          showFooterPageNumber={true}
+          showFooterPropertyName={true}
+        >
+          <CoverPage
+            title={data.title}
+            address={data.address}
+            backgroundImage={data.images?.[0]?.url ? getFullImageUrl(data.images[0].url) : undefined}
+            propertyName={data.propertyName}
+            pageNumber="1 / 12"
+          />
+        </PageWrapper>
 
         {/* 第2页 - 议程 */}
-        <div className="slide w-full h-screen bg-white p-12 flex items-center pb-20" 
-             style={{ aspectRatio: '16/9', minHeight: '1080px' }}>
-          <div className="w-full max-w-7xl mx-auto grid grid-cols-2 gap-16 items-center">
-            {/* 左侧议程 */}
-            <div>
-              <h2 className="text-4xl font-serif font-bold text-gray-900 mb-8">Agenda</h2>
-              <ol className="space-y-4">
-                {data.agendaItems?.map((item, index) => (
-                  <li key={index} className="flex items-start gap-4">
-                    <span className="flex-shrink-0 w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold text-lg">
-                      {index + 1}
-                    </span>
-                    <span className="text-xl text-gray-700 font-medium">{item}</span>
-                  </li>
-                )) || [
-                  'Immobilienübersicht',
-                  'Eckdaten',
-                  'Immobiliendetails',
-                  'Bildergalerie',
-                  'Lagebeschreibung',
-                  'Grundriss',
-                  'Kontaktinformationen'
-                ].map((item, index) => (
-                  <li key={index} className="flex items-start gap-4">
-                    <span className="flex-shrink-0 w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold text-lg">
-                      {index + 1}
-                    </span>
-                    <span className="text-xl text-gray-700 font-medium">{item}</span>
-                  </li>
-                ))}
-              </ol>
-            </div>
+        <PageWrapper
+          pageNumber="2 / 12"
+          dividerStyle="gradient"
+          dividerVariant="medium"
+          propertyName={data.propertyName}
+          showFooterPageNumber={true}
+          showFooterPropertyName={true}
+        >
+          <AgendaPage
+            agendaItems={data.agendaItems}
+            backgroundImage={data.images?.[0]?.url ? getFullImageUrl(data.images[0].url) : undefined}
+            propertyName={data.propertyName}
+            pageNumber="2 / 12"
+          />
+        </PageWrapper>
             
-            {/* 右侧图片 */}
-            <div className="flex justify-center">
-              <div className="w-80 h-60 bg-gray-200 rounded-lg shadow-lg overflow-hidden">
-                <img 
-                  src={data.images?.[1]?.url ? getFullImageUrl(data.images[1].url) : 
-                       data.images?.[0]?.url ? getFullImageUrl(data.images[0].url) : 
-                       'https://source.unsplash.com/800x600/?house-interior'} 
-                  alt="Immobilienbild"
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = 'https://source.unsplash.com/800x600/?house-interior';
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-          
-          {/* Footer */}
-          <div className="slide-footer">
-            <div className="footer-left">
-              {data.propertyName || 'Immobilienname'}
-            </div>
-            <div className="footer-right">
-              2 / 8
-            </div>
-          </div>
-        </div>
+        {/* 第3页 - 位置信息 */}
+        <PageWrapper
+          pageNumber="3 / 12"
+          dividerStyle="gradient"
+          dividerVariant="medium"
+          propertyName={data.propertyName}
+          showFooterPageNumber={true}
+          showFooterPropertyName={true}
+        >
+          <LocationDescriptionPage
+            locationDescription={data.locationDescription}
+            locationImage={data.locationImage ? getFullImageUrl(data.locationImage) : undefined}
+            cityName={data.city}
+            propertyName={data.propertyName}
+            pageNumber="3 / 12"
+          />
+        </PageWrapper>
 
-        {/* 第3页 - 关键数据 */}
-        <div className="slide w-full h-screen bg-white p-12 flex items-center pb-20" 
-             style={{ aspectRatio: '16/9', minHeight: '1080px' }}>
-          <div className="w-full max-w-4xl mx-auto">
-            <h2 className="text-4xl font-serif font-bold text-gray-900 mb-12 text-center">Eckdaten</h2>
-            
-            <div className="grid grid-cols-2 gap-8">
-              {/* 左侧字段 */}
-              <div className="space-y-6">
-                <div className="text-right font-bold text-xl text-gray-700">Baujahr</div>
-                <div className="text-right font-bold text-xl text-gray-700">Wohnfläche</div>
-                <div className="text-right font-bold text-xl text-gray-700">Zimmer</div>
-                <div className="text-right font-bold text-xl text-gray-700">Schlafzimmer</div>
-                <div className="text-right font-bold text-xl text-gray-700">Badezimmer</div>
-                <div className="text-right font-bold text-xl text-gray-700">Heizungssystem</div>
-                <div className="text-right font-bold text-xl text-gray-700">Energieklasse</div>
-              </div>
+        {/* 第4页 - 关键数据 */}
+        <PageWrapper
+          pageNumber="4 / 12"
+          dividerStyle="gradient"
+          dividerVariant="medium"
+          propertyName={data.propertyName}
+          showFooterPageNumber={true}
+          showFooterPropertyName={true}
+        >
+          <KeyDataPage
+            keyFacts={data.keyFacts}
+            price={data.price}
+            propertyName={data.propertyName}
+            pageNumber="4 / 12"
+          />
+        </PageWrapper>
+
+        {/* 第5页 - 房源描述 */}
+        <PageWrapper
+          pageNumber="5 / 12"
+          dividerStyle="gradient"
+          dividerVariant="medium"
+          propertyName={data.propertyName}
+          showFooterPageNumber={true}
+          showFooterPropertyName={true}
+        >
+          <DescriptionPage
+            description={data.description}
+            propertyName={data.propertyName}
+            backgroundImage={data.images?.[3]?.url ? getFullImageUrl(data.images[3].url) : undefined}
+            pageNumber="5 / 12"
+          />
+        </PageWrapper>
+
+                    {/* 第6页 - 房间描述 - 动态布局 */}
+        <PageWrapper
+          pageNumber="6 / 12"
+          dividerStyle="gradient"
+          dividerVariant="medium"
+          propertyName={data.propertyName}
+          showFooterPageNumber={true}
+          showFooterPropertyName={true}
+        >
+                <DynamicImageLayout
+                  images={getLayoutImagesByCategory('wohnzimmer')}
+            propertyName={data.propertyName}
+                  description="Das großzügige Wohnzimmer bietet viel Platz für Entspannung und Geselligkeit."
+            category="wohnzimmer"
+            pageNumber="6 / 12"
+            className="w-full h-full"
+          />
+        </PageWrapper>
+
+        {/* 第7页 - 房间描述 - 动态布局 */}
+        <PageWrapper
+          pageNumber="7 / 12"
+          dividerStyle="gradient"
+          dividerVariant="medium"
+          propertyName={data.propertyName}
+          showFooterPageNumber={true}
+          showFooterPropertyName={true}
+        >
+                <DynamicImageLayout
+                  images={getLayoutImagesByCategory('kueche')}
+            propertyName={data.propertyName}
+                  description="Die vollausgestattete Einbauküche überzeugt durch funktionales Design und hochwertige Ausstattung."
+            category="kueche"
+            pageNumber="7 / 12"
+            className="w-full h-full"
+          />
+        </PageWrapper>
               
-              {/* 右侧数值 */}
-              <div className="space-y-6">
-                <div className="text-left text-xl text-gray-600">{data.keyFacts?.baujahr || '2020'}</div>
-                <div className="text-left text-xl text-gray-600">{data.keyFacts?.wohnflaeche || '120 m²'}</div>
-                <div className="text-left text-xl text-gray-600">{data.keyFacts?.zimmer || '5'}</div>
-                <div className="text-left text-xl text-gray-600">{data.keyFacts?.schlafzimmer || '3'}</div>
-                <div className="text-left text-xl text-gray-600">{data.keyFacts?.badezimmer || '2'}</div>
-                <div className="text-left text-xl text-gray-600">{data.keyFacts?.heizungssystem || 'Fußbodenheizung'}</div>
-                <div className="text-left text-xl text-gray-600">{data.keyFacts?.energieklasse || 'A'}</div>
-              </div>
-            </div>
-          </div>
-          
-          {/* Footer */}
-          <div className="slide-footer">
-            <div className="footer-left">
-              {data.propertyName || 'Immobilienname'}
-            </div>
-            <div className="footer-right">
-              3 / 8
-            </div>
-          </div>
-        </div>
+                        {/* 第8页 - 房间描述 - 动态布局 */}
+        <PageWrapper
+          pageNumber="8 / 12"
+          dividerStyle="gradient"
+          dividerVariant="medium"
+          propertyName={data.propertyName}
+          showFooterPageNumber={true}
+          showFooterPropertyName={true}
+        >
+                <DynamicImageLayout
+                  images={getLayoutImagesByCategory('zimmer')}
+            propertyName={data.propertyName}
+            description="Das großzügige Schlafzimmer bietet viel Platz für Entspannung und Geselligkeit."
+            category="zimmer"
+            pageNumber="8 / 12"
+            className="w-full h-full"
+          />
+        </PageWrapper>
+              
+                        {/* 第9页 - 房间描述 - 动态布局 */}
+        <PageWrapper
+          pageNumber="9 / 12"
+          dividerStyle="gradient"
+          dividerVariant="medium"
+          propertyName={data.propertyName}
+          showFooterPageNumber={true}
+          showFooterPropertyName={true}
+        >
+                <DynamicImageLayout
+                  images={getLayoutImagesByCategory('bad')}
+            propertyName={data.propertyName}
+            description="Das großzügige Bad bietet viel Platz für Entspannung und Geselligkeit."
+                  category="Bad"
+            pageNumber="9 / 12"
+            className="w-full h-full"
+          />
+        </PageWrapper>
+              
+                        {/* 第10页 - 房间描述 - 动态布局 */}
+        <PageWrapper
+          pageNumber="10 / 12"
+          dividerStyle="gradient"
+          dividerVariant="medium"
+          propertyName={data.propertyName}
+          showFooterPageNumber={true}
+          showFooterPropertyName={true}
+        >
+                <DynamicImageLayout
+                  images={getLayoutImagesByCategory('balkon')}
+            propertyName={data.propertyName}
+            description="Das großzügige Balkon bietet viel Platz für Entspannung und Geselligkeit."
+                  category="Balkon"
+            pageNumber="10 / 12"
+            className="w-full h-full"
+          />
+        </PageWrapper>
+              
+        {/* 第11页 - 平面图 - 使用新的 GrundrissPage 组件 */}
+        <PageWrapper
+          pageNumber="11 / 12"
+          dividerStyle="gradient"
+          dividerVariant="medium"
+          propertyName={data.propertyName}
+          showFooterPageNumber={true}
+          showFooterPropertyName={true}
+        >
+          <GrundrissPage
+            image={{
+              url: getFirstImageByCategory('grundriss', 'https://source.unsplash.com/800x600/?floor-plan'),
+              category: 'Grundriss',
+              alt: 'Grundriss'
+            }}
+            title="Grundriss"
+            roomStats={{
+              totalRooms: parseInt(data.keyFacts.zimmer || '0') || 0,
+              bedrooms: parseInt(data.keyFacts.schlafzimmer || '0') || 0,
+              bathrooms: parseInt(data.keyFacts.badezimmer || '0') || 0,
+              livingRooms: 1,
+              kitchens: 1,
+              balconies: 0
+            }}
+            propertyName={data.propertyName}
+            pageNumber="11 / 12"
+            className="w-full h-full"
+          />
+        </PageWrapper>
 
-        {/* 第4页 - 房源描述 */}
-        <div className="slide w-full h-screen bg-white p-12 flex items-center pb-20" 
-             style={{ aspectRatio: '16/9', minHeight: '1080px' }}>
-          <div className="w-full max-w-5xl mx-auto">
-            <h2 className="text-4xl font-serif font-bold text-gray-900 mb-12 text-center">Beschreibung</h2>
-            
-            <div className="bg-gray-50 rounded-lg p-8">
-              <p className="text-xl text-gray-700 leading-relaxed text-justify">
-                {data.description || 'Dies ist eine hochwertige Immobilie in einer erstklassigen Lage mit ausgezeichneter Verkehrsanbindung. Die Wohnung ist durchdacht gestaltet, bietet viel Tageslicht und verfügt über eine vollständige Ausstattung. Die Umgebung ist wunderschön, das Leben ist bequem und es ist eine ideale Wahl zum Wohnen. Die Immobilie ist gut gepflegt, die Renovierungsqualität ist ausgezeichnet und sie kann direkt bezogen werden.'}
-                </p>
-            </div>
-          </div>
-          
-          {/* Footer */}
-          <div className="slide-footer">
-            <div className="footer-left">
-              {data.propertyName || 'Immobilienname'}
-            </div>
-            <div className="footer-right">
-              4 / 8
-            </div>
-          </div>
-        </div>
-
-        {/* 第5页 - 图片画廊 */}
-        <div className="slide w-full h-screen bg-white p-12 flex items-center pb-20" 
-             style={{ aspectRatio: '16/9', minHeight: '1080px' }}>
-          <div className="w-full max-w-6xl mx-auto">
-            <h2 className="text-4xl font-serif font-bold text-gray-900 mb-12 text-center">Impressionen</h2>
-            
-            <div className="grid grid-cols-3 gap-6">
-              {(data.images?.slice(0, 6) || Array(6).fill(null)).map((image, index) => (
-                <div key={index} className="aspect-video bg-gray-200 rounded-lg shadow-lg overflow-hidden">
-                  <img 
-                    src={image?.url ? getFullImageUrl(image.url) : `https://source.unsplash.com/800x600/?house-${index + 1}`} 
-                    alt={image?.alt || `Immobilienbild ${index + 1}`}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = `https://source.unsplash.com/800x600/?house-${index + 1}`;
-                    }}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-          
-          {/* Footer */}
-          <div className="slide-footer">
-            <div className="footer-left">
-              {data.propertyName || 'Immobilienname'}
-            </div>
-            <div className="footer-right">
-              5 / 8
-            </div>
-          </div>
-        </div>
-
-        {/* 第6页 - 位置信息 */}
-        <div className="slide w-full h-screen bg-white p-12 flex items-center pb-20" 
-             style={{ aspectRatio: '16/9', minHeight: '1080px' }}>
-          <div className="w-full max-w-7xl mx-auto grid grid-cols-2 gap-16 items-center">
-            {/* 左侧文字 */}
-            <div>
-              <h2 className="text-4xl font-serif font-bold text-gray-900 mb-8">Lagebeschreibung</h2>
-              <div className="space-y-4 text-lg text-gray-700">
-                <p>• Einkaufszentrum 5 Minuten zu Fuß</p>
-                <p>• Viele Restaurants und Cafés</p>
-                <p>• Hochwertige Schulressourcen</p>
-                <p>• Krankenhauseinrichtungen vollständig</p>
-                <p>• Stadtzentrum verkehrsgünstig gelegen</p>
-                <p>• Parks und Grünflächen in der Nähe</p>
-              </div>
-            </div>
-            
-            {/* 右侧地图图片 */}
-            <div className="flex justify-center">
-              <div className="w-96 h-72 bg-gray-200 rounded-lg shadow-lg overflow-hidden">
-                <img 
-                  src={data.locationImage ? getFullImageUrl(data.locationImage) : 
-                       data.images?.[0]?.url ? getFullImageUrl(data.images[0].url) : 
-                       'https://source.unsplash.com/800x600/?city-map'} 
-                  alt="Lagekarte"
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = 'https://source.unsplash.com/800x600/?city-map';
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-          
-          {/* Footer */}
-          <div className="slide-footer">
-            <div className="footer-left">
-              {data.propertyName || 'Immobilienname'}
-            </div>
-            <div className="footer-right">
-              6 / 8
-            </div>
-          </div>
-        </div>
-
-        {/* 第7页 - 平面图 */}
-        <div className="slide w-full h-screen bg-white p-12 flex items-center pb-20" 
-             style={{ aspectRatio: '16/9', minHeight: '1080px' }}>
-          <div className="w-full max-w-7xl mx-auto grid grid-cols-2 gap-16 items-center">
-            {/* 左侧平面图 */}
-            <div className="flex justify-center">
-              <div className="w-96 h-72 bg-gray-200 rounded-lg shadow-lg overflow-hidden">
-                <img 
-                  src={data.floorPlanImage ? getFullImageUrl(data.floorPlanImage) : 
-                       data.images?.[1]?.url ? getFullImageUrl(data.images[1].url) : 
-                       'https://source.unsplash.com/800x600/?floor-plan'} 
-                  alt="Grundriss"
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = 'https://source.unsplash.com/800x600/?floor-plan';
-                  }}
-                />
-              </div>
-            </div>
-            
-            {/* 右侧详情 */}
-            <div>
-              <h2 className="text-4xl font-serif font-bold text-gray-900 mb-8">Grundriss Details</h2>
-              <ul className="space-y-3 text-lg text-gray-700">
-                {(data.floorPlanDetails || [
-                  '3 Schlafzimmer, Hauptschlafzimmer mit eigenem Bad',
-                  '2 Badezimmer, Trocken- und Nassbereich getrennt',
-                  'Offene Küche, Essbereich integriert',
-                  'Wohnzimmer geräumig, viel Tageslicht',
-                  'Balkon verbindet Wohnzimmer und Hauptschlafzimmer',
-                  'Abstellraum und Kleiderschrank vorhanden'
-                ]).map((detail, index) => (
-                  <li key={index} className="flex items-center gap-3">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                    {detail}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-          
-          {/* Footer */}
-          <div className="slide-footer">
-            <div className="footer-left">
-              {data.propertyName || 'Immobilienname'}
-            </div>
-            <div className="footer-right">
-              7 / 8
-            </div>
-          </div>
-        </div>
-
-        {/* 第8页 - 联系信息 */}
-        <div className="slide w-full h-screen bg-white p-12 flex items-center pb-20" 
-             style={{ aspectRatio: '16/9', minHeight: '1080px' }}>
-          <div className="w-full max-w-5xl mx-auto">
-            <h2 className="text-4xl font-serif font-bold text-gray-900 mb-12 text-center">Kontakt</h2>
-            
-            <div className="grid grid-cols-2 gap-8">
-              {(data.contacts || [
-                {
-                  name: 'Herr Zhang',
-                  phone: '+86 138 0013 8000',
-                  email: 'zhang@example.com',
-                  avatar: '/placeholder-avatar.jpg'
-                },
-                {
-                  name: 'Frau Li',
-                  phone: '+86 139 0013 8001',
-                  email: 'li@example.com',
-                  avatar: '/placeholder-avatar.jpg'
-                }
-              ]).map((contact, index) => (
-                <div key={index} className="bg-gray-50 rounded-lg p-6 border border-gray-200 shadow-sm">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="w-16 h-16 bg-gray-300 rounded-full overflow-hidden">
-                      <img 
-                        src={contact.avatar ? getFullImageUrl(contact.avatar) : `https://source.unsplash.com/100x100/?portrait-${index + 1}`} 
-                        alt={contact.name}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.src = `https://source.unsplash.com/100x100/?portrait-${index + 1}`;
-                        }}
-                      />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-900">{contact.name}</h3>
-                      <p className="text-gray-600">Immobilienberater</p>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-gray-700">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                      </svg>
-                      {contact.phone}
-                    </div>
-                    <div className="flex items-center gap-2 text-gray-700">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                      </svg>
-                      {contact.email}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-          
-          {/* Footer */}
-          <div className="slide-footer">
-            <div className="footer-left">
-              {data.propertyName || 'Immobilienname'}
-            </div>
-            <div className="footer-right">
-              8 / 8
-            </div>
-          </div>
-        </div>
+        {/* 第12页 - 联系信息 */}
+        <PageWrapper
+          pageNumber="12 / 12"
+          dividerStyle="gradient"
+          dividerVariant="medium"
+          propertyName={data.propertyName}
+          showFooterPageNumber={true}
+          showFooterPropertyName={true}
+        >
+          <ContactPage
+            contacts={data.contacts}
+            agentInfo={data.agentInfo}
+            propertyName={data.propertyName}
+            pageNumber="12 / 12"
+          />
+        </PageWrapper>
       </div>
     </div>
   );

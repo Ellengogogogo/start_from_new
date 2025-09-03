@@ -1,57 +1,83 @@
-export interface PropertyFormData {
-  // 步骤1: 基本信息
+export interface Images {
+  wohnzimmer?: File[];
+  kueche?: File[];
+  zimmer?: File[];
+  bad?: File[];
+  balkon?: File[];
+  grundriss?: File[];
+}
+
+// 基础属性接口 - 包含所有共同的属性
+export interface BasePropertyFields {
   title: string;
+  city: string;
+  plz: string;
+  address: string;
+  price: number;
+  rooms: number;
+  area: number;
+  yearBuilt: number;
+  bedrooms: number;
+  bathrooms: number;
+  heating_system: string;
+  energy_source: string;
+  energy_certificate: string;
+  parking: string;
+  renovation_quality: string;
+  floor_type: string;
+  description?: string;
+}
+
+// 可选属性接口 - 包含所有可选的属性
+export interface OptionalPropertyFields {
+  grundstuecksgroesse?: number; // 地块大小
+  einbaukueche?: string; // 内置厨房
+  energieverbrauch?: number; // 能源消耗 kWh/m²
+  energieausweis_typ?: string; // 能源证书类型
+  energieausweis_gueltig_bis?: string; // 能源证书有效期
+  floor?: number; // 楼层
+  balkon_garten?: string; // 阳台/花园
+}
+
+// 联系信息接口
+export interface ContactInfo {
+  contact_person: string;
+  contact_phone: string;
+  contact_email: string;
+  contact_person2?: string;
+  contact_phone2?: string;
+  contact_email2?: string;
+}
+
+// 表单特有字段
+export interface FormSpecificFields {
   property_type: string;
   city: string;
-  postal_code: string;
-  address: string;
-  price: number;
-  
-  // 步骤2: 房屋详情
-  rooms: number;
-  area: number;
-  yearBuilt: number;
-  
-  // 步骤3: 描述文本
+  plz: string;
   description?: string;
   suggested_description?: string;
-  
-  // 步骤4: 图片
-  images: File[];
+  locationDescription?: string;
+  suggested_location_description?: string;
+  agentInfo?: AgentInfo;
 }
 
-export interface PropertyData {
-  id: string;
-  title: string;
-  address: string;
-  price: number;
-  rooms: number;
-  area: number;
-  yearBuilt: number;
-  description: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
+// 图片接口
 export interface PropertyImage {
   id: string;
-  propertyId: string;
-  filename: string;
   url: string;
-  isPrimary: boolean;
+  category: string;
   createdAt: string;
 }
 
-export interface PropertyPreview {
-  property: PropertyData;
-  images: PropertyImage[];
-}
+// 重构后的接口定义
+export interface PropertyFormData extends BasePropertyFields, OptionalPropertyFields, FormSpecificFields, ContactInfo {}
 
 export interface UploadProgress {
   [key: string]: number;
 }
 
-export interface ExposeData {
+// ExposeData 接口 - 包含所有必要的字段
+export interface ExposeData extends BasePropertyFields, OptionalPropertyFields, FormSpecificFields, ContactInfo {
   id: string;
   propertyId: string;
   status: 'pending' | 'processing' | 'completed' | 'failed';
@@ -59,19 +85,8 @@ export interface ExposeData {
   createdAt: string;
   completedAt?: string;
   pdfUrl?: string;
-  previewData?: {
-    title?: string;
-    address?: string;
-    price?: number;
-    rooms?: number;
-    area?: number;
-    yearBuilt?: number;
-    description?: string;
-    images?: Array<{
-      url: string;
-      isPrimary: boolean;
-    }>;
-  };
+  // Override images field to use PropertyImage[] instead of Images
+  images?: PropertyImage[];
 }
 
 export interface ExposeGenerationRequest {
@@ -83,4 +98,12 @@ export interface ExposeGenerationRequest {
     language?: 'zh' | 'en';
     format?: 'A4' | 'A3';
   };
+}
+
+export interface AgentInfo {
+  companyLogo?: string;
+  address: string;
+  website?: string;
+  phone: string;
+  userType: 'agent';
 }
