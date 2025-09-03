@@ -98,7 +98,7 @@ export const FourImagesRoom: React.FC<FourImagesProps> = ({
   };
 
   return (
-    <div className={`four-images w-full h-screen relative overflow-hidden ${className}`}>
+    <section className={`page w-full h-screen flex flex-col justify-center items-center relative overflow-hidden ${className}`} style={{ pageBreakAfter: 'always' }}>
       
       {/* 背景渐变 - 低饱和度 */}
       <div className="absolute inset-0 bg-gradient-to-br from-stone-50/40 via-slate-50/30 to-gray-50/40"></div>
@@ -182,7 +182,6 @@ export const FourImagesRoom: React.FC<FourImagesProps> = ({
         </div>
       </div>
 
-
-    </div>
+    </section>
   );
 };

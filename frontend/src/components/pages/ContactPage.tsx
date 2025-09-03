@@ -69,7 +69,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({
   };
 
   return (
-    <div className={`contact-page w-full h-screen relative overflow-hidden ${backgroundClasses[backgroundColor]} ${className}`}>
+    <section className={`page w-full h-screen flex flex-col justify-center items-center relative overflow-hidden ${backgroundClasses[backgroundColor]} ${className}`} style={{ pageBreakAfter: 'always' }}>
       
       {/* 背景设计系统 - 低饱和度 */}
       <div className="absolute inset-0 z-0">
@@ -233,7 +233,6 @@ export const ContactPage: React.FC<ContactPageProps> = ({
         </div>
       </div>
 
-
-    </div>
+    </section>
   );
 };

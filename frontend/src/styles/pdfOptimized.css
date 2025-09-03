@@ -1,0 +1,71 @@
+/* PDF 优化样式 - 确保 Puppeteer/Playwright 稳定导出 */
+
+/* 基础页面设置 */
+.page {
+  height: 297mm !important; /* A4 高度 */
+  width: 210mm !important;  /* A4 宽度 */
+  page-break-after: always !important;
+  page-break-inside: avoid !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* 确保内容不被截断 */
+.page * {
+  page-break-inside: avoid !important;
+  orphans: 3 !important;
+  widows: 3 !important;
+}
+
+/* 图片优化 */
+.page img {
+  max-width: 100% !important;
+  height: auto !important;
+  page-break-inside: avoid !important;
+  object-fit: cover !important;
+}
+
+/* 文本优化 */
+.page p, .page h1, .page h2, .page h3 {
+  page-break-inside: avoid !important;
+  orphans: 3 !important;
+  widows: 3 !important;
+}
+
+/* 禁用动画和过渡 */
+.page * {
+  animation: none !important;
+  transition: none !important;
+  transform: none !important;
+}
+
+/* 确保颜色正确渲染 */
+.page * {
+  -webkit-print-color-adjust: exact !important;
+  color-adjust: exact !important;
+}
+
+/* 字体优化 */
+.page {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+}
+
+/* 布局稳定性 */
+.page .flex, .page .grid {
+  display: block !important;
+}
+
+/* 确保背景正确显示 */
+.page {
+  background-color: white !important;
+  background-image: none !important;
+}
+
+/* 简化阴影 */
+.page * {
+  box-shadow: none !important;
+  filter: none !important;
+}

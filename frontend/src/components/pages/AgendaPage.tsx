@@ -51,7 +51,7 @@ export const AgendaPage: React.FC<AgendaPageProps> = ({
   console.log('AgendaPage props:', { backgroundImage, imageUrl });
 
   return (
-    <div className={`agenda-page w-full h-screen relative overflow-hidden ${backgroundClasses[backgroundColor]} ${className}`}>
+    <section className={`page w-full h-screen flex flex-col justify-center items-center relative overflow-hidden ${backgroundClasses[backgroundColor]} ${className}`} style={{ pageBreakAfter: 'always' }}>
       
       {/* 右侧背景图片 - 占满整个右侧 */}
       <div className="absolute right-0 top-0 w-1/2 h-full z-0">
@@ -135,7 +135,6 @@ export const AgendaPage: React.FC<AgendaPageProps> = ({
          </div>
       </div>
 
-
-    </div>
+    </section>
   );
 };

@@ -34,7 +34,7 @@ export const OneImageRoom: React.FC<OneImageRoomProps> = ({
   };
 
   return (
-    <div className={`one-image-room w-full h-screen relative overflow-hidden ${className}`}>
+    <section className={`page w-full h-screen flex flex-col justify-center items-center relative overflow-hidden ${className}`} style={{ pageBreakAfter: 'always' }}>
       
       {/* 背景大图 - 覆盖整个屏幕 */}
       <div className="absolute inset-0 z-0">
@@ -114,7 +114,6 @@ export const OneImageRoom: React.FC<OneImageRoomProps> = ({
         </div>
       </div>
 
-
-    </div>
+    </section>
   );
 };

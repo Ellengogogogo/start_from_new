@@ -42,7 +42,7 @@ export const CoverPage: React.FC<CoverPageProps> = ({
   const defaultBackgroundImage = 'https://source.unsplash.com/1920x1080/?modern-house';
 
   return (
-    <div className={`cover-page w-full h-screen flex flex-col justify-center items-center relative ${backgroundColor === 'gradient' ? '' : backgroundClasses[backgroundColor]} ${className}`}>
+    <section className={`page w-full h-screen flex flex-col justify-center items-center relative ${backgroundColor === 'gradient' ? '' : backgroundClasses[backgroundColor]} ${className}`} style={{ pageBreakAfter: 'always' }}>
       
       {/* 背景大图 - 覆盖整个屏幕 */}
       <div className="absolute inset-0 z-0">
@@ -146,7 +146,6 @@ export const CoverPage: React.FC<CoverPageProps> = ({
         </div>
       </div>
 
-
-    </div>
+    </section>
   );
 };

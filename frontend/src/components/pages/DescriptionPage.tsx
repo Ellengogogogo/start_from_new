@@ -30,7 +30,7 @@ export const DescriptionPage: React.FC<DescriptionPageProps> = ({
   const displayDescription = description || defaultDescription;
 
   return (
-    <div className={`description-page w-full h-screen relative overflow-hidden ${backgroundClasses[backgroundColor]} ${className}`}>
+    <section className={`page w-full h-screen flex flex-col justify-center items-center relative overflow-hidden ${backgroundClasses[backgroundColor]} ${className}`} style={{ pageBreakAfter: 'always' }}>
       
       {/* 背景设计元素 - 极简化 */}
       <div className="absolute inset-0 z-0">
@@ -116,7 +116,6 @@ export const DescriptionPage: React.FC<DescriptionPageProps> = ({
         </div>
       </div>
 
-
-    </div>
+    </section>
   );
 };

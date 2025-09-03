@@ -99,7 +99,7 @@ export const KeyDataPage: React.FC<KeyDataPageProps> = ({
   ];
 
   return (
-    <div className={`key-data-page w-full h-screen relative overflow-hidden ${backgroundClasses[backgroundColor]} ${className}`}>
+    <section className={`page w-full h-screen flex flex-col justify-center items-center relative overflow-hidden ${backgroundClasses[backgroundColor]} ${className}`} style={{ pageBreakAfter: 'always' }}>
       
       {/* 主内容区域 - 极简左右对分布局 */}
       <div className="relative z-10 h-full flex flex-col px-16 py-20">
@@ -198,7 +198,6 @@ export const KeyDataPage: React.FC<KeyDataPageProps> = ({
         </div>
       </div>
 
-
-    </div>
+    </section>
   );
 };

@@ -52,7 +52,7 @@ export const LocationDescriptionPage: React.FC<LocationDescriptionPageProps> = (
   const defaultLocationImage = 'https://source.unsplash.com/800x600/?city-map';
 
   return (
-    <div className={`location-description-page w-full h-screen relative overflow-hidden ${backgroundClasses[backgroundColor]} ${className}`}>
+    <section className={`page w-full h-screen flex flex-col justify-center items-center relative overflow-hidden ${backgroundClasses[backgroundColor]} ${className}`} style={{ pageBreakAfter: 'always' }}>
       
       {/* 主内容 - 极简布局：左侧文字，右侧标题+背景图 */}
       <div className="relative z-10 h-full grid grid-cols-12 gap-0">
@@ -164,8 +164,6 @@ export const LocationDescriptionPage: React.FC<LocationDescriptionPageProps> = (
         </div>
       </div>
 
-
-
-    </div>
+    </section>
   );
 };
