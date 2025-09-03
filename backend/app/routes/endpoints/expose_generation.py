@@ -3,7 +3,7 @@ Expose generation routes for creating professional property presentations
 """
 
 from fastapi import APIRouter, HTTPException, status, BackgroundTasks
-from typing import Dict, Any
+from fastapi.responses import Response
 import uuid
 from datetime import datetime
 import asyncio
@@ -304,3 +304,97 @@ async def schedule_image_cleanup():
         await cleanup_expired_images()
     except Exception as e:
         print(f"Error in scheduled image cleanup: {e}")
+
+
+@router.get("/download/{expose_id}")
+async def download_expose_pdf(expose_id: str):
+    """Download expose PDF file"""
+    try:
+        if expose_id not in expose_status:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Expose not found"
+            )
+        
+        expose = expose_status[expose_id]
+        if expose["status"] != "completed":
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Expose generation not completed yet"
+            )
+        
+        # 这里应该生成实际的PDF文件
+        # 目前返回一个模拟的PDF内容
+        
+        # 生成简单的PDF内容（实际项目中应该使用真实的PDF生成库）
+        pdf_content = f"""
+        %PDF-1.4
+        1 0 obj
+        <<
+        /Type /Catalog
+        /Pages 2 0 R
+        >>
+        endobj
+        
+        2 0 obj
+        <<
+        /Type /Pages
+        /Kids [3 0 R]
+        /Count 1
+        >>
+        endobj
+        
+        3 0 obj
+        <<
+        /Type /Page
+        /Parent 2 0 R
+        /MediaBox [0 0 612 792]
+        /Contents 4 0 R
+        >>
+        endobj
+        
+        4 0 obj
+        <<
+        /Length 44
+        >>
+        stream
+        BT
+        /F1 12 Tf
+        100 700 Td
+        (Immobilien Expose - {expose_id[:8]}) Tj
+        ET
+        endstream
+        endobj
+        
+        xref
+        0 5
+        0000000000 65535 f
+        0000000009 00000 n
+        0000000058 00000 n
+        0000000111 00000 n
+        0000000206 00000 n
+        trailer
+        <<
+        /Size 5
+        /Root 1 0 R
+        >>
+        startxref
+        297
+        %%EOF
+        """.encode('utf-8')
+        
+        return Response(
+            content=pdf_content,
+            media_type="application/pdf",
+            headers={
+                "Content-Disposition": f"attachment; filename=expose_{expose_id[:8]}.pdf"
+            }
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to download expose: {str(e)}"
+        )

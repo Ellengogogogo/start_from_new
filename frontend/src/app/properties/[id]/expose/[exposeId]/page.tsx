@@ -297,19 +297,32 @@ export default function ExposeGenerationPage() {
     return () => clearInterval(interval);
   }, [exposeId, propertyId, exposeData?.status]);
 
+  // 处理PDF下载
   const handleDownloadPDF = async () => {
     try {
+      if (!exposeData || exposeData.status !== 'completed') {
+        alert('Exposé ist noch nicht fertig generiert');
+        return;
+      }
+
       const blob = await downloadPDF(exposeId);
+      
+      // 创建下载链接
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `Immobilienpräsentation_${propertyId}_${exposeId}.pdf`;
-      document.body.appendChild(a);
-      a.click();
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `expose_${exposeId.slice(0, 8)}.pdf`;
+      
+      // 触发下载
+      document.body.appendChild(link);
+      link.click();
+      
+      // 清理
+      document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
+      
     } catch (error) {
-      console.error('Download fehlgeschlagen:', error);
+      console.error('Download error:', error);
       alert('Download fehlgeschlagen, bitte versuchen Sie es erneut');
     }
   };
